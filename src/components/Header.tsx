@@ -1,3 +1,6 @@
+import Image from 'next/image';
+import logo from '@/app/logo.svg';
+
 export default function Header() {
   return (
     <header className="bg-transparent">
@@ -6,10 +9,12 @@ export default function Header() {
         aria-label="Global"
       >
         <div className="flex flex-1 justify-start">
-          <a href="#" className="-m-1.5 p-1.5">
-            <span className="sr-only">Your Company</span>
-            <h1 className="font-bold">chordwise</h1>
-          </a>
+        <Image
+          priority
+          src={logo}
+          width={120}
+          alt="chordwise logo"
+        />
         </div>
         <div className="flex flex-1 justify-end">
           <h1>Chords progressions AI generator.</h1>
