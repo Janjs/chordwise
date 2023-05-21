@@ -14,8 +14,8 @@ const ChordsPlayer: FC<ChordsPlayerProps> = (props) => {
     <div className="flex flex-row items-center rounded-lg mb-4 bg-muted p-4 [&>svg]:text-foreground">
       <Play className="mr-4" />
       <div className="flex-1 columns-4 rounded-lg gap-4 [&>svg]:text-foreground">
-        {chordProgression.map((chord) => (
-          <h1 className="border rounded-lg aspect-square flex justify-center items-center bg-background">
+        {chordProgression.map((chord, i) => (
+          <h1 key={i} className="border rounded-lg aspect-square flex justify-center items-center bg-background">
             {chord}
           </h1>
         ))}
