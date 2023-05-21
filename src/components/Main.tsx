@@ -44,8 +44,8 @@ const Main = () => {
       />
       <Separator className="my-5" />
       <ul>
-        {chordProgressions.map((chordProgression) => (
-          <li>{chordProgression.chords}</li>
+        {chordProgressions.map((chordProgression, index) => (
+          <li key={index}>{chordProgression.chords}</li>
         ))}
       </ul>
     </div>
