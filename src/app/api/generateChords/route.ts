@@ -10,7 +10,6 @@ export async function POST(req: Request) {
   const userInput: GenerateChordsRequest = await req.json();
 
   const content = `True.
-
   1. Cm - Ab - Bb - Eb
   2. Fm - G7 - Cm - Ab
   3. Cm - Bb - Ab - G7

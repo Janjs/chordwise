@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { ChangeEvent, FormEvent, useState } from "react";
 import UserInput from "../components/UserInput";
@@ -6,6 +6,7 @@ import { Separator } from "../components/ui/separator";
 import { ChordProgression } from "@/types/types";
 import { AlertCircle, AlertTriangle } from "lucide-react";
 import { Alert, AlertTitle } from "@/components/ui/alert";
+import ChordsPlayer from "@/components/ChordsPlayer";
 
 const Main = () => {
   const [inputValue, setInputValue] = useState("");
@@ -57,7 +58,9 @@ const Main = () => {
       {chordProgressions.length > 0 && (
         <ul>
           {chordProgressions.map((chordProgression, index) => (
-            <li key={index}>{chordProgression.chords}</li>
+            <li key={index} className="">
+              <ChordsPlayer chordProgression={chordProgression.chords} />
+            </li>
           ))}
         </ul>
       )}
