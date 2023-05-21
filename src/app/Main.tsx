@@ -22,8 +22,8 @@ const Main = () => {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
-    setChordProgressions([])
-    setOtherResponse(null)
+    setChordProgressions([]);
+    setOtherResponse(null);
 
     fetch("/api/generateChords", {
       method: "POST",
@@ -36,11 +36,11 @@ const Main = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data)
-        if(data.found) {
+        console.log(data);
+        if (data.found) {
           setChordProgressions(data.chordProgressions);
         } else {
-          setOtherResponse(data.otherResponse)
+          setOtherResponse(data.otherResponse);
         }
       })
       .catch((error) => setError(error));
@@ -54,23 +54,25 @@ const Main = () => {
         onSubmit={handleSubmit}
       />
       <Separator className="my-5" />
-      {chordProgressions.length > 0 && <ul>
-        {chordProgressions.map((chordProgression, index) => (
-          <li key={index}>{chordProgression.chords}</li>
-        ))}
-      </ul>}
-      {otherResponse &&
+      {chordProgressions.length > 0 && (
+        <ul>
+          {chordProgressions.map((chordProgression, index) => (
+            <li key={index}>{chordProgression.chords}</li>
+          ))}
+        </ul>
+      )}
+      {otherResponse && (
         <Alert>
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle>{otherResponse}</AlertTitle>
         </Alert>
-      }
-      {error &&
+      )}
+      {error && (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Something went wrong</AlertTitle>
         </Alert>
-      }
+      )}
     </div>
   );
 };
