@@ -9,8 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@radix-ui/react-slot": "^1.0.1",
     "@radix-ui/react-separator": "^1.0.2",
+    "@radix-ui/react-slot": "^1.0.1",
     "@types/node": "20.1.0",
     "@types/react": "18.2.6",
     "@types/react-dom": "18.2.4",
@@ -20,6 +20,7 @@
     "eslint": "8.40.0",
     "eslint-config-next": "13.4.1",
     "lucide-react": "^0.214.0",
+    "midi-sounds-react": "^1.2.54",
     "next": "13.4.1",
     "openai": "^3.2.1",
     "postcss": "8.4.23",

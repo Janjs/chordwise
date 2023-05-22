@@ -9,10 +9,9 @@ import { Alert, AlertTitle } from "@/components/ui/alert";
 import ChordsPlayer from "@/components/ChordsPlayer";
 
 const Main = () => {
+  const [loading, setLoading] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  const [chordProgressions, setChordProgressions] = useState<
-    ChordProgression[]
-  >([]);
+  const [chordProgressions, setChordProgressions] = useState<ChordProgression[]>([]);
   const [error, setError] = useState(null);
   const [otherResponse, setOtherResponse] = useState(null);
 
@@ -22,6 +21,7 @@ const Main = () => {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setLoading(true)
     setError(null);
     setChordProgressions([]);
     setOtherResponse(null);
@@ -44,7 +44,8 @@ const Main = () => {
           setOtherResponse(data.otherResponse);
         }
       })
-      .catch((error) => setError(error));
+      .catch((error) => setError(error))
+      .finally(() => setLoading(false));
   };
 
   return (
@@ -53,6 +54,7 @@ const Main = () => {
         inputValue={inputValue}
         onInputChange={handleInputChange}
         onSubmit={handleSubmit}
+        loading={loading}
       />
       <Separator className="my-5" />
       {chordProgressions.length > 0 && (
