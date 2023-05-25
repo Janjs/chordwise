@@ -1,7 +1,8 @@
 'use client';
 
 import { ChangeEvent, FormEvent, useState } from "react";
-import UserInput from "../components/UserInput";
+import UserInput, { formSchema } from "../components/UserInput";
+import * as z from "zod";
 import { Separator } from "../components/ui/separator";
 import { ChordProgression } from "@/types/types";
 import { AlertCircle, AlertTriangle } from "lucide-react";
@@ -10,17 +11,11 @@ import ChordsPlayer from "@/components/ChordsPlayer";
 
 const Main = () => {
   const [loading, setLoading] = useState(false);
-  const [inputValue, setInputValue] = useState("");
   const [chordProgressions, setChordProgressions] = useState<ChordProgression[]>([]);
   const [error, setError] = useState(null);
   const [otherResponse, setOtherResponse] = useState(null);
 
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setInputValue(event.target.value);
-  };
-
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSubmit = (values: z.infer<typeof formSchema>) => {
     setLoading(true)
     setError(null);
     setChordProgressions([]);
@@ -29,7 +24,7 @@ const Main = () => {
     fetch("/api/generateChords", {
       method: "POST",
       body: JSON.stringify({
-        description: inputValue,
+        description: values.description,
       }),
       headers: {
         "Content-Type": "application/json",
@@ -51,8 +46,6 @@ const Main = () => {
   return (
     <div className="flex-1 max-w-screen-lg flex flex-col">
       <UserInput
-        inputValue={inputValue}
-        onInputChange={handleInputChange}
         onSubmit={handleSubmit}
         loading={loading}
       />

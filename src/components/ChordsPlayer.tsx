@@ -2,7 +2,6 @@
 
 import { FC, useState } from "react";
 import { Play, Pause, SkipBack, Download } from "lucide-react";
-import MIDISounds from 'midi-sounds-react';
 
 interface ChordsPlayerProps {
   chordProgression: string[];
