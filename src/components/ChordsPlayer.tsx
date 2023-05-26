@@ -24,7 +24,7 @@ const ChordsPlayer: FC<ChordsPlayerProps> = (props) => {
         {chordProgression.map((chord, i) => (
           <h1
             key={i}
-            className="border rounded-lg aspect-square flex justify-center items-center bg-background"
+            className="border rounded-lg aspect-square flex justify-center items-center bg-background p-2"
           >
             {chord}
           </h1>

@@ -19,7 +19,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <Header />
         {children}
-        <p className="fixed bottom-0 right-0 pr-14 pb-8 text-muted-foreground">
+        <p className="fixed bottom-0 right-0 pr-14 pb-8 text-muted-foreground text-xs">
           Made by <a href="https://github.com/Janjs" className="text-foreground">@Janjs</a>
           <br />
           Powered by ChatGPT
