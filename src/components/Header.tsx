@@ -1,7 +1,12 @@
+"use client"
+
 import Image from 'next/image';
 import logo from '@/assets/logo.svg';
+import { useTheme } from 'next-themes'
 
 export default function Header() {
+  const { theme, setTheme } = useTheme()
+  
   return (
     <header className="bg-transparent">
       <nav
@@ -19,6 +24,11 @@ export default function Header() {
         <div className="flex flex-1 justify-end">
           <h1>Chords progressions AI generator.</h1>
         </div>
+        <div>
+      The current theme is: {theme}
+      <button onClick={() => setTheme('light')}>Light Mode</button>
+      <button onClick={() => setTheme('dark')}>Dark Mode</button>
+    </div>
       </nav>
     </header>
   );
