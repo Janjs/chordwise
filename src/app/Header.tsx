@@ -1,6 +1,6 @@
 import Image from "next/image";
-import logo from "@/assets/logo.svg";
-import ThemeChanger from "./ThemeChanger";
+import ThemeChanger from "../components/ThemeChanger";
+import ThemedLogo from "@/assets/ThemedLogo";
 
 export default function Header() {
   return (
@@ -10,7 +10,7 @@ export default function Header() {
         aria-label="Global"
       >
         <div className="flex flex-1">
-          <Image priority src={logo} width={120} alt="chordwise logo" />
+          <ThemedLogo />
         </div>
         <div className="flex flex-1 italic justify-center">
           <h1>Chords progressions AI generator.</h1>

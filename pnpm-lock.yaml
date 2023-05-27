@@ -43,6 +43,9 @@ dependencies:
   lucide-react:
     specifier: ^0.214.0
     version: 0.214.0(react@18.2.0)
+  midi-writer-js:
+    specifier: ^2.1.4
+    version: 2.1.4
   next:
     specifier: 13.4.1
     version: 13.4.1(react-dom@18.2.0)(react@18.2.0)
@@ -2495,6 +2498,13 @@ packages:
       picomatch: 2.3.1
     dev: false
 
+  /midi-writer-js@2.1.4:
+    resolution: {integrity: sha512-gpc7TBg4a6XaKfdWSEbFof3eKLBiBHD4dGHF6sh/LW+5eTwTRgcu5+03eeDHa8ZSti6e5trAhT3KYbdmJ7ddJg==}
+    requiresBuild: true
+    dependencies:
+      tonal-midi: 0.69.7
+    dev: false
+
   /mime-db@1.52.0:
     resolution: {integrity: sha512-sPU4uV7dYlvtWJxwwxHD0PuihVNiE7TyAbQ5SWxDCB9mUYvOgroQOwYQQOKPJ8CIbE+1ETVlOoK1UC2nU3gYvg==}
     engines: {node: '>= 0.6'}
@@ -2622,6 +2632,10 @@ packages:
   /normalize-range@0.1.2:
     resolution: {integrity: sha512-bdok/XvKII3nUpklnV6P2hxtMNrCboOjAcyBuQnWEhO665FwrSNRxU+AqpsyvO6LgGYPspN+lu5CLtw4jPRKNA==}
     engines: {node: '>=0.10.0'}
+    dev: false
+
+  /note-parser@2.0.1:
+    resolution: {integrity: sha512-w9o6Fv46y3NsFxeezTZSmftBtUM/ypme6iZWVrTJvvsD5RN+w0XNDePWtfreNrZFL3jSjBFhadPoXb+pJO4UdA==}
     dev: false
 
   /npm-run-path@4.0.1:
@@ -3356,6 +3370,12 @@ packages:
     engines: {node: '>=8.0'}
     dependencies:
       is-number: 7.0.0
+    dev: false
+
+  /tonal-midi@0.69.7:
+    resolution: {integrity: sha512-AY3YIuIm54HqMxhQgYmKXjjoCN7f6Y4GsF975Ao2aM8LcvcONk8uocN4T/PQI9K6i8yTfkK8aNYNQJjU59Z7ug==}
+    dependencies:
+      note-parser: 2.0.1
     dev: false
 
   /ts-interface-checker@0.1.13:
