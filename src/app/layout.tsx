@@ -21,6 +21,7 @@ export default function RootLayout({
         <Providers>
           <Header />
           {children}
+          {/*Make this a hover-card https://ui.shadcn.com/docs/components/hover-card*/}
           <p className="fixed bottom-0 right-0 pr-14 pb-8 text-muted-foreground text-xs">
             Made by{" "}
             <a href="https://github.com/Janjs" className="text-foreground">
