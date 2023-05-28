@@ -1,6 +1,6 @@
 "use client";
 
-import MidiWriter from "midi-writer-js";
+import MidiWriter, { Pitch } from "midi-writer-js";
 import "tone";
 import "@magenta/music";
 import "focus-visible";
@@ -24,27 +24,24 @@ const MidiPlayer: FC<MidiPlayerProps> = (props) => {
 
     chords.forEach((notes) => {
       // Add some notes:
-      const noteEvent = new MidiWriter.NoteEvent({pitch: notes, duration: '4'});
+      const noteEvent = new MidiWriter.NoteEvent({pitch: notes as Pitch[], duration: '4'});
       track.addEvent(noteEvent);
     });
 
     const midiWriter = new MidiWriter.Writer(track);
-
 
     // Add HTML components from the html-midi-player
     const midiVisualizer = document.createElement('midi-visualizer');
     midiVisualizer.setAttribute('src', midiWriter.dataUri());
     midiVisualizer.setAttribute('type', 'piano-roll');
     midiVisualizer.setAttribute('id', `midiVisualizer-${index}`);
-
+    document.getElementById(`midi-${index}`)?.appendChild(midiVisualizer);
+    
     const midiPlayer = document.createElement('midi-player');
     midiPlayer.setAttribute('src', midiWriter.dataUri());
     midiPlayer.setAttribute('sound-font', 'https://storage.googleapis.com/magentadata/js/soundfonts/sgm_plus');
     midiPlayer.setAttribute('visualizer', `#midiVisualizer-${index}`);
     midiPlayer.setAttribute('id', 'midiPlayer');
-
-    // add elements to DOM
-    document.getElementById(`midi-${index}`)?.appendChild(midiVisualizer);
     document.getElementById(`midi-${index}`)?.appendChild(midiPlayer);
   }, []);
 
