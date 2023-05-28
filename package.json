@@ -23,7 +23,7 @@
     "eslint": "8.40.0",
     "eslint-config-next": "13.4.1",
     "lucide-react": "^0.214.0",
-    "midi-writer-js": "^2.1.4",
+    "midi-sounds-react": "^1.2.54",
     "next": "13.4.1",
     "next-themes": "^0.2.1",
     "openai": "^3.2.1",
@@ -34,6 +34,7 @@
     "tailwind-merge": "^1.12.0",
     "tailwindcss": "3.3.2",
     "tailwindcss-animate": "^1.0.5",
+    "tonal": "^4.14.1",
     "typescript": "5.0.4",
     "zod": "^3.21.4"
   }
