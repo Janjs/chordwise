@@ -54,7 +54,7 @@ const Main = () => {
         <ul>
           {chordProgressions.map((chordProgression, index) => (
             <li key={index} className="">
-              <ChordsPlayer chordProgression={chordProgression.chords} />
+              <ChordsPlayer index={index} chordProgression={chordProgression.chords} />
             </li>
           ))}
         </ul>

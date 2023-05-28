@@ -1,36 +1,34 @@
 "use client";
 
-import { FC, MouseEventHandler, useRef, useState } from "react";
+import { FC, useState } from "react";
 import { Play, Pause, SkipBack, Download } from "lucide-react";
-import MIDISounds, { MIDISoundsMethods } from 'midi-sounds-react';
-import { Midi, Chord } from "tonal";
+import { Chord } from "tonal";
+import MidiPlayer from "./MidiPlayer";
 
 interface ChordsPlayerProps {
+  index: number;
   chordProgression: string[];
 }
 
+const PITCH = "4"
+
 const ChordsPlayer: FC<ChordsPlayerProps> = (props) => {
-  const { chordProgression } = props;
+  const { index, chordProgression } = props;
   const [playing, setPlaying] = useState(false);
 
-  const midiSoundsRef = useRef<MIDISoundsMethods | null>(null);
+  const chordsPitches = chordProgression.map((chord) => {
+    const notes = Chord.get(chord).notes;
 
-  const notes = Chord.get("Cmaj7").notes;
-  console.log(notes);
-  const pitches: number[] = notes.map((note) => Midi.toMidi(note+"4") as number).filter(note => !!note);
-  console.log(pitches);
+    const pitches: string[] = notes
+      .map((note) => note + PITCH)
+      .filter((note) => !!note);
 
-  const playTestInstrument = () => {
-    if (midiSoundsRef.current) {
-      midiSoundsRef.current.playChordNow(4, pitches, 2.5);
-    }
-  };
+    return pitches
+  });
 
   const handlePlay = () => {
-    setPlaying(true)
-    playTestInstrument()
-  }
-  
+    setPlaying(true);
+  };
 
   return (
     <div className="flex flex-row items-center rounded-lg px-10 mb-4 bg-muted p-4 gap-10 [&>svg]:text-foreground">
@@ -51,10 +49,7 @@ const ChordsPlayer: FC<ChordsPlayerProps> = (props) => {
         ))}
       </div>
       <Download />
-      <div className="hidden">
-        <MIDISounds ref={midiSoundsRef} instruments={[4]} />
-      </div>
-      <hr />
+      <MidiPlayer index={index} chords={chordsPitches} />
     </div>
   );
 };
