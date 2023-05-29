@@ -1,13 +1,13 @@
 'use client';
 
-import { ChangeEvent, FormEvent, useState } from "react";
+import { useState } from "react";
 import UserInput, { formSchema } from "../components/UserInput";
 import * as z from "zod";
 import { Separator } from "../components/ui/separator";
 import { ChordProgression } from "@/types/types";
 import { AlertCircle, AlertTriangle } from "lucide-react";
 import { Alert, AlertTitle } from "@/components/ui/alert";
-import ChordsPlayer from "@/components/ChordsPlayer";
+import Player from "@/components/Player";
 
 const Main = () => {
   const [loading, setLoading] = useState(false);
@@ -51,13 +51,8 @@ const Main = () => {
       />
       <Separator className="my-5" />
       {chordProgressions.length > 0 && (
-        <ul>
-          {chordProgressions.map((chordProgression, index) => (
-            <li key={index} className="">
-              <ChordsPlayer index={index} chordProgression={chordProgression.chords} />
-            </li>
-          ))}
-        </ul>
+        
+        <Player chordProgressions={chordProgressions} />
       )}
       {otherResponse && (
         <Alert>

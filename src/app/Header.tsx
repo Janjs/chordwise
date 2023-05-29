@@ -13,7 +13,7 @@ export default function Header() {
           <ThemedLogo />
         </div>
         <div className="flex flex-1 italic justify-center">
-          <h1>Chords progressions AI generator.</h1>
+          <h1>Chord progressions AI generator.</h1>
         </div>
         <div className="flex flex-1 justify-end">
           <ThemeChanger />

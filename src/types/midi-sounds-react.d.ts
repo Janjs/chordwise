@@ -9,7 +9,7 @@ declare module 'midi-sounds-react' {
 
   export interface MIDISoundsMethods {
     playChordNow(channel: number, pitches: number[], duration: number): void;
-    // Add other methods if available in the MIDISounds component
+    cancelQueue(): void;
   }
 
   type MIDISoundsComponent = React.ForwardRefExoticComponent<
