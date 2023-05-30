@@ -16,7 +16,7 @@ const ChordProgressionViewer: FC<ChordProgressionViewerProps> = (props) => {
   const isChordPlaying = (chord: number) => isPlaying(index) && indexChordPlaying === chord
 
   return (
-    <div onClick={() => handlePlay(index)} className="transition-colors duration-150 ease-in flex flex-row items-center rounded-lg px-10 mb-4 p-4 gap-10 bg-muted hover:bg-primary [&>svg]:text-foreground hover:[&>svg]:text-background">
+    <div onClick={() => handlePlay(index)} className="transition-colors duration-150 ease-in flex flex-row items-center rounded-lg mb-4 p-4 gap-10 bg-muted hover:bg-primary [&>svg]:text-foreground hover:[&>svg]:text-background">
       <div className="flex-1 columns-4 rounded-lg gap-4">
         {chordProgression.map((chord, i) => (
           <h1

@@ -5,6 +5,16 @@ import { ChordProgression } from "@/types/types";
 import ChordProgressionViewer from "./ChordProgressionViewer";
 import MIDISounds, { MIDISoundsMethods } from "midi-sounds-react";
 import { Midi, Chord } from "tonal";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { FormLabel } from "./ui/form";
 
 interface PlayerProps {
   chordProgressions: ChordProgression[];
@@ -13,29 +23,38 @@ interface PlayerProps {
 const PITCH = "4";
 const BPM = 100;
 
+// list of instruments: https://surikov.github.io/midi-sounds-react-examples/examples/midi-sounds-example3/build/
+enum Instrument {
+  piano = 4,
+  guitar = 260,
+  flute = 771,
+}
+
+const getChordsPitches = (chordProgression: ChordProgression) => {
+  return chordProgression.chords.map((chord) => {
+    const notes = Chord.get(chord).notes;
+
+    const pitches: number[] = notes
+      .map((note) => Midi.toMidi(note + PITCH) as number)
+      .filter((note) => !!note);
+
+    return pitches;
+  });
+};
+
 const Player: FC<PlayerProps> = (props) => {
   const { chordProgressions } = props;
 
   const [chordPlaying, setChordPlaying] = useState<number>(-1);
   const [indexCurrentPlaying, setIndexChordPlaying] = useState<number>(0);
+  const [instrument, setInstrument] =
+    useState<keyof typeof Instrument>("piano");
   const midiSoundsRef = useRef<MIDISoundsMethods | null>(null);
-
-  const getChordsPitches = (chordProgression: ChordProgression) => {
-    return chordProgression.chords.map((chord) => {
-      const notes = Chord.get(chord).notes;
-
-      const pitches: number[] = notes
-        .map((note) => Midi.toMidi(note + PITCH) as number)
-        .filter((note) => !!note);
-
-      return pitches;
-    });
-  };
 
   const playChordProgression = (indexChordProgression: number) => {
     const millisecondsPerBeat = 60000 / BPM; // Calculate the duration of each beat in milliseconds
     const chordProgressionPlaying = chordProgressions[indexChordProgression];
-    const chordProgressionPitches = getChordsPitches(chordProgressionPlaying)
+    const chordProgressionPitches = getChordsPitches(chordProgressionPlaying);
     setChordPlaying(indexChordProgression);
     let i = 0;
 
@@ -44,7 +63,11 @@ const Player: FC<PlayerProps> = (props) => {
         const chordPitches = chordProgressionPitches[i];
         // Play each chord
         setChordPlaying(i);
-        midiSoundsRef.current?.playChordNow(4, chordPitches, 1);
+        midiSoundsRef.current?.playChordNow(
+          Instrument[instrument],
+          chordPitches,
+          1
+        );
 
         i++;
         setTimeout(playNextChord, millisecondsPerBeat);
@@ -62,6 +85,8 @@ const Player: FC<PlayerProps> = (props) => {
 
   const isPlaying = (i: number) => i === indexCurrentPlaying;
 
+  const instrumentValues: number[] = Object.values(Instrument).map(value => Number(value))
+
   return (
     <div className="flex flex-column gap-5">
       <ul className="flex-1">
@@ -77,10 +102,27 @@ const Player: FC<PlayerProps> = (props) => {
           </li>
         ))}
         <div className="hidden">
-          <MIDISounds ref={midiSoundsRef} instruments={[4]} />
+          <MIDISounds ref={midiSoundsRef} instruments={instrumentValues} />
         </div>
       </ul>
-      <p className="flex-initial w-36">Settings</p>
+      <p className="flex-initial w-36">
+        <Select
+          onValueChange={(d) => setInstrument(d as keyof typeof Instrument)}
+          defaultValue={instrument}
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Instruments</SelectLabel>
+              <SelectItem value="piano">🎹 Piano</SelectItem>
+              <SelectItem value="guitar">🎸 Guitar</SelectItem>
+              <SelectItem value="flute">🪈 Flute</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </p>
     </div>
   );
 };
