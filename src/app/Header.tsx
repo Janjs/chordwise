@@ -1,4 +1,3 @@
-import Image from "next/image";
 import ThemeChanger from "../components/ThemeChanger";
 import ThemedLogo from "@/assets/ThemedLogo";
 
