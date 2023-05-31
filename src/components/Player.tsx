@@ -14,14 +14,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { FormLabel } from "./ui/form";
 
 interface PlayerProps {
   chordProgressions: ChordProgression[];
 }
 
 const PITCH = "4";
-const BPM = 100;
 
 // list of instruments: https://surikov.github.io/midi-sounds-react-examples/examples/midi-sounds-example3/build/
 enum Instrument {
@@ -47,12 +45,13 @@ const Player: FC<PlayerProps> = (props) => {
 
   const [chordPlaying, setChordPlaying] = useState<number>(-1);
   const [indexCurrentPlaying, setIndexChordPlaying] = useState<number>(0);
-  const [instrument, setInstrument] =
-    useState<keyof typeof Instrument>("piano");
+  const [instrument, setInstrument] = useState<keyof typeof Instrument>("piano");
+  const [bpm, setBpm] =useState<number>(100);
+
   const midiSoundsRef = useRef<MIDISoundsMethods | null>(null);
 
   const playChordProgression = (indexChordProgression: number) => {
-    const millisecondsPerBeat = 60000 / BPM; // Calculate the duration of each beat in milliseconds
+    const millisecondsPerBeat = 60000 / bpm; // Calculate the duration of each beat in milliseconds
     const chordProgressionPlaying = chordProgressions[indexChordProgression];
     const chordProgressionPitches = getChordsPitches(chordProgressionPlaying);
     setChordPlaying(indexChordProgression);
@@ -85,7 +84,7 @@ const Player: FC<PlayerProps> = (props) => {
 
   const isPlaying = (i: number) => i === indexCurrentPlaying;
 
-  const instrumentValues: number[] = Object.values(Instrument).map(value => Number(value))
+  const instrumentValues: number[] = Object.values(Instrument).filter(v => typeof v === 'number').map(value => Number(value)).filter(v => v!!)
 
   return (
     <div className="flex flex-column gap-5">
@@ -105,7 +104,7 @@ const Player: FC<PlayerProps> = (props) => {
           <MIDISounds ref={midiSoundsRef} instruments={instrumentValues} />
         </div>
       </ul>
-      <p className="flex-initial w-36">
+      <p className="flex-initial w-36 flex flex-col gap-5">
         <Select
           onValueChange={(d) => setInstrument(d as keyof typeof Instrument)}
           defaultValue={instrument}
@@ -122,6 +121,7 @@ const Player: FC<PlayerProps> = (props) => {
             </SelectGroup>
           </SelectContent>
         </Select>
+        {/* <Input type="email" placeholder="Email" /> */}
       </p>
     </div>
   );
