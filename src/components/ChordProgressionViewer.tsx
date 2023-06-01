@@ -21,7 +21,7 @@ const ChordProgressionViewer: FC<ChordProgressionViewerProps> = (props) => {
         {chordProgression.map((chord, i) => (
           <h1
             key={i}
-            className={`border rounded-lg aspect-square flex justify-center items-center ${isChordPlaying(i) ? 'bg-primary text-primary-foreground' : 'bg-card text-card-foreground'} p-2`}
+            className={`font-bold border rounded-lg aspect-square flex justify-center items-center ${isChordPlaying(i) ? 'bg-primary text-primary-foreground' : 'bg-card text-card-foreground'} p-2`}
           >
             {chord}
           </h1>
