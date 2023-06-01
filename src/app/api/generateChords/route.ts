@@ -3,18 +3,21 @@ import { ChordProgression } from "@/types/types";
 import { NextResponse } from "next/server";
 
 export interface GenerateChordsRequest {
-  description?: string;
+  description: string;
+  musicalKey: string;
+  musicalScale: string;
 }
 
 export async function POST(req: Request) {
   const userInput: GenerateChordsRequest = await req.json();
 
   const content = `True.
-  1. A - Bm - D - Em
+  1. A - Bm - D - C
   2. Fm - G7 - Cm - Ab
   3. Cm - Bb - Ab - G7
   4. Dm - G7 - Cm - Ab
   5. Cm - G7 - Fm - Ab`
+  const response = content
 
   // const completion = await openai.createChatCompletion({
   //   model: "gpt-3.5-turbo",
@@ -30,13 +33,11 @@ export async function POST(req: Request) {
   //     },
   //     {
   //       role: "user",
-  //       content: `Generate 5 chord progressions in the key of C major that fit the following description: ${userInput.description}}`,
+  //       content: `Generate 5 chord progressions in the key of ${userInput.musicalKey} ${userInput.musicalScale} that fit the following description: ${userInput.description}}`,
   //     },
   //   ],
   // });
-
   // const response = completion.data.choices[0].message?.content
-  const response = content
 
   if(validateFoundChords(response)){
     const chordProgressions: ChordProgression[] = parseChords(response!);

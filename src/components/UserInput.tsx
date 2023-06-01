@@ -14,8 +14,17 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 interface UserInputProps {
   onSubmit: (values: z.infer<typeof formSchema>) => void;
@@ -24,7 +33,25 @@ interface UserInputProps {
 
 export const formSchema = z.object({
   description: z.string().min(1).max(200),
+  musicalKey: z.string(),
+  musicalScale: z.string(),
 });
+
+const MUSICAL_KEYS = [
+  "C",
+  "Db/C#",
+  "D",
+  "Eb",
+  "E",
+  "F",
+  "Gb/F#",
+  "G",
+  "Ab",
+  "A",
+  "Bb",
+  "B/Cb",
+];
+const MUSICAL_SCALES = ["major", "minor"];
 
 const UserInput: FC<UserInputProps> = (props) => {
   const { onSubmit, loading } = props;
@@ -33,6 +60,8 @@ const UserInput: FC<UserInputProps> = (props) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       description: "",
+      musicalKey: MUSICAL_KEYS[0],
+      musicalScale: MUSICAL_SCALES[0],
     },
   });
 
@@ -40,14 +69,56 @@ const UserInput: FC<UserInputProps> = (props) => {
     <Form {...form}>
       {/* TODO: add a dropdown to select the Key of the chords: */}
       {/* TODO: add a dropdown to select the style of the chords: */}
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 flex flex-row justify-between space-x-5">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex-1 flex flex-row gap-3 justify-between"
+      >
+        <FormField
+          control={form.control}
+          name="musicalKey"
+          render={({ field }) => (
+            <Select onValueChange={field.onChange}>
+              <SelectTrigger className="w-[37px]">
+                <SelectValue placeholder={MUSICAL_KEYS[0]} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {MUSICAL_KEYS.map((key) => (
+                    <SelectItem value={key}>{key}</SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="musicalScale"
+          render={({ field }) => (
+            <Select onValueChange={field.onChange}>
+              <SelectTrigger className="w-[65px]">
+                <SelectValue placeholder={MUSICAL_SCALES[0]} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {MUSICAL_SCALES.map((key) => (
+                    <SelectItem value={key}>{key}</SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          )}
+        />
         <FormField
           control={form.control}
           name="description"
           render={({ field }) => (
-            <FormItem className="flex-1">
+            <FormItem className="w-full">
               <FormControl>
-                <Input placeholder="Chords in the style of Nirvana" {...field} />
+                <Input
+                  placeholder="Chords in the style of Nirvana"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

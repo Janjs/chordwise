@@ -21,10 +21,14 @@ const Main = () => {
     setChordProgressions([]);
     setOtherResponse(null);
 
+    console.log(values)
+
     fetch("/api/generateChords", {
       method: "POST",
       body: JSON.stringify({
         description: values.description,
+        musicalKey: values.musicalKey,
+        musicalScale: values.musicalScale
       }),
       headers: {
         "Content-Type": "application/json",
@@ -51,7 +55,6 @@ const Main = () => {
       />
       <Separator className="my-5" />
       {chordProgressions.length > 0 && (
-        
         <Player chordProgressions={chordProgressions} />
       )}
       {otherResponse && (
