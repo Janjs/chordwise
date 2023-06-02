@@ -1,3 +1,3 @@
 ## Chordwise
 
-Chords progressions AI generator.
+Chords progressions AI generator, powered by ChatGPT.
