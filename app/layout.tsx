@@ -24,9 +24,15 @@ export default function RootLayout({
           defaultTheme='system'
           enableSystem
         >
-          <Header />
-          {children}
-          <Footer />
+          <div className='flex flex-col h-screen'>
+            <div className='flex-none'>
+              <Header />
+            </div>
+            <div className='flex-1 overflow-auto'>{children}</div>
+            <div className='flex-none'>
+              <Footer />
+            </div>
+          </div>
         </ThemeProvider>
       </body>
     </html>

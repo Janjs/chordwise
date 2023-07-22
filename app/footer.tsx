@@ -2,7 +2,7 @@ import { Separator } from '@/components/ui/separator'
 
 export default function Footer() {
   return (
-    <div className='fixed bottom-0 left-0 right-0 bg-background/80'>
+    <div className='bg-background/80'>
       <Separator />
       {/*Make this a hover-card https://ui.shadcn.com/docs/components/hover-card*/}
       <p className='p-4 text-right text-xs text-muted-foreground'>

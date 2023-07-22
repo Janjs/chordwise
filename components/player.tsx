@@ -1,85 +1,89 @@
-"use client";
+'use client'
 
-import { FC, useRef, useState } from "react";
-import { ChordProgression } from "@/types/types";
-import ChordProgressionViewer from "./chord-prog-viewer";
-import MIDISounds, { MIDISoundsMethods } from "midi-sounds-react";
-import { Midi, Chord } from "tonal";
-import PlayerSettings, { Instrument } from "./player-settings";
+import { FC, useRef, useState } from 'react'
+import { ChordProgression } from '@/types/types'
+import ChordProgressionViewer from './chord-prog-viewer'
+import MIDISounds, { MIDISoundsMethods } from 'midi-sounds-react'
+import { Midi, Chord } from 'tonal'
+import PlayerSettings, { Instrument } from './player-settings'
 
 interface PlayerProps {
-  chordProgressions: ChordProgression[];
+  chordProgressions: ChordProgression[]
 }
 
-const PITCH = "4";
+const PITCH = '4'
 
 const Player: FC<PlayerProps> = (props) => {
-  const { chordProgressions } = props;
+  const { chordProgressions } = props
 
-  const [chordPlaying, setChordPlaying] = useState<number>(-1);
-  const [indexCurrentPlaying, setIndexChordPlaying] = useState<number>(0);
+  const [chordPlaying, setChordPlaying] = useState<number>(-1)
+  const [indexCurrentPlaying, setIndexChordPlaying] =
+    useState<number>(0)
 
   // player settings
   const [instrumentKey, setInstrumentKey] =
-    useState<keyof typeof Instrument>("piano");
-  const [tempo, setTempo] = useState<number>(120);
-  const [pitch, setPitch] = useState<number>(5);
+    useState<keyof typeof Instrument>('piano')
+  const [tempo, setTempo] = useState<number>(120)
+  const [pitch, setPitch] = useState<number>(5)
 
-  const midiSoundsRef = useRef<MIDISoundsMethods | null>(null);
+  const midiSoundsRef = useRef<MIDISoundsMethods | null>(null)
 
   const getChordsPitches = (chordProgression: ChordProgression) => {
     return chordProgression.chords.map((chord) => {
-      const notes = Chord.get(chord).notes;
+      const notes = Chord.get(chord).notes
 
       const pitches: number[] = notes
         .map((note) => Midi.toMidi(note + pitch) as number)
-        .filter((note) => !!note);
+        .filter((note) => !!note)
 
-      return pitches;
-    });
-  };
+      return pitches
+    })
+  }
 
   const playChordProgression = (indexChordProgression: number) => {
-    const millisecondsPerBeat = 60000 / tempo; // Calculate the duration of each beat in milliseconds
-    const chordProgressionPlaying = chordProgressions[indexChordProgression];
-    const chordProgressionPitches = getChordsPitches(chordProgressionPlaying);
-    setChordPlaying(indexChordProgression);
-    let i = 0;
+    const millisecondsPerBeat = 60000 / tempo // Calculate the duration of each beat in milliseconds
+    const chordProgressionPlaying =
+      chordProgressions[indexChordProgression]
+    const chordProgressionPitches = getChordsPitches(
+      chordProgressionPlaying
+    )
+    setChordPlaying(indexChordProgression)
+    let i = 0
 
     const playNextChord = () => {
       if (i < chordProgressionPitches.length) {
-        const chordPitches = chordProgressionPitches[i];
+        const chordPitches = chordProgressionPitches[i]
         // Play each chord
-        setChordPlaying(i);
+        setChordPlaying(i)
         midiSoundsRef.current?.playChordNow(
           Instrument[instrumentKey],
           chordPitches,
-          1,
-        );
+          1
+        )
 
-        i++;
-        setTimeout(playNextChord, millisecondsPerBeat);
+        i++
+        setTimeout(playNextChord, millisecondsPerBeat)
       } else {
-        setChordPlaying(-1);
+        setChordPlaying(-1)
       }
-    };
-    playNextChord();
-  };
+    }
+    playNextChord()
+  }
 
   const handlePlay = (indexChordProgression: number) => {
-    setIndexChordPlaying(indexChordProgression);
-    playChordProgression(indexChordProgression);
-  };
+    setIndexChordPlaying(indexChordProgression)
+    playChordProgression(indexChordProgression)
+  }
 
-  const isPlaying = (i: number) => i === indexCurrentPlaying;
+  const isPlaying = (i: number) => i === indexCurrentPlaying
 
   const instrumentValues: number[] = Object.values(Instrument)
-    .filter((v) => typeof v === "number")
+    .filter((v) => typeof v === 'number')
     .map((value) => Number(value))
-    .filter((v) => v!!);
+    .filter((v) => v!!)
 
   return (
-    <div className="flex flex-column gap-5">
+    <div className='flex flex-column gap-5'>
       <PlayerSettings
         instrumentKey={instrumentKey}
         tempo={tempo}
@@ -88,7 +92,7 @@ const Player: FC<PlayerProps> = (props) => {
         setTempo={setTempo}
         setPitch={setPitch}
       />
-      <ul className="flex-1">
+      <ul className='flex-1'>
         {chordProgressions.map((chordProgression, index) => (
           <li key={index}>
             <ChordProgressionViewer
@@ -100,12 +104,15 @@ const Player: FC<PlayerProps> = (props) => {
             />
           </li>
         ))}
-        <div className="hidden">
-          <MIDISounds ref={midiSoundsRef} instruments={instrumentValues} />
+        <div className='hidden'>
+          <MIDISounds
+            ref={midiSoundsRef}
+            instruments={instrumentValues}
+          />
         </div>
       </ul>
     </div>
-  );
-};
+  )
+}
 
-export default Player;
+export default Player
