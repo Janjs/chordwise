@@ -1,4 +1,5 @@
 import {
+  AlertCircle,
   AlertTriangle,
   ArrowRight,
   Check,
@@ -43,6 +44,7 @@ export const Icons = {
   billing: CreditCard,
   ellipsis: MoreVertical,
   add: Plus,
+  info: AlertCircle,
   warning: AlertTriangle,
   user: User,
   arrowRight: ArrowRight,

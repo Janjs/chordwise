@@ -5,9 +5,9 @@ import UserInput, { formSchema } from "../components/user-input";
 import * as z from "zod";
 import { Separator } from "../components/ui/separator";
 import { ChordProgression } from "@/types/types";
-import { AlertCircle, AlertTriangle } from "lucide-react";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import Player from "@/components/player";
+import { Icons } from "@/components/icons";
 
 const Main = () => {
   const [loading, setLoading] = useState(false);
@@ -58,13 +58,13 @@ const Main = () => {
       )}
       {otherResponse && (
         <Alert>
-          <AlertTriangle className="h-4 w-4" />
+          <Icons.info className="h-4 w-4" />
           <AlertTitle>{otherResponse}</AlertTitle>
         </Alert>
       )}
       {error && (
         <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
+          <Icons.warning className="h-4 w-4" />
           <AlertTitle>Something went wrong</AlertTitle>
         </Alert>
       )}

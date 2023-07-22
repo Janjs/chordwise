@@ -1,4 +1,4 @@
-import ThemeChanger from "../components/theme-changer";
+import ModeToggle from "../components/modo-changer";
 import ThemedLogo from "@/assets/themed-logo";
 
 export default function Header() {
@@ -15,7 +15,7 @@ export default function Header() {
           <h1>Chord progressions AI generator.</h1>
         </div>
         <div className="flex flex-1 justify-end">
-          <ThemeChanger />
+          <ModeToggle />
         </div>
       </nav>
     </header>
