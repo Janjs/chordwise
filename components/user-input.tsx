@@ -78,7 +78,7 @@ const UserInput: FC<UserInputProps> = (props) => {
           name="musicalKey"
           render={({ field }) => (
             <Select onValueChange={field.onChange}>
-              <SelectTrigger className="w-[37px]">
+              <SelectTrigger className="w-auto">
                 <SelectValue placeholder={MUSICAL_KEYS[0]} />
               </SelectTrigger>
               <SelectContent>
@@ -96,7 +96,7 @@ const UserInput: FC<UserInputProps> = (props) => {
           name="musicalScale"
           render={({ field }) => (
             <Select onValueChange={field.onChange}>
-              <SelectTrigger className="w-[65px]">
+              <SelectTrigger className="w-auto">
                 <SelectValue placeholder={MUSICAL_SCALES[0]} />
               </SelectTrigger>
               <SelectContent>
