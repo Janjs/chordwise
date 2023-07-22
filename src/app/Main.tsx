@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState } from "react";
 import UserInput, { formSchema } from "../components/UserInput";
@@ -11,24 +11,26 @@ import Player from "@/components/Player";
 
 const Main = () => {
   const [loading, setLoading] = useState(false);
-  const [chordProgressions, setChordProgressions] = useState<ChordProgression[]>([]);
+  const [chordProgressions, setChordProgressions] = useState<
+    ChordProgression[]
+  >([]);
   const [error, setError] = useState(null);
   const [otherResponse, setOtherResponse] = useState(null);
 
   const handleSubmit = (values: z.infer<typeof formSchema>) => {
-    setLoading(true)
+    setLoading(true);
     setError(null);
     setChordProgressions([]);
     setOtherResponse(null);
 
-    console.log(values)
+    console.log(values);
 
     fetch("/api/generateChords", {
       method: "POST",
       body: JSON.stringify({
         description: values.description,
         musicalKey: values.musicalKey,
-        musicalScale: values.musicalScale
+        musicalScale: values.musicalScale,
       }),
       headers: {
         "Content-Type": "application/json",
@@ -49,10 +51,7 @@ const Main = () => {
 
   return (
     <div className="flex-1 max-w-screen-lg flex flex-col">
-      <UserInput
-        onSubmit={handleSubmit}
-        loading={loading}
-      />
+      <UserInput onSubmit={handleSubmit} loading={loading} />
       <Separator className="my-5" />
       {chordProgressions.length > 0 && (
         <Player chordProgressions={chordProgressions} />

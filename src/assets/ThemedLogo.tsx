@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import Image from "next/image";
 import { useTheme } from "next-themes";
@@ -8,11 +8,11 @@ import { useEffect, useState } from "react";
 
 const ThemedLogo = () => {
   const { resolvedTheme } = useTheme();
-  const [domLoaded, setDomLoaded] = useState(false)
+  const [domLoaded, setDomLoaded] = useState(false);
 
   useEffect(() => {
-    setDomLoaded(true)
-  }, [])
+    setDomLoaded(true);
+  }, []);
 
   let src;
   switch (resolvedTheme) {
@@ -27,7 +27,11 @@ const ThemedLogo = () => {
       break;
   }
 
-  return (domLoaded ? <Image priority src={src} width={120} alt="chordwise logo" /> : <></>);
-}
+  return domLoaded ? (
+    <Image priority src={src} width={120} alt="chordwise logo" />
+  ) : (
+    <></>
+  );
+};
 
 export default ThemedLogo;

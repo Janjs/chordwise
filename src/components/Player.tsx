@@ -54,7 +54,7 @@ const Player: FC<PlayerProps> = (props) => {
         midiSoundsRef.current?.playChordNow(
           Instrument[instrumentKey],
           chordPitches,
-          1
+          1,
         );
 
         i++;
@@ -80,7 +80,7 @@ const Player: FC<PlayerProps> = (props) => {
 
   return (
     <div className="flex flex-column gap-5">
-       <PlayerSettings
+      <PlayerSettings
         instrumentKey={instrumentKey}
         tempo={tempo}
         pitch={pitch}

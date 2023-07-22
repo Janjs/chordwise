@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import * as z from 'zod';
+import * as z from "zod";
 
 // list of instruments: https://surikov.github.io/midi-sounds-react-examples/examples/midi-sounds-example3/build/
 export enum Instrument {
@@ -28,46 +28,53 @@ interface PlayerSettingsProps {
   setPitch: (pitch: number) => void;
 }
 
-const tempoSchema = z.number().min(5, {
-  message: "Tempo must be at least 5.",
-}).max(300, {
-  message: "Tempo must not be more than 300.",
-});
-const pitchSchema = z.number().min(1, {
-  message: "Pitch must be at least 1.",
-}).max(8, {
-  message: "Pitch must not be more than 8.",
-});
-const DEFAULT_TEMPO = 120
-const DEFAULT_PITCH = 5
+const tempoSchema = z
+  .number()
+  .min(5, {
+    message: "Tempo must be at least 5.",
+  })
+  .max(300, {
+    message: "Tempo must not be more than 300.",
+  });
+const pitchSchema = z
+  .number()
+  .min(1, {
+    message: "Pitch must be at least 1.",
+  })
+  .max(8, {
+    message: "Pitch must not be more than 8.",
+  });
+const DEFAULT_TEMPO = 120;
+const DEFAULT_PITCH = 5;
 
 const PlayerSettings: FC<PlayerSettingsProps> = (props) => {
-  const { instrumentKey, tempo, pitch, setInstrumentKey, setTempo, setPitch } = props
+  const { instrumentKey, tempo, pitch, setInstrumentKey, setTempo, setPitch } =
+    props;
 
-  const [pitchError, setPitchError] = useState<string>("")
-  const [tempoError, setTempoError] = useState<string>("")
+  const [pitchError, setPitchError] = useState<string>("");
+  const [tempoError, setTempoError] = useState<string>("");
 
   const checkTempoError = () => {
     try {
-      tempoSchema.parse(tempo)
-    } catch(error) {
-      if(error instanceof z.ZodError) {
-        setTempoError(error.issues[0].message)
-        setTempo(DEFAULT_TEMPO)
-      } else throw new Error("Unknown error.")
+      tempoSchema.parse(tempo);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        setTempoError(error.issues[0].message);
+        setTempo(DEFAULT_TEMPO);
+      } else throw new Error("Unknown error.");
     }
-  }
+  };
 
   const checkPitchError = () => {
     try {
-      pitchSchema.parse(pitch)
-    } catch(error) {
-      if(error instanceof z.ZodError) {
-        setPitchError(error.issues[0].message)
-        setPitch(DEFAULT_PITCH)
-      } else throw new Error("Unknown error.")
+      pitchSchema.parse(pitch);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        setPitchError(error.issues[0].message);
+        setPitch(DEFAULT_PITCH);
+      } else throw new Error("Unknown error.");
     }
-  }
+  };
 
   return (
     <div className="w-40 flex flex-col gap-5">
@@ -105,7 +112,9 @@ const PlayerSettings: FC<PlayerSettingsProps> = (props) => {
           />
           <p className="flex justify-center items-center ml-2">bpm</p>
         </div>
-        {tempoError && <p className="text-sm font-medium text-destructive">{tempoError}</p>}
+        {tempoError && (
+          <p className="text-sm font-medium text-destructive">{tempoError}</p>
+        )}
       </div>
       <div className="flex flex-col gap-2">
         <Label>Pitch</Label>
@@ -121,7 +130,9 @@ const PlayerSettings: FC<PlayerSettingsProps> = (props) => {
             onMouseLeave={checkPitchError}
           />
         </div>
-        {pitchError && <p className="text-sm font-medium text-destructive">{pitchError}</p>}
+        {pitchError && (
+          <p className="text-sm font-medium text-destructive">{pitchError}</p>
+        )}
       </div>
     </div>
   );

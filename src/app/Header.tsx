@@ -11,7 +11,7 @@ export default function Header() {
         <div className="flex flex-1">
           <ThemedLogo />
         </div>
-        <div className="flex flex-1 italic justify-center text-center" >
+        <div className="flex flex-1 italic justify-center text-center">
           <h1>Chord progressions AI generator.</h1>
         </div>
         <div className="flex flex-1 justify-end">

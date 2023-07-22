@@ -1,5 +1,5 @@
-declare module 'midi-sounds-react' {
-  import React from 'react';
+declare module "midi-sounds-react" {
+  import React from "react";
 
   interface MIDISoundsProps {
     ref?: React.RefObject<MIDISoundsMethods>;
