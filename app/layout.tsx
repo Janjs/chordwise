@@ -1,7 +1,7 @@
-import Header from "@/app/Header";
+import Header from "./header";
 import "./globals.css";
 import { Inter } from "next/font/google";
-import { Providers } from "./providers";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,7 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <Providers>
+        <ThemeProvider>
           <Header />
           {children}
           {/*Make this a hover-card https://ui.shadcn.com/docs/components/hover-card*/}
@@ -30,7 +30,7 @@ export default function RootLayout({
             <br />
             Powered by ChatGPT
           </p>
-        </Providers>
+        </ThemeProvider>
       </body>
     </html>
   );

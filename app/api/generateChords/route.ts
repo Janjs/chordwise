@@ -1,4 +1,4 @@
-import openai from "@/app/api/generateChords/openai";
+import openai from "./openai";
 import { ChordProgression } from "@/types/types";
 import { NextResponse } from "next/server";
 

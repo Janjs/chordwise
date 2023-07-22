@@ -2,10 +2,10 @@
 
 import { FC, useRef, useState } from "react";
 import { ChordProgression } from "@/types/types";
-import ChordProgressionViewer from "./ChordProgressionViewer";
+import ChordProgressionViewer from "./chord-prog-viewer";
 import MIDISounds, { MIDISoundsMethods } from "midi-sounds-react";
 import { Midi, Chord } from "tonal";
-import PlayerSettings, { Instrument } from "./PlayerSettings";
+import PlayerSettings, { Instrument } from "./player-settings";
 
 interface PlayerProps {
   chordProgressions: ChordProgression[];

@@ -1,5 +1,5 @@
-import ThemeChanger from "../components/ThemeChanger";
-import ThemedLogo from "@/assets/ThemedLogo";
+import ThemeChanger from "../components/theme-changer";
+import ThemedLogo from "@/assets/themed-logo";
 
 export default function Header() {
   return (

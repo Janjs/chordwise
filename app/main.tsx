@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import UserInput, { formSchema } from "../components/UserInput";
+import UserInput, { formSchema } from "../components/user-input";
 import * as z from "zod";
 import { Separator } from "../components/ui/separator";
 import { ChordProgression } from "@/types/types";
 import { AlertCircle, AlertTriangle } from "lucide-react";
 import { Alert, AlertTitle } from "@/components/ui/alert";
-import Player from "@/components/Player";
+import Player from "@/components/player";
 
 const Main = () => {
   const [loading, setLoading] = useState(false);

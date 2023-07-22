@@ -84,7 +84,7 @@ const UserInput: FC<UserInputProps> = (props) => {
               <SelectContent>
                 <SelectGroup>
                   {MUSICAL_KEYS.map((key) => (
-                    <SelectItem value={key}>{key}</SelectItem>
+                    <SelectItem key={key} value={key}>{key}</SelectItem>
                   ))}
                 </SelectGroup>
               </SelectContent>
@@ -102,7 +102,7 @@ const UserInput: FC<UserInputProps> = (props) => {
               <SelectContent>
                 <SelectGroup>
                   {MUSICAL_SCALES.map((key) => (
-                    <SelectItem value={key}>{key}</SelectItem>
+                    <SelectItem key={key} value={key}>{key}</SelectItem>
                   ))}
                 </SelectGroup>
               </SelectContent>
