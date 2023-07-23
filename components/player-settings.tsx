@@ -11,7 +11,7 @@ import {
 import { Input } from './ui/input'
 import { Label } from './ui/label'
 import * as z from 'zod'
-import { Slider } from '@radix-ui/react-slider'
+import { Slider } from './ui/slider'
 
 // list of instruments: https://surikov.github.io/midi-sounds-react-examples/examples/midi-sounds-example3/build/
 export enum Instrument {
@@ -28,9 +28,6 @@ interface PlayerSettingsProps {
   setTempo: (tempo: number[]) => void
   setPitch: (pitch: number[]) => void
 }
-
-const DEFAULT_TEMPO = 120
-const DEFAULT_PITCH = 5
 
 const PlayerSettings: FC<PlayerSettingsProps> = (props) => {
   const {
@@ -68,14 +65,14 @@ const PlayerSettings: FC<PlayerSettingsProps> = (props) => {
       <div className='flex flex-col gap-2'>
         <div className='flex items-center justify-between'>
           <Label htmlFor='top-p'>Tempo</Label>
-          <span className='w-12 rounded-md border border-transparent px-2 py-0.5 text-right text-sm text-muted-foreground hover:border-border'>
+          <span className='w-12 rounded-md border border-transparent px-2 py-0.5 text-right text-sm text-muted-foreground'>
             {tempo}
           </span>
         </div>
         <Slider
           id='tempo'
-          max={5}
-          min={300}
+          max={300}
+          min={5}
           defaultValue={tempo}
           step={1}
           onValueChange={setTempo}
@@ -84,7 +81,22 @@ const PlayerSettings: FC<PlayerSettingsProps> = (props) => {
         />
       </div>
       <div className='flex flex-col gap-2'>
-        <Slider defaultValue={[33]} max={100} step={1} />
+        <div className='flex items-center justify-between'>
+          <Label htmlFor='pitch'>Pitch</Label>
+          <span className='w-12 rounded-md border border-transparent px-2 py-0.5 text-right text-sm text-muted-foreground'>
+            {pitch}
+          </span>
+        </div>
+        <Slider
+          id='pitch'
+          max={8}
+          min={1}
+          defaultValue={pitch}
+          step={1}
+          onValueChange={setPitch}
+          className='[&_[role=slider]]:h-4 [&_[role=slider]]:w-4'
+          aria-label='pitch'
+        />
       </div>
     </div>
   )

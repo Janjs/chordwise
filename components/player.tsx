@@ -11,7 +11,8 @@ interface PlayerProps {
   chordProgressions: ChordProgression[]
 }
 
-const PITCH = '4'
+const DEFAULT_TEMPO = 120
+const DEFAULT_PITCH = 5
 
 const Player: FC<PlayerProps> = (props) => {
   const { chordProgressions } = props
@@ -23,8 +24,8 @@ const Player: FC<PlayerProps> = (props) => {
   // player settings
   const [instrumentKey, setInstrumentKey] =
     useState<keyof typeof Instrument>('piano')
-  const [tempo, setTempo] = useState<number[]>([120])
-  const [pitch, setPitch] = useState<number[]>([5])
+  const [tempo, setTempo] = useState<number[]>([DEFAULT_TEMPO])
+  const [pitch, setPitch] = useState<number[]>([DEFAULT_PITCH])
 
   const midiSoundsRef = useRef<MIDISoundsMethods | null>(null)
 
