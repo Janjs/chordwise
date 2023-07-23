@@ -23,30 +23,32 @@ const Page = () => {
     setChordProgressions([])
     setOtherResponse(null)
 
-    console.log(values)
-
-    fetch('/api/generateChords', {
-      method: 'POST',
-      body: JSON.stringify({
-        description: values.description,
-        musicalKey: values.musicalKey,
-        musicalScale: values.musicalScale,
-      }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data)
-        if (data.found) {
-          setChordProgressions(data.chordProgressions)
-        } else {
-          setOtherResponse(data.otherResponse)
-        }
+    setTimeout(() => {
+      fetch('/api/generateChords', {
+        method: 'POST',
+        body: JSON.stringify({
+          description: values.description,
+          musicalKey: values.musicalKey,
+          musicalScale: values.musicalScale,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
-      .catch((error) => setError(error))
-      .finally(() => setLoading(false))
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data)
+          if (data.found) {
+            setChordProgressions(data.chordProgressions)
+          } else {
+            setOtherResponse(data.otherResponse)
+          }
+        })
+        .catch((error) => setError(error))
+        .finally(() => setLoading(false))
+    }, 3000)
+
+    console.log(values)
   }
 
   return (

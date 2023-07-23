@@ -47,7 +47,7 @@ const PlayerSettings: FC<PlayerSettingsProps> = (props) => {
           }
           defaultValue={instrumentKey}
         >
-          <SelectTrigger>
+          <SelectTrigger className='outline-none ring-2 ring-ring ring-offset-2'>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

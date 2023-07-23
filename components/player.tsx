@@ -9,7 +9,6 @@ import PlayerSettings, { Instrument } from './player-settings'
 import { Separator } from './ui/separator'
 import { Icons } from './icons'
 import { Progress } from './ui/progress'
-import { Toggle } from './ui/toggle'
 import GuitarChordsViewer from './guitar-viewer'
 
 interface PlayerProps {

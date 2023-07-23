@@ -1,5 +1,6 @@
-import ModeToggle from '../components/modo-changer'
+import ModeToggle from '@/components/mode-toggle'
 import ThemedLogo from '@/assets/themed-logo'
+import { Icons } from '@/components/icons'
 import {
   Tabs,
   TabsContent,
@@ -23,8 +24,14 @@ export default function Header() {
             className='w-[250px] flex justify-center'
           >
             <TabsList>
-              <TabsTrigger value='generate'>Generate</TabsTrigger>
-              <TabsTrigger value='explore'>Explore</TabsTrigger>
+              <TabsTrigger value='generate' className='gap-2'>
+                Generate
+                <Icons.generate size={15} />
+              </TabsTrigger>
+              <TabsTrigger value='explore' className='gap-2'>
+                Explore
+                <Icons.cassette size={18} />
+              </TabsTrigger>
             </TabsList>
             <TabsContent value='generate'></TabsContent>
             <TabsContent value='explore'></TabsContent>

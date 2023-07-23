@@ -1,6 +1,6 @@
 'use client'
 
-import { FC, useRef, useState } from 'react'
+import { FC } from 'react'
 
 interface ChordProgressionViewerProps {
   index: number
@@ -41,7 +41,7 @@ const ChordProgressionViewer: FC<ChordProgressionViewerProps> = (
               isChordPlaying(i)
                 ? 'bg-primary text-primary-foreground'
                 : 'bg-card text-card-foreground'
-            } p-2`}
+            } p-2 [fill:currentColor !important]`}
           >
             {chord}
           </h1>
