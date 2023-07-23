@@ -104,6 +104,7 @@ const Player: FC<PlayerProps> = (props) => {
           />
         </div>
       </ul>
+      <div className='flex-1 bg-muted'></div>
       <div className='flex-none'>
         <PlayerSettings
           instrumentKey={instrumentKey}

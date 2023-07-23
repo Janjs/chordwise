@@ -23,6 +23,7 @@ export default function RootLayout({
           attribute='class'
           defaultTheme='system'
           enableSystem
+          disableTransitionOnChange // TODO: doesn't work
         >
           <div className='flex flex-col h-screen'>
             <div className='flex-none'>
