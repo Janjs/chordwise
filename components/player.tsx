@@ -23,8 +23,8 @@ const Player: FC<PlayerProps> = (props) => {
   // player settings
   const [instrumentKey, setInstrumentKey] =
     useState<keyof typeof Instrument>('piano')
-  const [tempo, setTempo] = useState<number>(120)
-  const [pitch, setPitch] = useState<number>(5)
+  const [tempo, setTempo] = useState<number[]>([120])
+  const [pitch, setPitch] = useState<number[]>([5])
 
   const midiSoundsRef = useRef<MIDISoundsMethods | null>(null)
 
@@ -33,7 +33,7 @@ const Player: FC<PlayerProps> = (props) => {
       const notes = Chord.get(chord).notes
 
       const pitches: number[] = notes
-        .map((note) => Midi.toMidi(note + pitch) as number)
+        .map((note) => Midi.toMidi(note + pitch[0]) as number)
         .filter((note) => !!note)
 
       return pitches
@@ -41,7 +41,7 @@ const Player: FC<PlayerProps> = (props) => {
   }
 
   const playChordProgression = (indexChordProgression: number) => {
-    const millisecondsPerBeat = 60000 / tempo // Calculate the duration of each beat in milliseconds
+    const millisecondsPerBeat = 60000 / tempo[0] // Calculate the duration of each beat in milliseconds
     const chordProgressionPlaying =
       chordProgressions[indexChordProgression]
     const chordProgressionPitches = getChordsPitches(
@@ -83,16 +83,8 @@ const Player: FC<PlayerProps> = (props) => {
     .filter((v) => v!!)
 
   return (
-    <div className='flex flex-column gap-5'>
-      <PlayerSettings
-        instrumentKey={instrumentKey}
-        tempo={tempo}
-        pitch={pitch}
-        setInstrumentKey={setInstrumentKey}
-        setTempo={setTempo}
-        setPitch={setPitch}
-      />
-      <ul className='flex-1'>
+    <div className='flex-1 flex h-full flex-row gap-5'>
+      <ul className='flex-1 overflow-auto'>
         {chordProgressions.map((chordProgression, index) => (
           <li key={index}>
             <ChordProgressionViewer
@@ -111,6 +103,16 @@ const Player: FC<PlayerProps> = (props) => {
           />
         </div>
       </ul>
+      <div className='flex-none'>
+        <PlayerSettings
+          instrumentKey={instrumentKey}
+          tempo={tempo}
+          pitch={pitch}
+          setInstrumentKey={setInstrumentKey}
+          setTempo={setTempo}
+          setPitch={setPitch}
+        />
+      </div>
     </div>
   )
 }
