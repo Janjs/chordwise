@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import {
   Select,
   SelectContent,
@@ -8,10 +8,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Input } from './ui/input'
-import { Label } from './ui/label'
-import * as z from 'zod'
-import { Slider } from './ui/slider'
+import { Label } from '@/components/ui/label'
+import { Slider } from '@/components/ui/slider'
+import { Separator } from './ui/separator'
 
 // list of instruments: https://surikov.github.io/midi-sounds-react-examples/examples/midi-sounds-example3/build/
 export enum Instrument {
@@ -40,9 +39,8 @@ const PlayerSettings: FC<PlayerSettingsProps> = (props) => {
   } = props
 
   return (
-    <div className='w-40 flex flex-col gap-5'>
-      <div className='flex flex-col gap-2'>
-        <Label>Instrument</Label>
+    <div className='flex-1 flex flex-row gap-5 justify-between p-5'>
+      <div className='flex-1 flex flex-col gap-2 justify-center'>
         <Select
           onValueChange={(d) =>
             setInstrumentKey(d as keyof typeof Instrument)
@@ -62,12 +60,12 @@ const PlayerSettings: FC<PlayerSettingsProps> = (props) => {
           </SelectContent>
         </Select>
       </div>
-      <div className='flex flex-col gap-2'>
-        <div className='flex items-center justify-between'>
+      <div className='flex-1 flex flex-col gap-4'>
+        <div className='flex justify-between items-center'>
           <Label htmlFor='top-p'>Tempo</Label>
-          <span className='w-12 rounded-md border border-transparent px-2 py-0.5 text-right text-sm text-muted-foreground'>
-            {tempo}
-          </span>
+          <p className='text-right text-sm text-muted-foreground'>
+            {tempo} bpm
+          </p>
         </div>
         <Slider
           id='tempo'
@@ -80,10 +78,10 @@ const PlayerSettings: FC<PlayerSettingsProps> = (props) => {
           aria-label='tempo'
         />
       </div>
-      <div className='flex flex-col gap-2'>
+      <div className='flex-1 flex flex-col gap-4'>
         <div className='flex items-center justify-between'>
           <Label htmlFor='pitch'>Pitch</Label>
-          <span className='w-12 rounded-md border border-transparent px-2 py-0.5 text-right text-sm text-muted-foreground'>
+          <span className='text-right text-sm text-muted-foreground'>
             {pitch}
           </span>
         </div>

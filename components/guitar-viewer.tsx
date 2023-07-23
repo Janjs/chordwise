@@ -1,32 +1,24 @@
 'use client'
 
 import { FC, useRef, useState } from 'react'
+import ChordViewer from './chord-viewer'
 
-interface ChordProgressionViewerProps {
+interface GuitarChordsViewerProps {
   index: number
   chordProgression: string[]
-  handlePlay: (i: number) => void
   isPlaying: (i: number) => boolean
   indexChordPlaying: number
 }
 
-const ChordProgressionViewer: FC<ChordProgressionViewerProps> = (
-  props
-) => {
-  const {
-    index,
-    chordProgression,
-    handlePlay,
-    isPlaying,
-    indexChordPlaying,
-  } = props
+const GuitarChordsViewer: FC<GuitarChordsViewerProps> = (props) => {
+  const { index, chordProgression, isPlaying, indexChordPlaying } =
+    props
 
   const isChordPlaying = (chord: number) =>
     isPlaying(index) && indexChordPlaying === chord
 
   return (
     <div
-      onClick={() => handlePlay(index)}
       className={`transition-colors duration-150 ease-in flex flex-row items-center 
         border border-input rounded-2xl mb-4 p-4 gap-10 ${
           isPlaying(index) ? 'bg-muted' : ''
@@ -35,20 +27,11 @@ const ChordProgressionViewer: FC<ChordProgressionViewerProps> = (
     >
       <div className='flex-1 columns-4 rounded-lg gap-4'>
         {chordProgression.map((chord, i) => (
-          <h1
-            key={i}
-            className={`font-bold border rounded-lg aspect-square flex justify-center items-center ${
-              isChordPlaying(i)
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-card text-card-foreground'
-            } p-2`}
-          >
-            {chord}
-          </h1>
+          <ChordViewer key={i} chord={chord} />
         ))}
       </div>
     </div>
   )
 }
 
-export default ChordProgressionViewer
+export default GuitarChordsViewer

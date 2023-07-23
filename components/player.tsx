@@ -6,6 +6,11 @@ import ChordProgressionViewer from './chord-prog-viewer'
 import MIDISounds, { MIDISoundsMethods } from 'midi-sounds-react'
 import { Midi, Chord } from 'tonal'
 import PlayerSettings, { Instrument } from './player-settings'
+import { Separator } from './ui/separator'
+import { Icons } from './icons'
+import { Progress } from './ui/progress'
+import { Toggle } from './ui/toggle'
+import GuitarChordsViewer from './guitar-viewer'
 
 interface PlayerProps {
   chordProgressions: ChordProgression[]
@@ -104,16 +109,36 @@ const Player: FC<PlayerProps> = (props) => {
           />
         </div>
       </ul>
-      <div className='flex-1 bg-muted'></div>
-      <div className='flex-none'>
-        <PlayerSettings
-          instrumentKey={instrumentKey}
-          tempo={tempo}
-          pitch={pitch}
-          setInstrumentKey={setInstrumentKey}
-          setTempo={setTempo}
-          setPitch={setPitch}
-        />
+
+      <div className='flex-1 gap-5 flex flex-col'>
+        <div className='flex-1 bg-muted rounded-xl'>
+          <GuitarChordsViewer
+            index={indexCurrentPlaying}
+            chordProgression={
+              chordProgressions[indexCurrentPlaying].chords
+            }
+            isPlaying={isPlaying}
+            indexChordPlaying={chordPlaying}
+          />
+        </div>
+        <div className='flex-none bg-muted rounded-xl'>
+          <PlayerSettings
+            instrumentKey={instrumentKey}
+            tempo={tempo}
+            pitch={pitch}
+            setInstrumentKey={setInstrumentKey}
+            setTempo={setTempo}
+            setPitch={setPitch}
+          />
+          <Separator className='bg-background' />
+          <div className='flex-1 flex flex-row gap-5 justify-between items-center p-5'>
+            <Icons.skipBack size={35} />
+            <Icons.play size={35} />
+            <Icons.skipForward size={35} />
+            <Progress value={33} />
+            <Icons.repeat size={35} />
+          </div>
+        </div>
       </div>
     </div>
   )
