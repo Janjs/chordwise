@@ -1,43 +1,32 @@
 import ModeToggle from '@/components/mode-toggle'
 import ThemedLogo from '@/assets/themed-logo'
 import { Icons } from '@/components/icons'
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/tabs'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 export default function Header() {
   return (
-    <header className='bg-transparent'>
-      <nav
-        className='mx-auto flex max-w-7xl items-center justify-between p-6 px-8'
-        aria-label='Global'
-      >
-        <div className='flex-1'>
+    <header className="bg-transparent">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 px-8" aria-label="Global">
+        <div className="flex-1">
           <ThemedLogo />
         </div>
-        <div className='flex-1 flex italic justify-center text-center'>
-          <Tabs
-            defaultValue='generate'
-            className='w-[250px] flex justify-center'
-          >
+        <div className="flex-1 flex italic justify-center text-center">
+          <Tabs defaultValue="generate" className="w-[250px] flex justify-center">
             <TabsList>
-              <TabsTrigger value='generate' className='gap-2'>
+              <TabsTrigger value="generate" className="gap-2">
                 Generate
                 <Icons.generate size={15} />
               </TabsTrigger>
-              <TabsTrigger value='explore' className='gap-2'>
+              <TabsTrigger value="explore" className="gap-2">
                 Explore
                 <Icons.cassette size={18} />
               </TabsTrigger>
             </TabsList>
-            <TabsContent value='generate'></TabsContent>
-            <TabsContent value='explore'></TabsContent>
+            <TabsContent value="generate"></TabsContent>
+            <TabsContent value="explore"></TabsContent>
           </Tabs>
         </div>
-        <div className='flex flex-1 justify-end'>
+        <div className="flex flex-1 justify-end">
           <ModeToggle />
         </div>
       </nav>

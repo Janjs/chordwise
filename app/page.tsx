@@ -11,9 +11,7 @@ import { Icons } from '@/components/icons'
 
 const Page = () => {
   const [loading, setLoading] = useState(false)
-  const [chordProgressions, setChordProgressions] = useState<
-    ChordProgression[]
-  >([])
+  const [chordProgressions, setChordProgressions] = useState<ChordProgression[]>([])
   const [error, setError] = useState(null)
   const [otherResponse, setOtherResponse] = useState(null)
 
@@ -52,25 +50,23 @@ const Page = () => {
   }
 
   return (
-    <div className='flex-1 max-w-7xl p-5 flex flex-col h-full justify-between gap-5'>
-      <div className='flex-1 overflow-auto'>
-        {chordProgressions.length > 0 && (
-          <Player chordProgressions={chordProgressions} />
-        )}
+    <div className="flex-1 max-w-7xl p-5 flex flex-col h-full justify-between gap-5">
+      <div className="flex-1 overflow-auto">
+        {chordProgressions.length > 0 && <Player chordProgressions={chordProgressions} />}
       </div>
       {otherResponse && (
         <Alert>
-          <Icons.info className='h-4 w-4' />
+          <Icons.info className="h-4 w-4" />
           <AlertTitle>{otherResponse}</AlertTitle>
         </Alert>
       )}
       {error && (
-        <Alert variant='destructive'>
-          <Icons.warning className='h-4 w-4' />
+        <Alert variant="destructive">
+          <Icons.warning className="h-4 w-4" />
           <AlertTitle>Something went wrong</AlertTitle>
         </Alert>
       )}
-      <div className='flex-none'>
+      <div className="flex-none">
         <UserInput onSubmit={handleSubmit} loading={loading} />
       </div>
     </div>

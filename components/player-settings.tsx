@@ -29,71 +29,55 @@ interface PlayerSettingsProps {
 }
 
 const PlayerSettings: FC<PlayerSettingsProps> = (props) => {
-  const {
-    instrumentKey,
-    tempo,
-    pitch,
-    setInstrumentKey,
-    setTempo,
-    setPitch,
-  } = props
+  const { instrumentKey, tempo, pitch, setInstrumentKey, setTempo, setPitch } = props
 
   return (
-    <div className='flex-1 flex flex-row gap-5 justify-between p-5'>
-      <div className='flex-1 flex flex-col gap-2 justify-center'>
-        <Select
-          onValueChange={(d) =>
-            setInstrumentKey(d as keyof typeof Instrument)
-          }
-          defaultValue={instrumentKey}
-        >
-          <SelectTrigger className='outline-none ring-2 ring-ring ring-offset-2'>
+    <div className="flex-1 flex flex-row gap-5 justify-between p-5">
+      <div className="flex-1 flex flex-col gap-2 justify-center">
+        <Select onValueChange={(d) => setInstrumentKey(d as keyof typeof Instrument)} defaultValue={instrumentKey}>
+          <SelectTrigger className="outline-none ring-2 ring-ring ring-offset-2">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
               <SelectLabel>Instruments</SelectLabel>
-              <SelectItem value='piano'>🎹 Piano</SelectItem>
-              <SelectItem value='guitar'>🎸 Guitar</SelectItem>
-              <SelectItem value='flute'>🪈 Flute</SelectItem>
+              <SelectItem value="piano">🎹 Piano</SelectItem>
+              <SelectItem value="guitar">🎸 Guitar</SelectItem>
+              <SelectItem value="flute">🪈 Flute</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>
       </div>
-      <div className='flex-1 flex flex-col gap-4'>
-        <div className='flex justify-between items-center'>
-          <Label htmlFor='top-p'>Tempo</Label>
-          <p className='text-right text-sm text-muted-foreground'>
-            {tempo} bpm
-          </p>
+      <div className="flex-1 flex flex-col gap-4">
+        <div className="flex justify-between items-center">
+          <Label htmlFor="top-p">Tempo</Label>
+          <p className="text-right text-sm text-muted-foreground">{tempo} bpm</p>
         </div>
         <Slider
-          id='tempo'
+          id="tempo"
           max={300}
           min={5}
           defaultValue={tempo}
           step={1}
           onValueChange={setTempo}
-          className='[&_[role=slider]]:h-4 [&_[role=slider]]:w-4'
-          aria-label='tempo'
+          className="[&_[role=slider]]:h-4 [&_[role=slider]]:w-4"
+          aria-label="tempo"
         />
       </div>
-      <div className='flex-1 flex flex-col gap-4'>
-        <div className='flex items-center justify-between'>
-          <Label htmlFor='pitch'>Pitch</Label>
-          <span className='text-right text-sm text-muted-foreground'>
-            {pitch}
-          </span>
+      <div className="flex-1 flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <Label htmlFor="pitch">Pitch</Label>
+          <span className="text-right text-sm text-muted-foreground">{pitch}</span>
         </div>
         <Slider
-          id='pitch'
+          id="pitch"
           max={8}
           min={1}
           defaultValue={pitch}
           step={1}
           onValueChange={setPitch}
-          className='[&_[role=slider]]:h-4 [&_[role=slider]]:w-4'
-          aria-label='pitch'
+          className="[&_[role=slider]]:h-4 [&_[role=slider]]:w-4"
+          aria-label="pitch"
         />
       </div>
     </div>

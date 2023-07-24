@@ -29,9 +29,7 @@ const ChordViewer: FC<ChordViewerProps> = (props) => {
 
   useEffect(() => {
     if (svgRef.current) {
-      const shapes = svgRef.current.querySelectorAll(
-        'path, circle, rect'
-      )
+      const shapes = svgRef.current.querySelectorAll('path, circle, rect')
       shapes.forEach((shape) => {
         shape.setAttribute('fill', 'hsl(var(--background))')
         shape.setAttribute('stroke', 'hsl(var(--background))')

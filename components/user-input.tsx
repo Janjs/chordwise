@@ -6,14 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 
 import { Button } from '@/components/ui/button'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import {
   Select,
   SelectContent,
@@ -38,20 +31,7 @@ export const formSchema = z.object({
   musicalScale: z.string(),
 })
 
-const MUSICAL_KEYS = [
-  'C',
-  'Db/C#',
-  'D',
-  'Eb',
-  'E',
-  'F',
-  'Gb/F#',
-  'G',
-  'Ab',
-  'A',
-  'Bb',
-  'B/Cb',
-]
+const MUSICAL_KEYS = ['C', 'Db/C#', 'D', 'Eb', 'E', 'F', 'Gb/F#', 'G', 'Ab', 'A', 'Bb', 'B/Cb']
 const MUSICAL_SCALES = ['major', 'minor']
 
 const UserInput: FC<UserInputProps> = (props) => {
@@ -67,23 +47,20 @@ const UserInput: FC<UserInputProps> = (props) => {
   })
 
   return (
-    <div className='flex-1 flex flex-row gap-3 justify-between'>
-      <Button variant='secondary' size='icon'>
-        <Icons.random className='h-4 w-10' />
+    <div className="flex-1 flex flex-row gap-3 justify-between">
+      <Button variant="secondary" size="icon">
+        <Icons.random className="h-4 w-10" />
       </Button>
       <Form {...form}>
         {/* TODO: add a dropdown to select the Key of the chords: */}
         {/* TODO: add a dropdown to select the style of the chords: */}
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className='flex-1 flex flex-row gap-3 justify-between'
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 flex flex-row gap-3 justify-between">
           <FormField
             control={form.control}
-            name='musicalKey'
+            name="musicalKey"
             render={({ field }) => (
               <Select onValueChange={field.onChange}>
-                <SelectTrigger className='w-auto'>
+                <SelectTrigger className="w-auto">
                   <SelectValue placeholder={MUSICAL_KEYS[0]} />
                 </SelectTrigger>
                 <SelectContent>
@@ -100,10 +77,10 @@ const UserInput: FC<UserInputProps> = (props) => {
           />
           <FormField
             control={form.control}
-            name='musicalScale'
+            name="musicalScale"
             render={({ field }) => (
               <Select onValueChange={field.onChange}>
-                <SelectTrigger className='w-auto'>
+                <SelectTrigger className="w-auto">
                   <SelectValue placeholder={MUSICAL_SCALES[0]} />
                 </SelectTrigger>
                 <SelectContent>
@@ -120,26 +97,23 @@ const UserInput: FC<UserInputProps> = (props) => {
           />
           <FormField
             control={form.control}
-            name='description'
+            name="description"
             render={({ field }) => (
-              <FormItem className='w-full'>
+              <FormItem className="w-full">
                 <FormControl>
-                  <Input
-                    placeholder='Chords in the style of Nirvana'
-                    {...field}
-                  />
+                  <Input placeholder="Chords in the style of Nirvana" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
           {!loading ? (
-            <Button type='submit' size='icon'>
-              <Icons.generate className='h-4 w-10' />
+            <Button type="submit" size="icon">
+              <Icons.generate className="h-4 w-10" />
             </Button>
           ) : (
-            <Button size='icon' disabled>
-              <Icons.generate className='h-4 w-10 animate-spin ease-in-out' />
+            <Button size="icon" disabled>
+              <Icons.generate className="h-4 w-10 animate-spin ease-in-out" />
             </Button>
           )}
         </form>

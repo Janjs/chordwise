@@ -1,22 +1,20 @@
-declare module "midi-sounds-react" {
-  import React from "react";
+declare module 'midi-sounds-react' {
+  import React from 'react'
 
   interface MIDISoundsProps {
-    ref?: React.RefObject<MIDISoundsMethods>;
-    appElementName?: string;
-    instruments?: number[];
+    ref?: React.RefObject<MIDISoundsMethods>
+    appElementName?: string
+    instruments?: number[]
   }
 
   export interface MIDISoundsMethods {
-    playChordNow(channel: number, pitches: number[], duration: number): void;
-    cancelQueue(): void;
+    playChordNow(channel: number, pitches: number[], duration: number): void
+    cancelQueue(): void
   }
 
-  type MIDISoundsComponent = React.ForwardRefExoticComponent<
-    MIDISoundsProps & React.RefAttributes<MIDISoundsMethods>
-  >;
+  type MIDISoundsComponent = React.ForwardRefExoticComponent<MIDISoundsProps & React.RefAttributes<MIDISoundsMethods>>
 
-  const MIDISounds: MIDISoundsComponent;
+  const MIDISounds: MIDISoundsComponent
 
-  export default MIDISounds;
+  export default MIDISounds
 }

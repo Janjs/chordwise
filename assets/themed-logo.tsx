@@ -27,11 +27,7 @@ const ThemedLogo = () => {
       break
   }
 
-  return domLoaded ? (
-    <Image priority src={src} width={120} alt='chordwise logo' />
-  ) : (
-    <></>
-  )
+  return domLoaded ? <Image priority src={src} width={120} alt="chordwise logo" /> : <></>
 }
 
 export default ThemedLogo

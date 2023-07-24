@@ -40,9 +40,7 @@ export async function POST(req: Request) {
   // const response = completion.data.choices[0].message?.content
 
   if (validateFoundChords(response)) {
-    const chordProgressions: ChordProgression[] = parseChords(
-      response!
-    )
+    const chordProgressions: ChordProgression[] = parseChords(response!)
     return NextResponse.json({
       found: true,
       chordProgressions: chordProgressions,
@@ -61,9 +59,7 @@ function parseChords(chordsString: string): ChordProgression[] {
     .split('\n')
     .map((item, i) => {
       if (i === 0) return { chords: [] }
-      const elements = item
-        .split('-')
-        .map((e) => e.trim().replace(/^\d+\.\s*/, ''))
+      const elements = item.split('-').map((e) => e.trim().replace(/^\d+\.\s*/, ''))
       return { chords: elements }
     })
     .filter((chordProgression) => chordProgression.chords.length > 0)

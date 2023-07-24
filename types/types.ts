@@ -1,5 +1,5 @@
-import { ChatCompletionResponseMessage } from "openai";
+import { ChatCompletionResponseMessage } from 'openai'
 
 export interface ChordProgression {
-  chords: string[];
+  chords: string[]
 }
