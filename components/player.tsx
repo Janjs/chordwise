@@ -22,12 +22,10 @@ const Player: FC<PlayerProps> = (props) => {
   const { chordProgressions } = props
 
   const [chordPlaying, setChordPlaying] = useState<number>(-1)
-  const [indexCurrentPlaying, setIndexChordPlaying] =
-    useState<number>(0)
+  const [indexCurrentPlaying, setIndexChordPlaying] = useState<number>(0)
 
   // player settings
-  const [instrumentKey, setInstrumentKey] =
-    useState<keyof typeof Instrument>('piano')
+  const [instrumentKey, setInstrumentKey] = useState<keyof typeof Instrument>('piano')
   const [tempo, setTempo] = useState<number[]>([DEFAULT_TEMPO])
   const [pitch, setPitch] = useState<number[]>([DEFAULT_PITCH])
 
@@ -37,9 +35,7 @@ const Player: FC<PlayerProps> = (props) => {
     return chordProgression.chords.map((chord) => {
       const notes = Chord.get(chord).notes
 
-      const pitches: number[] = notes
-        .map((note) => Midi.toMidi(note + pitch[0]) as number)
-        .filter((note) => !!note)
+      const pitches: number[] = notes.map((note) => Midi.toMidi(note + pitch[0]) as number).filter((note) => !!note)
 
       return pitches
     })
@@ -47,11 +43,8 @@ const Player: FC<PlayerProps> = (props) => {
 
   const playChordProgression = (indexChordProgression: number) => {
     const millisecondsPerBeat = 60000 / tempo[0] // Calculate the duration of each beat in milliseconds
-    const chordProgressionPlaying =
-      chordProgressions[indexChordProgression]
-    const chordProgressionPitches = getChordsPitches(
-      chordProgressionPlaying
-    )
+    const chordProgressionPlaying = chordProgressions[indexChordProgression]
+    const chordProgressionPitches = getChordsPitches(chordProgressionPlaying)
     setChordPlaying(indexChordProgression)
     let i = 0
 
@@ -60,11 +53,7 @@ const Player: FC<PlayerProps> = (props) => {
         const chordPitches = chordProgressionPitches[i]
         // Play each chord
         setChordPlaying(i)
-        midiSoundsRef.current?.playChordNow(
-          Instrument[instrumentKey],
-          chordPitches,
-          1
-        )
+        midiSoundsRef.current?.playChordNow(Instrument[instrumentKey], chordPitches, 1)
 
         i++
         setTimeout(playNextChord, millisecondsPerBeat)
@@ -88,8 +77,8 @@ const Player: FC<PlayerProps> = (props) => {
     .filter((v) => v!!)
 
   return (
-    <div className='flex-1 flex h-full flex-row gap-5'>
-      <ul className='flex-1 overflow-auto'>
+    <div className="flex-1 flex h-full flex-row gap-5">
+      <ul className="flex-1 overflow-auto">
         {chordProgressions.map((chordProgression, index) => (
           <li key={index}>
             <ChordProgressionViewer
@@ -101,26 +90,21 @@ const Player: FC<PlayerProps> = (props) => {
             />
           </li>
         ))}
-        <div className='hidden'>
-          <MIDISounds
-            ref={midiSoundsRef}
-            instruments={instrumentValues}
-          />
+        <div className="hidden">
+          <MIDISounds ref={midiSoundsRef} instruments={instrumentValues} />
         </div>
       </ul>
 
-      <div className='flex-1 gap-5 flex flex-col'>
-        <div className='flex-1 bg-muted rounded-xl'>
+      <div className="flex-1 gap-5 flex flex-col">
+        <div className="flex-1 bg-muted rounded-xl">
           <GuitarChordsViewer
             index={indexCurrentPlaying}
-            chordProgression={
-              chordProgressions[indexCurrentPlaying].chords
-            }
+            chordProgression={chordProgressions[indexCurrentPlaying].chords}
             isPlaying={isPlaying}
             indexChordPlaying={chordPlaying}
           />
         </div>
-        <div className='flex-none bg-muted rounded-xl'>
+        <div className="flex-none bg-muted rounded-xl">
           <PlayerSettings
             instrumentKey={instrumentKey}
             tempo={tempo}
@@ -129,8 +113,8 @@ const Player: FC<PlayerProps> = (props) => {
             setTempo={setTempo}
             setPitch={setPitch}
           />
-          <Separator className='bg-background' />
-          <div className='flex-1 flex flex-row gap-5 justify-between items-center p-5'>
+          <Separator className="bg-background" />
+          <div className="flex-1 flex flex-row gap-5 justify-between items-center p-5">
             <Icons.skipBack size={35} />
             <Icons.play size={35} />
             <Icons.skipForward size={35} />
