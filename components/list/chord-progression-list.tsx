@@ -2,7 +2,7 @@
 
 import { FC } from 'react'
 
-interface ChordProgressionViewerProps {
+interface ChordProgressionListProps {
   index: number
   chordProgression: string[]
   handlePlay: (i: number) => void
@@ -10,7 +10,7 @@ interface ChordProgressionViewerProps {
   indexChordPlaying: number
 }
 
-const ChordProgressionViewer: FC<ChordProgressionViewerProps> = (props) => {
+const ChordProgressionList: FC<ChordProgressionListProps> = (props) => {
   const { index, chordProgression, handlePlay, isPlaying, indexChordPlaying } = props
 
   const isChordPlaying = (chord: number) => isPlaying(index) && indexChordPlaying === chord
@@ -38,4 +38,4 @@ const ChordProgressionViewer: FC<ChordProgressionViewerProps> = (props) => {
   )
 }
 
-export default ChordProgressionViewer
+export default ChordProgressionList

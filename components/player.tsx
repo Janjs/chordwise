@@ -2,14 +2,14 @@
 
 import { FC, useRef, useState } from 'react'
 import { ChordProgression } from '@/types/types'
-import ChordProgressionViewer from './chord-prog-viewer'
+import ChordProgressionViewer from './list/chord-progression-list'
 import MIDISounds, { MIDISoundsMethods } from 'midi-sounds-react'
 import { Midi, Chord } from 'tonal'
 import PlayerSettings, { Instrument } from './player-settings'
 import { Separator } from './ui/separator'
 import { Icons } from './icons'
 import { Progress } from './ui/progress'
-import GuitarChordsViewer from './guitar-viewer'
+import GuitarChordsViewer from './guitar/chord-progression'
 
 interface PlayerProps {
   chordProgressions: ChordProgression[]

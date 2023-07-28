@@ -44,7 +44,7 @@ const Page = () => {
         })
         .catch((error) => setError(error))
         .finally(() => setLoading(false))
-    }, 3000)
+    }, 1000)
 
     console.log(values)
   }

@@ -1,16 +1,16 @@
 'use client'
 
 import { FC, useRef, useState } from 'react'
-import ChordViewer from './chord-viewer'
+import ChordViewer from './chord'
 
-interface GuitarChordsViewerProps {
+interface ChordProgressionViewerProps {
   index: number
   chordProgression: string[]
   isPlaying: (i: number) => boolean
   indexChordPlaying: number
 }
 
-const GuitarChordsViewer: FC<GuitarChordsViewerProps> = (props) => {
+const ChordProgressionViewer: FC<ChordProgressionViewerProps> = (props) => {
   const { index, chordProgression, isPlaying, indexChordPlaying } = props
 
   const isChordPlaying = (chord: number) => isPlaying(index) && indexChordPlaying === chord
@@ -30,4 +30,4 @@ const GuitarChordsViewer: FC<GuitarChordsViewerProps> = (props) => {
   )
 }
 
-export default GuitarChordsViewer
+export default ChordProgressionViewer
