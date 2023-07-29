@@ -2,14 +2,15 @@
 
 import { FC, useRef, useState } from 'react'
 import { ChordProgression } from '@/types/types'
-import ChordProgressionViewer from './list/chord-progression-list'
+import ChordProgItem from './list/chord-prog-item'
 import MIDISounds, { MIDISoundsMethods } from 'midi-sounds-react'
+// TODO: Check compatibility to chords from guitar chord
 import { Midi, Chord } from 'tonal'
 import PlayerSettings, { Instrument } from './player-settings'
 import { Separator } from './ui/separator'
 import { Icons } from './icons'
 import { Progress } from './ui/progress'
-import GuitarChordsViewer from './guitar/chord-progression'
+import GuitarChordsViewer from './guitar/guitar-chord-prog'
 
 interface PlayerProps {
   chordProgressions: ChordProgression[]
@@ -33,7 +34,7 @@ const Player: FC<PlayerProps> = (props) => {
 
   const getChordsPitches = (chordProgression: ChordProgression) => {
     return chordProgression.chords.map((chord) => {
-      const notes = Chord.get(chord).notes
+      const notes = Chord.get(chord.representation).notes
 
       const pitches: number[] = notes.map((note) => Midi.toMidi(note + pitch[0]) as number).filter((note) => !!note)
 
@@ -81,9 +82,9 @@ const Player: FC<PlayerProps> = (props) => {
       <ul className="flex-1 overflow-auto">
         {chordProgressions.map((chordProgression, index) => (
           <li key={index}>
-            <ChordProgressionViewer
+            <ChordProgItem
               index={index}
-              chordProgression={chordProgression.chords}
+              chordProgression={chordProgression}
               handlePlay={handlePlay}
               isPlaying={isPlaying}
               indexChordPlaying={chordPlaying}
@@ -99,7 +100,7 @@ const Player: FC<PlayerProps> = (props) => {
         <div className="flex-1 bg-muted rounded-xl">
           <GuitarChordsViewer
             index={indexCurrentPlaying}
-            chordProgression={chordProgressions[indexCurrentPlaying].chords}
+            chordProgression={chordProgressions[indexCurrentPlaying]}
             isPlaying={isPlaying}
             indexChordPlaying={chordPlaying}
           />

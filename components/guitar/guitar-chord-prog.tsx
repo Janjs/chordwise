@@ -1,16 +1,18 @@
 'use client'
 
 import { FC, useRef, useState } from 'react'
-import ChordViewer from './chord'
+import GuitarChord from './guitar-chord'
+import { ChordProgression } from '@/types/types'
+import { Chord } from '@/types/types'
 
-interface ChordProgressionViewerProps {
+interface GuitarChordProgViewerProps {
   index: number
-  chordProgression: string[]
+  chordProgression: ChordProgression
   isPlaying: (i: number) => boolean
   indexChordPlaying: number
 }
 
-const ChordProgressionViewer: FC<ChordProgressionViewerProps> = (props) => {
+const GuitarChordProgViewer: FC<GuitarChordProgViewerProps> = (props) => {
   const { index, chordProgression, isPlaying, indexChordPlaying } = props
 
   const isChordPlaying = (chord: number) => isPlaying(index) && indexChordPlaying === chord
@@ -22,12 +24,12 @@ const ChordProgressionViewer: FC<ChordProgressionViewerProps> = (props) => {
         hover:bg-muted [&>svg]:text-foreground hover:[&>svg]:text-background`}
     >
       <div className="flex-1 columns-4 rounded-lg gap-4">
-        {chordProgression.map((chord, i) => (
-          <ChordViewer key={i} chord={chord} />
+        {chordProgression.chords.map((chord, i) => (
+          <GuitarChord key={i} chord={chord} />
         ))}
       </div>
     </div>
   )
 }
 
-export default ChordProgressionViewer
+export default GuitarChordProgViewer

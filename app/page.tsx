@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import UserInput, { formSchema } from '../components/user-input'
 import * as z from 'zod'
-import { Separator } from '../components/ui/separator'
 import { ChordProgression } from '@/types/types'
 import { Alert, AlertTitle } from '@/components/ui/alert'
 import Player from '@/components/player'
@@ -13,13 +12,11 @@ const Page = () => {
   const [loading, setLoading] = useState(false)
   const [chordProgressions, setChordProgressions] = useState<ChordProgression[]>([])
   const [error, setError] = useState(null)
-  const [otherResponse, setOtherResponse] = useState(null)
 
   const handleSubmit = (values: z.infer<typeof formSchema>) => {
     setLoading(true)
     setError(null)
     setChordProgressions([])
-    setOtherResponse(null)
 
     setTimeout(() => {
       fetch('/api/generateChords', {
@@ -35,18 +32,11 @@ const Page = () => {
       })
         .then((res) => res.json())
         .then((data) => {
-          console.log(data)
-          if (data.found) {
-            setChordProgressions(data.chordProgressions)
-          } else {
-            setOtherResponse(data.otherResponse)
-          }
+          setChordProgressions(data.chordProgressions)
         })
         .catch((error) => setError(error))
         .finally(() => setLoading(false))
     }, 1000)
-
-    console.log(values)
   }
 
   return (
@@ -54,12 +44,6 @@ const Page = () => {
       <div className="flex-1 overflow-auto">
         {chordProgressions.length > 0 && <Player chordProgressions={chordProgressions} />}
       </div>
-      {otherResponse && (
-        <Alert>
-          <Icons.info className="h-4 w-4" />
-          <AlertTitle>{otherResponse}</AlertTitle>
-        </Alert>
-      )}
       {error && (
         <Alert variant="destructive">
           <Icons.warning className="h-4 w-4" />

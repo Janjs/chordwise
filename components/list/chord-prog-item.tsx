@@ -1,16 +1,17 @@
 'use client'
 
+import { ChordProgression } from '@/types/types'
 import { FC } from 'react'
 
-interface ChordProgressionListProps {
+interface ChordProgItemProps {
   index: number
-  chordProgression: string[]
+  chordProgression: ChordProgression
   handlePlay: (i: number) => void
   isPlaying: (i: number) => boolean
   indexChordPlaying: number
 }
 
-const ChordProgressionList: FC<ChordProgressionListProps> = (props) => {
+const ChordProgItem: FC<ChordProgItemProps> = (props) => {
   const { index, chordProgression, handlePlay, isPlaying, indexChordPlaying } = props
 
   const isChordPlaying = (chord: number) => isPlaying(index) && indexChordPlaying === chord
@@ -23,14 +24,14 @@ const ChordProgressionList: FC<ChordProgressionListProps> = (props) => {
         hover:bg-muted [&>svg]:text-foreground hover:[&>svg]:text-background`}
     >
       <div className="flex-1 columns-4 rounded-lg gap-4">
-        {chordProgression.map((chord, i) => (
+        {chordProgression.chords.map((chord, i) => (
           <h1
             key={i}
             className={`font-bold border rounded-lg aspect-square flex justify-center items-center ${
               isChordPlaying(i) ? 'bg-primary text-primary-foreground' : 'bg-card text-card-foreground'
             } p-2 [fill:currentColor !important]`}
           >
-            {chord}
+            {chord.representation}
           </h1>
         ))}
       </div>
@@ -38,4 +39,4 @@ const ChordProgressionList: FC<ChordProgressionListProps> = (props) => {
   )
 }
 
-export default ChordProgressionList
+export default ChordProgItem

@@ -41,6 +41,9 @@ dependencies:
   '@radix-ui/react-toggle':
     specifier: ^1.0.3
     version: 1.0.3(@types/react-dom@18.2.4)(@types/react@18.2.6)(react-dom@18.2.0)(react@18.2.0)
+  '@tombatossals/chords-db':
+    specifier: ^0.5.1
+    version: 0.5.1
   '@tombatossals/react-chords':
     specifier: ^0.2.10
     version: 0.2.10
@@ -1292,6 +1295,10 @@ packages:
     transitivePeerDependencies:
       - encoding
       - seedrandom
+    dev: false
+
+  /@tombatossals/chords-db@0.5.1:
+    resolution: {integrity: sha512-5kLLtwOxmnFfpVTYfYiw1Q22NJ8msb5JeyDLre09XnUFx2l6KSeqPtJQPsVPOak4BUenlsv/j2H65KBVhB6qgQ==}
     dev: false
 
   /@tombatossals/react-chords@0.2.10:

@@ -1,5 +1,5 @@
 import openai from './openai'
-import { ChordProgression } from '@/types/types'
+import { Chord, ChordProgression } from '@/types/types'
 import { NextResponse } from 'next/server'
 
 export interface GenerateChordsRequest {
@@ -17,7 +17,18 @@ export async function POST(req: Request) {
   3. Cm - Bb - Ab - G7
   4. Dm - G7 - Cm - Ab
   5. Cm - G7 - Fm - Ab`
-  const response = content
+
+  const A = createChord('A', 'A', 'major')
+  const Bm = createChord('Bm', 'B', 'minor')
+  const D = createChord('D', 'D', 'major')
+  const C = createChord('C', 'A', 'major')
+
+  const chordProgressions: ChordProgression[] = [
+    { chords: [A, Bm, D, C] },
+    { chords: [D, Bm, A, C] },
+    { chords: [Bm, A, D, D] },
+    { chords: [D, C, A, Bm] },
+  ]
 
   // const completion = await openai.createChatCompletion({
   //   model: "gpt-3.5-turbo",
@@ -39,33 +50,30 @@ export async function POST(req: Request) {
   // });
   // const response = completion.data.choices[0].message?.content
 
-  if (validateFoundChords(response)) {
-    const chordProgressions: ChordProgression[] = parseChords(response!)
-    return NextResponse.json({
-      found: true,
-      chordProgressions: chordProgressions,
-    })
-  } else {
-    return NextResponse.json({
-      found: false,
-      chordProgressions: [],
-      otherResponse: response,
-    })
+  return NextResponse.json({ chordProgressions: chordProgressions })
+}
+
+// chatgpt function should return an object like this
+function createChord(representation: string, key: string, suffic: string): Chord {
+  return {
+    representation: representation,
+    key: key,
+    suffix: suffic,
   }
 }
+// # with chat complition
+// function parseChords(chordsString: string): ChordProgression[] {
+//   return chordsString
+//     .split('\n')
+//     .map((item, i) => {
+//       if (i === 0) return { chords: [] }
+//       const elements = item.split('-').map((e) => e.trim().replace(/^\d+\.\s*/, ''))
+//       return { chords: elements }
+//     })
+//     .filter((chordProgression) => chordProgression.chords.length > 0)
+// }
 
-function parseChords(chordsString: string): ChordProgression[] {
-  return chordsString
-    .split('\n')
-    .map((item, i) => {
-      if (i === 0) return { chords: [] }
-      const elements = item.split('-').map((e) => e.trim().replace(/^\d+\.\s*/, ''))
-      return { chords: elements }
-    })
-    .filter((chordProgression) => chordProgression.chords.length > 0)
-}
-
-function validateFoundChords(response: string | undefined) {
-  if (response?.startsWith('True')) return true
-  else false
-}
+// function validateFoundChords(response: string | undefined) {
+//   if (response?.startsWith('True')) return true
+//   else false
+// }

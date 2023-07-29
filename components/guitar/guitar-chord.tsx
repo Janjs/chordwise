@@ -2,28 +2,25 @@
 
 import { FC, useEffect, useRef, useState } from 'react'
 import { default as ChordSvg } from '@tombatossals/react-chords/lib/Chord'
-import { useTheme } from 'next-themes'
+const guitar = require(`@tombatossals/chords-db/lib/guitar.json`)
+import { Chord } from '@/types/types'
 
-interface ChordProps {
-  chord: string
+interface GuitarChordProps {
+  chord: Chord
 }
 
-const Chord: FC<ChordProps> = (props) => {
-  const chord = {
-    frets: [1, 3, 3, 2, 1, 1],
-    fingers: [1, 3, 4, 2, 1, 1],
-    barres: [1],
-    capo: false,
+const instrument = Object.assign(guitar.main, { tunings: guitar.tunings })
+
+const GuitarChord: FC<GuitarChordProps> = (props) => {
+  const chord = props.chord
+  let svgChordData
+  if (guitar.chords[chord.key]) {
+    svgChordData = guitar.chords[chord.key].find((chordOptions: any) => chordOptions.suffix === chord.suffix)
+    // Use chord here
+  } else {
+    console.log('Invalid property:', chord)
   }
-  const instrument = {
-    strings: 6,
-    fretsOnChord: 4,
-    name: 'Guitar',
-    keys: [],
-    tunings: {
-      standard: ['E', 'A', 'D', 'G', 'B', 'E'],
-    },
-  }
+
   const lite = false // defaults to false if omitted
 
   const svgRef = useRef<HTMLHeadingElement | null>(null)
@@ -49,12 +46,14 @@ const Chord: FC<ChordProps> = (props) => {
 
   return (
     <div className="flex flex-col" ref={svgRef}>
-      <h1 className="p-2 flex justify-center">{props.chord}</h1>
+      <h1 className="p-2 flex justify-center">{props.chord.representation}</h1>
       <div>
-        <ChordSvg ref={svgRef} chord={chord} instrument={instrument} lite={lite} />
+        {svgChordData && (
+          <ChordSvg ref={svgRef} chord={svgChordData.positions[0]} instrument={instrument} lite={lite} />
+        )}
       </div>
     </div>
   )
 }
 
-export default Chord
+export default GuitarChord
