@@ -2,11 +2,12 @@
 
 import { FC, useEffect, useRef, useState } from 'react'
 import { default as ChordSvg } from '@tombatossals/react-chords/lib/Chord'
-const guitar = require(`@tombatossals/chords-db/lib/guitar.json`)
 import { Chord } from '@/types/types'
+const guitar = require(`@tombatossals/chords-db/lib/guitar.json`)
 
 interface GuitarChordProps {
   chord: Chord
+  dialog: boolean
 }
 
 const instrument = Object.assign(guitar.main, { tunings: guitar.tunings })
@@ -34,6 +35,10 @@ const GuitarChord: FC<GuitarChordProps> = (props) => {
       })
       const texts = svgRef.current.querySelectorAll('text')
       texts.forEach((text) => {
+        if (!props.dialog) {
+          text.setAttribute('visibility', 'hidden')
+          return
+        }
         const textContent = text.textContent
         if (textContent !== null && !isNaN(parseFloat(textContent))) {
           text.setAttribute('fill', 'hsl(var(--background))')
@@ -42,11 +47,11 @@ const GuitarChord: FC<GuitarChordProps> = (props) => {
         }
       })
     }
-  }, [])
+  }, [chord])
 
   return (
     <div className="flex flex-col" ref={svgRef}>
-      <h1 className="p-2 flex justify-center">{props.chord.representation}</h1>
+      <h1 className={`p-2 flex justify-center ${props.dialog ? 'text-3xl' : ''}`}>{props.chord.representation}</h1>
       <div>
         {svgChordData && (
           <ChordSvg ref={svgRef} chord={svgChordData.positions[0]} instrument={instrument} lite={lite} />

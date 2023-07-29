@@ -4,6 +4,17 @@ import { FC, useRef, useState } from 'react'
 import GuitarChord from './guitar-chord'
 import { ChordProgression } from '@/types/types'
 import { Chord } from '@/types/types'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 
 interface GuitarChordProgViewerProps {
   index: number
@@ -18,16 +29,26 @@ const GuitarChordProgViewer: FC<GuitarChordProgViewerProps> = (props) => {
   const isChordPlaying = (chord: number) => isPlaying(index) && indexChordPlaying === chord
 
   return (
-    <div
-      className={`transition-colors duration-150 ease-in flex flex-row items-center 
-        border border-input rounded-2xl mb-4 p-4 gap-10 ${isPlaying(index) ? 'bg-muted' : ''} 
-        hover:bg-muted [&>svg]:text-foreground hover:[&>svg]:text-background`}
-    >
-      <div className="flex-1 columns-4 rounded-lg gap-4">
-        {chordProgression.chords.map((chord, i) => (
-          <GuitarChord key={i} chord={chord} />
-        ))}
-      </div>
+    <div className="flex flex-row items-center rounded-xl p-4 hover:bg-secondary">
+      <AlertDialog>
+        <AlertDialogTrigger>
+          <div className="flex-1 columns-4 p-4">
+            {chordProgression.chords.map((chord, i) => (
+              <GuitarChord key={i} chord={chord} dialog={false} />
+            ))}
+          </div>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <div className="flex-1 columns-2">
+            {chordProgression.chords.map((chord, i) => (
+              <GuitarChord key={i} chord={chord} dialog={true} />
+            ))}
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel>close</AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

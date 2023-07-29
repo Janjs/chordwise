@@ -11,17 +11,10 @@ export interface GenerateChordsRequest {
 export async function POST(req: Request) {
   const userInput: GenerateChordsRequest = await req.json()
 
-  const content = `True.
-  1. A - Bm - D - C
-  2. Fm - G7 - Cm - Ab
-  3. Cm - Bb - Ab - G7
-  4. Dm - G7 - Cm - Ab
-  5. Cm - G7 - Fm - Ab`
-
   const A = createChord('A', 'A', 'major')
   const Bm = createChord('Bm', 'B', 'minor')
   const D = createChord('D', 'D', 'major')
-  const C = createChord('C', 'A', 'major')
+  const C = createChord('C', 'C', 'major')
 
   const chordProgressions: ChordProgression[] = [
     { chords: [A, Bm, D, C] },
