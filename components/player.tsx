@@ -10,7 +10,7 @@ import PlayerSettings, { Instrument } from './player-settings'
 import { Separator } from './ui/separator'
 import { Icons } from './icons'
 import { Progress } from './ui/progress'
-import GuitarChordsViewer from './guitar/guitar-chord-prog'
+import GuitarChordProg from './guitar/guitar-chord-prog'
 
 interface PlayerProps {
   chordProgressions: ChordProgression[]
@@ -98,7 +98,7 @@ const Player: FC<PlayerProps> = (props) => {
 
       <div className="flex-1 gap-5 flex flex-col">
         <div className="flex-1 bg-muted rounded-xl">
-          <GuitarChordsViewer
+          <GuitarChordProg
             index={indexCurrentPlaying}
             chordProgression={chordProgressions[indexCurrentPlaying]}
             isPlaying={isPlaying}

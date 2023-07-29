@@ -1,3 +1,7 @@
+declare module '@tombatossals/react-chords/lib/Chord'
+
+declare module 'react-piano-roll'
+
 declare module 'midi-sounds-react' {
   import React from 'react'
 
