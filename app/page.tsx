@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import UserInput, { formSchema } from '../components/user-input'
+import UserInput, { formSchema } from '@/components/user-input'
 import * as z from 'zod'
 import { ChordProgression } from '@/types/types'
 import { Alert, AlertTitle } from '@/components/ui/alert'
@@ -40,19 +40,8 @@ const Page = () => {
   }
 
   return (
-    <div className="flex-1 max-w-7xl p-5 flex flex-col h-full justify-between gap-5">
-      <div className="flex-1 overflow-auto">
-        {chordProgressions.length > 0 && <Player chordProgressions={chordProgressions} />}
-      </div>
-      {error && (
-        <Alert variant="destructive">
-          <Icons.warning className="h-4 w-4" />
-          <AlertTitle>Something went wrong</AlertTitle>
-        </Alert>
-      )}
-      <div className="flex-none">
-        <UserInput onSubmit={handleSubmit} loading={loading} />
-      </div>
+    <div className="flex-1 flex justify-center items-center">
+      <h2 className="text-5xl font-bold">AI-Generated Chord Progression Ideas</h2>
     </div>
   )
 }
