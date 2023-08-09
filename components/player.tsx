@@ -91,13 +91,14 @@ const Player: FC<PlayerProps> = (props) => {
             />
           </li>
         ))}
-        <div className="hidden">
-          <MIDISounds ref={midiSoundsRef} instruments={instrumentValues} />
-        </div>
       </ul>
 
+      <div className="hidden">
+        <MIDISounds ref={midiSoundsRef} instruments={instrumentValues} />
+      </div>
+
       <div className="flex-1 gap-5 flex flex-col">
-        <div className="flex-1 bg-muted rounded-xl">
+        <div className="flex-1 bg-card rounded-xl h-full p-4">
           <GuitarChordProg
             index={indexCurrentPlaying}
             chordProgression={chordProgressions[indexCurrentPlaying]}
@@ -105,7 +106,7 @@ const Player: FC<PlayerProps> = (props) => {
             indexChordPlaying={chordPlaying}
           />
         </div>
-        <div className="flex-none bg-muted rounded-xl">
+        <div className="flex-none bg-card rounded-xl">
           <PlayerSettings
             instrumentKey={instrumentKey}
             tempo={tempo}
