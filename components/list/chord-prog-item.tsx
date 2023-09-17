@@ -19,17 +19,20 @@ const ChordProgItem: FC<ChordProgItemProps> = (props) => {
   return (
     <div
       onClick={() => handlePlay(index)}
-      className={`transition-colors duration-150 ease-in flex flex-row items-center 
-        border border-input rounded-2xl mb-4 p-4 gap-10 ${isPlaying(index) ? 'bg-muted' : ''} 
-        hover:bg-muted [&>svg]:text-foreground hover:[&>svg]:text-background`}
+      className={`transition-colors duration-100 ease-in flex flex-row items-center 
+         rounded-2xl mb-4 p-4 gap-10 ${
+           isPlaying(index) ? 'bg-card hover:bg-card' : 'hover:bg-secondary border border-card'
+         } 
+      `}
     >
       <div className="flex-1 columns-4 rounded-lg gap-4">
-        {chordProgression.chords.map((chord, i) => (
+        {chordProgression.chords.map((chord, j) => (
           <h1
-            key={i}
-            className={`font-bold border rounded-lg aspect-square flex justify-center items-center ${
-              isChordPlaying(i) ? 'bg-primary text-primary-foreground' : 'bg-card text-card-foreground'
-            } p-2 [fill:currentColor !important]`}
+            key={j}
+            className={`font-bold text-3xl rounded-lg border aspect-square flex justify-center items-center 
+            ${isChordPlaying(j) ? 'bg-primary' : ''} 
+            ${isPlaying(index) ? '' : 'border-card'} 
+            p-2`}
           >
             {chord.representation}
           </h1>

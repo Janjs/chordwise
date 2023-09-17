@@ -24,7 +24,7 @@ const GuitarChordProgViewer: FC<GuitarChordProgViewerProps> = (props) => {
   const isChordPlaying = (chord: number) => isPlaying(index) && indexChordPlaying === chord
 
   return (
-    <div className="flex flex-row items-center rounded-xl hover:bg-secondary">
+    <div className="flex-none rounded-xl p-5 flex flex-row items-center bg-card hover:bg-secondary">
       <AlertDialog>
         <AlertDialogTrigger>
           <div className="flex-1 columns-4">

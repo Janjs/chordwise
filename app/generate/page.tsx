@@ -7,6 +7,7 @@ import { ChordProgression } from '@/types/types'
 import { Alert, AlertTitle } from '@/components/ui/alert'
 import Player from '@/components/player'
 import { Icons } from '@/components/icons'
+import { Separator } from '@/components/ui/separator'
 
 const Page = () => {
   const [loading, setLoading] = useState(false)
@@ -40,7 +41,7 @@ const Page = () => {
   }
 
   return (
-    <div className="flex-1 max-w-7xl p-5 flex flex-col h-full justify-between gap-5">
+    <div className="flex-1 max-w-7xl p-1 flex flex-col h-full justify-between">
       <div className="flex-1 overflow-auto">
         {chordProgressions.length > 0 && <Player chordProgressions={chordProgressions} />}
       </div>
@@ -50,7 +51,8 @@ const Page = () => {
           <AlertTitle>Something went wrong</AlertTitle>
         </Alert>
       )}
-      <div className="flex-none">
+      <Separator className="bg-card mb-5" />
+      <div className="flex-none rounded-xl bg-card border p-3">
         <UserInput onSubmit={handleSubmit} loading={loading} />
       </div>
     </div>

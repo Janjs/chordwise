@@ -34,7 +34,7 @@ export default function Header() {
             </Tabs>
           )}
         </div>
-        <div className="flex flex-1 justify-end gap-5">
+        <div className="flex flex-1 justify-end gap-3">
           <About />
           <ModeToggle />
         </div>
