@@ -11,6 +11,7 @@ import { Separator } from './ui/separator'
 import { Icons } from './icons'
 import { Progress } from './ui/progress'
 import GuitarChordProg from './guitar/guitar-chord-prog'
+import Piano from './piano/piano'
 
 interface PlayerProps {
   chordProgressions: ChordProgression[]
@@ -103,6 +104,7 @@ const Player: FC<PlayerProps> = (props) => {
           isPlaying={isPlaying}
           indexChordPlaying={chordPlaying}
         />
+        <Piano />
         <div className="mt-auto mb-5 justify-self-end bg-card rounded-xl">
           <PlayerSettings
             instrumentKey={instrumentKey}
