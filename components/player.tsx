@@ -98,14 +98,16 @@ const Player: FC<PlayerProps> = (props) => {
       </ul>
 
       <div className="flex-1 gap-5 flex flex-col h-full">
-        <GuitarChordProg
-          index={indexCurrentPlaying}
-          chordProgression={chordProgressions[indexCurrentPlaying]}
-          isPlaying={isPlaying}
-          indexChordPlaying={chordPlaying}
-        />
-        <Piano />
-        <div className="mt-auto mb-5 justify-self-end bg-card rounded-xl">
+        <div className="flex-1 rounded-xl p-5 flex flex-row bg-card hover:bg-secondary">
+          <GuitarChordProg
+            index={indexCurrentPlaying}
+            chordProgression={chordProgressions[indexCurrentPlaying]}
+            isPlaying={isPlaying}
+            indexChordPlaying={chordPlaying}
+          />
+          <Piano />
+        </div>
+        <div className="flex-none mt-auto mb-5 justify-self-end bg-card rounded-xl">
           <PlayerSettings
             instrumentKey={instrumentKey}
             tempo={tempo}
