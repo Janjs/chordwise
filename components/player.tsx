@@ -12,6 +12,7 @@ import { Icons } from './icons'
 import { Progress } from './ui/progress'
 import GuitarChordProg from './guitar/guitar-chord-prog'
 import Piano from './piano/piano'
+import PlayerViewer from './player-viewer'
 
 interface PlayerProps {
   chordProgressions: ChordProgression[]
@@ -98,15 +99,14 @@ const Player: FC<PlayerProps> = (props) => {
       </ul>
 
       <div className="flex-1 gap-5 flex flex-col h-full">
-        <div className="flex-1 rounded-xl p-5 flex flex-row bg-card hover:bg-secondary">
-          <GuitarChordProg
-            index={indexCurrentPlaying}
-            chordProgression={chordProgressions[indexCurrentPlaying]}
-            isPlaying={isPlaying}
-            indexChordPlaying={chordPlaying}
-          />
-          <Piano />
-        </div>
+        <PlayerViewer
+          guitarChordProgViewerProps={{
+            index: indexCurrentPlaying,
+            chordProgression: chordProgressions[indexCurrentPlaying],
+            isPlaying: isPlaying,
+            indexChordPlaying: chordPlaying,
+          }}
+        />
         <div className="flex-none mt-auto mb-5 justify-self-end bg-card rounded-xl">
           <PlayerSettings
             instrumentKey={instrumentKey}

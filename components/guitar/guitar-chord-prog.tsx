@@ -10,8 +10,9 @@ import {
   AlertDialogFooter,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 
-interface GuitarChordProgViewerProps {
+export interface GuitarChordProgViewerProps {
   index: number
   chordProgression: ChordProgression
   isPlaying: (i: number) => boolean
@@ -24,27 +25,25 @@ const GuitarChordProgViewer: FC<GuitarChordProgViewerProps> = (props) => {
   const isChordPlaying = (chord: number) => isPlaying(index) && indexChordPlaying === chord
 
   return (
-    <div className="">
-      <AlertDialog>
-        <AlertDialogTrigger>
-          <div className="flex-1 columns-4">
-            {chordProgression.chords.map((chord, i) => (
-              <GuitarChord key={i} chord={chord} dialog={false} />
-            ))}
-          </div>
-        </AlertDialogTrigger>
-        <AlertDialogContent>
-          <div className="flex-1 columns-2">
-            {chordProgression.chords.map((chord, i) => (
-              <GuitarChord key={i} chord={chord} dialog={true} />
-            ))}
-          </div>
-          <AlertDialogFooter>
-            <AlertDialogCancel>close</AlertDialogCancel>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
+    <AlertDialog>
+      <AlertDialogTrigger>
+        <div className="flex-1 columns-4 rounded-sm hover:bg-secondary">
+          {chordProgression.chords.map((chord, i) => (
+            <GuitarChord key={i} chord={chord} dialog={false} />
+          ))}
+        </div>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <div className="flex-1 columns-2">
+          {chordProgression.chords.map((chord, i) => (
+            <GuitarChord key={i} chord={chord} dialog={true} />
+          ))}
+        </div>
+        <AlertDialogFooter>
+          <AlertDialogCancel>close</AlertDialogCancel>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   )
 }
 
