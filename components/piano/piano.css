@@ -1,0 +1,19 @@
+.ReactPiano__Keyboard {
+  @apply h-[100px];
+}
+
+.ReactPiano__Key {
+  @apply rounded-b-[3px] border-2 border-background  !important;
+}
+
+.ReactPiano__Key--accidental {
+  @apply bg-black;
+}
+
+.ReactPiano__Key--active {
+  @apply bg-primary;
+}
+
+.ReactPiano__Key--active.ReactPiano__Key--natural {
+  @apply h-full;
+}

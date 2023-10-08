@@ -20,3 +20,5 @@ declare module 'midi-sounds-react' {
 
   export default MIDISounds
 }
+
+declare module 'react-piano'

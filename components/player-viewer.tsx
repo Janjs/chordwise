@@ -2,24 +2,17 @@ import { FC, useState } from 'react'
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import GuitarChordProgViewer, { GuitarChordProgViewerProps } from './guitar/guitar-chord-prog'
-import Piano from './piano/piano'
+import Piano, { PianoViewerProps } from './piano/piano'
 
-interface PlayerViewerProps<GuitarChordProgViewerProps> {
+interface PlayerViewerProps<GuitarChordProgViewerProps, PianoViewerProps> {
   guitarChordProgViewerProps: GuitarChordProgViewerProps
+  pianoViewerProps: PianoViewerProps
 }
 
-const PlayerViewer: FC<PlayerViewerProps<GuitarChordProgViewerProps>> = ({ guitarChordProgViewerProps }) => {
-  const [openItems, setOpenItems] = useState<string[]>([])
-
-  function handleItemClick(id: string) {
-    setOpenItems((prev) => {
-      if (prev.includes(id)) {
-        return prev.filter((item) => item !== id)
-      } else {
-        return [...prev, id]
-      }
-    })
-  }
+const PlayerViewer: FC<PlayerViewerProps<GuitarChordProgViewerProps, PianoViewerProps>> = ({
+  guitarChordProgViewerProps,
+  pianoViewerProps,
+}) => {
   return (
     <div className="flex-1 rounded-xl p-5 flex flex-row bg-card">
       <div className="w-full">
@@ -33,7 +26,7 @@ const PlayerViewer: FC<PlayerViewerProps<GuitarChordProgViewerProps>> = ({ guita
           <AccordionItem value="piano">
             <AccordionTrigger>Piano</AccordionTrigger>
             <AccordionContent>
-              <Piano />
+              <Piano {...pianoViewerProps} />
             </AccordionContent>
           </AccordionItem>
         </Accordion>

@@ -10,8 +10,6 @@ import PlayerSettings, { Instrument } from './player-settings'
 import { Separator } from './ui/separator'
 import { Icons } from './icons'
 import { Progress } from './ui/progress'
-import GuitarChordProg from './guitar/guitar-chord-prog'
-import Piano from './piano/piano'
 import PlayerViewer from './player-viewer'
 
 interface PlayerProps {
@@ -24,15 +22,14 @@ const DEFAULT_PITCH = 5
 const Player: FC<PlayerProps> = (props) => {
   const { chordProgressions } = props
 
-  const [chordPlaying, setChordPlaying] = useState<number>(-1)
-  const [indexCurrentPlaying, setIndexChordPlaying] = useState<number>(0)
-
   // player settings
   const [instrumentKey, setInstrumentKey] = useState<keyof typeof Instrument>('piano')
   const [tempo, setTempo] = useState<number[]>([DEFAULT_TEMPO])
   const [pitch, setPitch] = useState<number[]>([DEFAULT_PITCH])
 
-  const midiSoundsRef = useRef<MIDISoundsMethods | null>(null)
+  // player state
+  const [chordPlaying, setChordPlaying] = useState<number>(-1)
+  const [indexCurrentPlaying, setIndexChordPlaying] = useState<number>(0)
 
   const getChordsPitches = (chordProgression: ChordProgression) => {
     return chordProgression.chords.map((chord) => {
@@ -44,10 +41,16 @@ const Player: FC<PlayerProps> = (props) => {
     })
   }
 
+  const [chordProgressionPitches, setChordProgressionPitches] = useState<number[][]>(
+    getChordsPitches(chordProgressions[indexCurrentPlaying]),
+  )
+
+  const midiSoundsRef = useRef<MIDISoundsMethods | null>(null)
+
   const playChordProgression = (indexChordProgression: number) => {
     const millisecondsPerBeat = 60000 / tempo[0] // Calculate the duration of each beat in milliseconds
     const chordProgressionPlaying = chordProgressions[indexChordProgression]
-    const chordProgressionPitches = getChordsPitches(chordProgressionPlaying)
+    setChordProgressionPitches(getChordsPitches(chordProgressionPlaying))
     setChordPlaying(indexChordProgression)
     let i = 0
 
@@ -105,6 +108,11 @@ const Player: FC<PlayerProps> = (props) => {
             chordProgression: chordProgressions[indexCurrentPlaying],
             isPlaying: isPlaying,
             indexChordPlaying: chordPlaying,
+          }}
+          pianoViewerProps={{
+            chordProgressionPitches,
+            indexChordPlaying: chordPlaying,
+            pitch: pitch,
           }}
         />
         <div className="flex-none mt-auto mb-5 justify-self-end bg-card rounded-xl">
