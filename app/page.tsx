@@ -40,7 +40,7 @@ const Page = () => {
   }
 
   return (
-    <div className="flex-1 flex justify-center items-center">
+    <div className="flex flex-1 items-center justify-center">
       <h2 className="text-5xl font-bold">AI-Generated Chord Progression Ideas</h2>
     </div>
   )

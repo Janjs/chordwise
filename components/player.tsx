@@ -83,7 +83,7 @@ const Player: FC<PlayerProps> = (props) => {
     .filter((v) => v!!)
 
   return (
-    <div className="flex-1 flex h-full flex-row gap-5">
+    <div className="flex h-full flex-1 flex-row gap-5">
       <ul className="flex-1 overflow-auto">
         {chordProgressions.map((chordProgression, index) => (
           <li key={index}>
@@ -101,7 +101,7 @@ const Player: FC<PlayerProps> = (props) => {
         </div>
       </ul>
 
-      <div className="flex-1 gap-5 flex flex-col h-full">
+      <div className="flex h-full flex-1 flex-col gap-5">
         <PlayerViewer
           guitarChordProgViewerProps={{
             index: indexCurrentPlaying,
@@ -115,7 +115,7 @@ const Player: FC<PlayerProps> = (props) => {
             pitch: pitch,
           }}
         />
-        <div className="flex-none mt-auto mb-5 justify-self-end bg-card rounded-xl">
+        <div className="mb-5 mt-auto flex-none justify-self-end rounded-xl bg-card">
           <PlayerSettings
             instrumentKey={instrumentKey}
             tempo={tempo}
@@ -125,7 +125,7 @@ const Player: FC<PlayerProps> = (props) => {
             setPitch={setPitch}
           />
           <Separator className="bg-background" />
-          <div className="flex-1 flex flex-row gap-5 justify-between items-center p-5">
+          <div className="flex flex-1 flex-row items-center justify-between gap-5 p-5">
             <Icons.skipBack size={35} />
             <Icons.play size={35} />
             <Icons.skipForward size={35} />

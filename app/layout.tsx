@@ -21,11 +21,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           enableSystem
           disableTransitionOnChange // TODO: doesn't work
         >
-          <div className="flex flex-col h-screen">
+          <div className="flex h-screen flex-col">
             <div className="flex-none">
               <Header />
             </div>
-            <div className="flex-1 overflow-auto flex justify-center">{children}</div>
+            <div className="flex flex-1 justify-center overflow-auto">{children}</div>
             <div className="flex-none">
               <Footer />
             </div>

@@ -19,17 +19,17 @@ const ChordProgItem: FC<ChordProgItemProps> = (props) => {
   return (
     <div
       onClick={() => handlePlay(index)}
-      className={`transition-colors duration-100 ease-in flex flex-row items-center 
-         rounded-2xl mb-4 p-4 gap-10 ${
-           isPlaying(index) ? 'bg-card hover:bg-card' : 'hover:bg-secondary border border-card'
+      className={`mb-4 flex flex-row items-center gap-10 rounded-2xl 
+         p-4 transition-colors duration-100 ease-in ${
+           isPlaying(index) ? 'bg-card hover:bg-card' : 'border border-card hover:bg-secondary'
          } 
       `}
     >
-      <div className="flex-1 columns-4 rounded-lg gap-4">
+      <div className="flex-1 columns-4 gap-4 rounded-lg">
         {chordProgression.chords.map((chord, j) => (
           <h1
             key={j}
-            className={`font-bold text-3xl rounded-lg border aspect-square flex justify-center items-center 
+            className={`flex aspect-square items-center justify-center rounded-lg border text-3xl font-bold 
             ${isChordPlaying(j) ? 'bg-primary' : ''} 
             ${isPlaying(index) ? '' : 'border-card'} 
             p-2`}

@@ -14,7 +14,7 @@ const PlayerViewer: FC<PlayerViewerProps<GuitarChordProgViewerProps, PianoViewer
   pianoViewerProps,
 }) => {
   return (
-    <div className="flex-1 rounded-xl p-5 flex flex-row bg-card">
+    <div className="flex flex-1 flex-row rounded-xl bg-card p-5">
       <div className="w-full">
         <Accordion type="multiple" defaultValue={['guitar', 'piano']}>
           <AccordionItem value="guitar">

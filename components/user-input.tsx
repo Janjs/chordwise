@@ -47,14 +47,14 @@ const UserInput: FC<UserInputProps> = (props) => {
   })
 
   return (
-    <div className="flex-1 flex flex-row gap-3 justify-between">
+    <div className="flex flex-1 flex-row justify-between gap-3">
       <Button variant="secondary" size="icon">
         <Icons.random className="h-4 w-10" />
       </Button>
       <Form {...form}>
         {/* TODO: add a dropdown to select the Key of the chords: */}
         {/* TODO: add a dropdown to select the style of the chords: */}
-        <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 flex flex-row gap-3 justify-between">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-row justify-between gap-3">
           <FormField
             control={form.control}
             name="musicalKey"

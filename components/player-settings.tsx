@@ -32,8 +32,8 @@ const PlayerSettings: FC<PlayerSettingsProps> = (props) => {
   const { instrumentKey, tempo, pitch, setInstrumentKey, setTempo, setPitch } = props
 
   return (
-    <div className="flex-1 flex flex-row gap-5 justify-between p-5">
-      <div className="flex-1 flex flex-col gap-2 justify-center">
+    <div className="flex flex-1 flex-row justify-between gap-5 p-5">
+      <div className="flex flex-1 flex-col justify-center gap-2">
         <Select onValueChange={(d) => setInstrumentKey(d as keyof typeof Instrument)} defaultValue={instrumentKey}>
           <SelectTrigger className="outline-none ring-2 ring-ring ring-offset-2">
             <SelectValue />
@@ -48,8 +48,8 @@ const PlayerSettings: FC<PlayerSettingsProps> = (props) => {
           </SelectContent>
         </Select>
       </div>
-      <div className="flex-1 flex flex-col gap-4">
-        <div className="flex justify-between items-center">
+      <div className="flex flex-1 flex-col gap-4">
+        <div className="flex items-center justify-between">
           <Label htmlFor="top-p">Tempo</Label>
           <p className="text-right text-sm text-muted-foreground">{tempo} bpm</p>
         </div>
@@ -64,7 +64,7 @@ const PlayerSettings: FC<PlayerSettingsProps> = (props) => {
           aria-label="tempo"
         />
       </div>
-      <div className="flex-1 flex flex-col gap-4">
+      <div className="flex flex-1 flex-col gap-4">
         <div className="flex items-center justify-between">
           <Label htmlFor="pitch">Pitch</Label>
           <span className="text-right text-sm text-muted-foreground">{pitch}</span>

@@ -16,9 +16,9 @@ export default function Header() {
         <Link href="/" className="flex-1">
           <Icons.logo className="h-5 w-auto" />
         </Link>
-        <div className="flex-1 flex italic justify-center text-center">
+        <div className="flex flex-1 justify-center text-center italic">
           {!(pathname === '/') && (
-            <Tabs defaultValue="generate" className="w-[250px] flex justify-center">
+            <Tabs defaultValue="generate" className="flex w-[250px] justify-center">
               <TabsList>
                 <TabsTrigger value="generate" className="gap-2">
                   Generate

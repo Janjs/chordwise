@@ -41,7 +41,7 @@ const Page = () => {
   }
 
   return (
-    <div className="flex-1 max-w-7xl p-1 flex flex-col h-full justify-between">
+    <div className="flex h-full max-w-7xl flex-1 flex-col justify-between p-1">
       <div className="flex-1 overflow-auto">
         {chordProgressions.length > 0 && <Player chordProgressions={chordProgressions} />}
       </div>
@@ -51,8 +51,8 @@ const Page = () => {
           <AlertTitle>Something went wrong</AlertTitle>
         </Alert>
       )}
-      <Separator className="bg-card mb-5" />
-      <div className="flex-none rounded-xl bg-card border p-3">
+      <Separator className="mb-5 bg-card" />
+      <div className="flex-none rounded-xl border bg-card p-3">
         <UserInput onSubmit={handleSubmit} loading={loading} />
       </div>
     </div>
