@@ -41,7 +41,7 @@ const Page = () => {
   }
 
   return (
-    <div className="flex h-full max-w-7xl flex-1 flex-col justify-between p-1">
+    <div className="flex h-full max-w-7xl flex-1 flex-col justify-between pb-1 pl-3 pr-3">
       <div className="flex-1 overflow-auto">
         {chordProgressions.length > 0 && <Player chordProgressions={chordProgressions} />}
       </div>

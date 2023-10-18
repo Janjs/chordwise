@@ -83,7 +83,7 @@ const Player: FC<PlayerProps> = (props) => {
     .filter((v) => v!!)
 
   return (
-    <div className="flex h-full flex-1 flex-row gap-5">
+    <div className="flex h-full flex-1 flex-col gap-5 md:flex-row">
       <ul className="flex-1 overflow-auto">
         {chordProgressions.map((chordProgression, index) => (
           <li key={index}>
@@ -101,20 +101,22 @@ const Player: FC<PlayerProps> = (props) => {
         </div>
       </ul>
 
-      <div className="flex h-full flex-1 flex-col gap-5">
-        <PlayerViewer
-          guitarChordProgViewerProps={{
-            index: indexCurrentPlaying,
-            chordProgression: chordProgressions[indexCurrentPlaying],
-            isPlaying: isPlaying,
-            indexChordPlaying: chordPlaying,
-          }}
-          pianoViewerProps={{
-            chordProgressionPitches,
-            indexChordPlaying: chordPlaying,
-            pitch: pitch,
-          }}
-        />
+      <div className="hidden h-full flex-1 flex-col gap-5 md:flex">
+        <div className="flex flex-1 flex-row overflow-auto rounded-xl bg-card p-5">
+          <PlayerViewer
+            guitarChordProgViewerProps={{
+              index: indexCurrentPlaying,
+              chordProgression: chordProgressions[indexCurrentPlaying],
+              isPlaying: isPlaying,
+              indexChordPlaying: chordPlaying,
+            }}
+            pianoViewerProps={{
+              chordProgressionPitches,
+              indexChordPlaying: chordPlaying,
+              pitch: pitch,
+            }}
+          />
+        </div>
         <div className="mb-5 mt-auto flex-none justify-self-end rounded-xl bg-card">
           <PlayerSettings
             instrumentKey={instrumentKey}
