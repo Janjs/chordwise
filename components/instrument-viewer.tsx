@@ -4,28 +4,28 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import GuitarChordProgViewer, { GuitarChordProgViewerProps } from './guitar/guitar-chord-prog'
 import Piano, { PianoViewerProps } from './piano/piano'
 
-interface PlayerViewerProps<GuitarChordProgViewerProps, PianoViewerProps> {
+interface InstrumentViewerProps<GuitarChordProgViewerProps, PianoViewerProps> {
   guitarChordProgViewerProps: GuitarChordProgViewerProps
   pianoViewerProps: PianoViewerProps
 }
 
-const PlayerViewer: FC<PlayerViewerProps<GuitarChordProgViewerProps, PianoViewerProps>> = ({
+const InstrumentViewer: FC<InstrumentViewerProps<GuitarChordProgViewerProps, PianoViewerProps>> = ({
   guitarChordProgViewerProps,
   pianoViewerProps,
 }) => {
   return (
     <div className="w-full">
       <Accordion type="multiple" defaultValue={['guitar', 'piano']}>
-        <AccordionItem value="guitar">
-          <AccordionTrigger>Guitar</AccordionTrigger>
-          <AccordionContent>
-            <GuitarChordProgViewer {...guitarChordProgViewerProps} />
-          </AccordionContent>
-        </AccordionItem>
         <AccordionItem value="piano">
           <AccordionTrigger>Piano</AccordionTrigger>
           <AccordionContent>
             <Piano {...pianoViewerProps} />
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="guitar">
+          <AccordionTrigger>Guitar</AccordionTrigger>
+          <AccordionContent>
+            <GuitarChordProgViewer {...guitarChordProgViewerProps} />
           </AccordionContent>
         </AccordionItem>
       </Accordion>
@@ -33,4 +33,4 @@ const PlayerViewer: FC<PlayerViewerProps<GuitarChordProgViewerProps, PianoViewer
   )
 }
 
-export default PlayerViewer
+export default InstrumentViewer

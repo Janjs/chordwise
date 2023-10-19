@@ -4,13 +4,12 @@ import { FC, useRef, useState } from 'react'
 import { ChordProgression } from '@/types/types'
 import ChordProgItem from './list/chord-prog-item'
 import MIDISounds, { MIDISoundsMethods } from 'midi-sounds-react'
-// TODO: Check compatibility to chords from guitar chord
 import { Midi, Chord } from 'tonal'
 import PlayerSettings, { Instrument } from './player-settings'
 import { Separator } from './ui/separator'
 import { Icons } from './icons'
 import { Progress } from './ui/progress'
-import PlayerViewer from './player-viewer'
+import InstrumentViewer from './instrument-viewer'
 
 interface PlayerProps {
   chordProgressions: ChordProgression[]
@@ -102,8 +101,8 @@ const Player: FC<PlayerProps> = (props) => {
       </ul>
 
       <div className="hidden h-full flex-1 flex-col gap-5 md:flex">
-        <div className="flex flex-1 flex-row overflow-auto rounded-xl bg-card p-5">
-          <PlayerViewer
+        <div className="flex flex-1 flex-row overflow-auto rounded-xl bg-card p-5 pt-1">
+          <InstrumentViewer
             guitarChordProgViewerProps={{
               index: indexCurrentPlaying,
               chordProgression: chordProgressions[indexCurrentPlaying],
