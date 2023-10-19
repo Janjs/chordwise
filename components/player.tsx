@@ -5,7 +5,7 @@ import { ChordProgression } from '@/types/types'
 import ChordProgItem from './list/chord-prog-item'
 import MIDISounds, { MIDISoundsMethods } from 'midi-sounds-react'
 import { Midi, Chord } from 'tonal'
-import PlayerSettings, { Instrument } from './player-settings'
+import PlayerSettings, { Instrument, MASTER_VOLUME } from './player-settings'
 import { Separator } from './ui/separator'
 import { Icons } from './icons'
 import { Progress } from './ui/progress'
@@ -47,7 +47,7 @@ const Player: FC<PlayerProps> = (props) => {
   const midiSoundsRef = useRef<MIDISoundsMethods | null>(null)
 
   useEffect(() => {
-    midiSoundsRef.current?.setMasterVolume(0.5)
+    midiSoundsRef.current?.setMasterVolume(MASTER_VOLUME)
   }, [])
 
   const playChordProgression = (indexChordProgression: number) => {

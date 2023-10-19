@@ -19,7 +19,7 @@ export enum Instrument {
   flute = 771,
 }
 
-export const VOLUME = 0.05
+export const MASTER_VOLUME = 0.05
 
 interface PlayerSettingsProps {
   instrumentKey: keyof typeof Instrument
