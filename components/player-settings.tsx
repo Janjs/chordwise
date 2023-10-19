@@ -14,10 +14,12 @@ import { Separator } from './ui/separator'
 
 // list of instruments: https://surikov.github.io/midi-sounds-react-examples/examples/midi-sounds-example3/build/
 export enum Instrument {
-  piano = 4,
-  guitar = 260,
+  piano = 12,
+  guitar = 248,
   flute = 771,
 }
+
+export const VOLUME = 0.05
 
 interface PlayerSettingsProps {
   instrumentKey: keyof typeof Instrument

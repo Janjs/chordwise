@@ -11,6 +11,7 @@ declare module 'midi-sounds-react' {
 
   export interface MIDISoundsMethods {
     playChordNow(channel: number, pitches: number[], duration: number): void
+    setMasterVolume(n: number): void
     cancelQueue(): void
   }
 

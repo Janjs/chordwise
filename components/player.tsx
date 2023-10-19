@@ -1,6 +1,6 @@
 'use client'
 
-import { FC, useRef, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { ChordProgression } from '@/types/types'
 import ChordProgItem from './list/chord-prog-item'
 import MIDISounds, { MIDISoundsMethods } from 'midi-sounds-react'
@@ -45,6 +45,10 @@ const Player: FC<PlayerProps> = (props) => {
   )
 
   const midiSoundsRef = useRef<MIDISoundsMethods | null>(null)
+
+  useEffect(() => {
+    midiSoundsRef.current?.setMasterVolume(0.5)
+  }, [])
 
   const playChordProgression = (indexChordProgression: number) => {
     const millisecondsPerBeat = 60000 / tempo[0] // Calculate the duration of each beat in milliseconds
