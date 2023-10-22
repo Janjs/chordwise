@@ -51,7 +51,13 @@ const GuitarChord: FC<GuitarChordProps> = (props) => {
 
   return (
     <div className="flex flex-col" ref={svgRef}>
-      <h1 className={`flex justify-center p-2 ${props.dialog ? 'text-3xl' : ''}`}>{props.chord.representation}</h1>
+      <h1
+        className={`flex justify-center p-2 ${
+          props.dialog ? 'scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl' : ''
+        }`}
+      >
+        {props.chord.representation}
+      </h1>
       <div>
         {svgChordData && (
           <ChordSvg ref={svgRef} chord={svgChordData.positions[0]} instrument={instrument} lite={lite} />

@@ -1,4 +1,5 @@
-import openai from './openai'
+import OpenAI from 'openai'
+import { ChatCompletionMessage, ChatCompletionMessageParam } from 'openai/resources/chat'
 import { Chord, ChordProgression } from '@/types/types'
 import { NextResponse } from 'next/server'
 
@@ -8,65 +9,119 @@ export interface GenerateChordsRequest {
   musicalScale: string
 }
 
+const openai = new OpenAI()
+
+const functions: OpenAI.Chat.ChatCompletionCreateParams.Function[] = [
+  {
+    name: 'generate',
+    description: 'generate chord progressions',
+    parameters: {
+      name: 'chord_progressions',
+      type: 'object',
+      description: 'Chord progressions',
+      properties: {
+        chord_progressions: {
+          type: 'array',
+          items: {
+            type: 'array',
+            description: 'Chord progression',
+            items: {
+              name: 'chord',
+              type: 'object',
+              description: 'chord',
+              properties: {
+                chord: {
+                  type: 'string',
+                  description: 'chord',
+                },
+              },
+              required: ['chord'],
+            },
+          },
+        },
+      },
+      required: ['chord_progressions'],
+    },
+  },
+]
+
 export async function POST(req: Request) {
   const userInput: GenerateChordsRequest = await req.json()
 
-  const A = createChord('A', 'A', 'major')
-  const Bm = createChord('Bm', 'B', 'minor')
-  const D = createChord('D', 'D', 'major')
-  const C = createChord('C', 'C', 'major')
-
-  const chordProgressions: ChordProgression[] = [
-    { chords: [A, Bm, D, C] },
-    { chords: [D, Bm, A, C] },
-    { chords: [Bm, A, D, D] },
-    { chords: [D, C, A, Bm] },
+  const messages: ChatCompletionMessageParam[] = [
+    {
+      role: 'system',
+      content: 'Generate 5 chord progressions. The chord progressions have to fit a user-provided description and key',
+    },
+    {
+      role: 'user',
+      content: `Generate chord progressions in the key of ${
+        userInput.musicalKey + userInput.musicalScale
+      }, that fit the following description: ${userInput.description}`,
+    },
   ]
 
-  // const completion = await openai.createChatCompletion({
-  //   model: "gpt-3.5-turbo",
-  //   temperature: 0.8,
-  //   n: 1,
-  //   stream: false,
-  //   messages: [
-  //     {
-  //       role: "system",
-  //       content: `You are a generator of chord progressions.
-  //         The user will ask you to generate a numbered list of 5 chord progressions in a certain key and that fit a certain description.
-  //         You will respond with a boolean (true or false) if you were able to complete the request, followed by the numbered list.`,
-  //     },
-  //     {
-  //       role: "user",
-  //       content: `Generate 5 chord progressions in the key of ${userInput.musicalKey} ${userInput.musicalScale} that fit the following description: ${userInput.description}}`,
-  //     },
-  //   ],
-  // });
-  // const response = completion.data.choices[0].message?.content
+  const completion = await openai.chat.completions.create({
+    model: 'gpt-3.5-turbo',
+    messages,
+    functions: functions,
+  })
+  const message = completion.choices[0]!.message
+  messages.push(message)
+
+  if (!message.function_call) {
+    return NextResponse.json({})
+  }
+
+  const response = JSON.parse(message.function_call.arguments)['chord_progressions']
+
+  const chordProgressions: ChordProgression[] = []
+
+  for (let chordProgResponse of response) {
+    let structuredChordResponse = []
+    for (let chordResponse of chordProgResponse) {
+      structuredChordResponse.push(createChord(chordResponse.chord))
+    }
+    chordProgressions.push({ chords: structuredChordResponse })
+  }
 
   return NextResponse.json({ chordProgressions: chordProgressions })
+
+  // return NextResponse.json({
+  //   chordProgressions: [
+  //     {
+  //       chords: [
+  //         {
+  //           representation: 'B#',
+  //           key: 'B',
+  //           suffix: 'major',
+  //         },
+  //         {
+  //           representation: 'B#',
+  //           key: 'B',
+  //           suffix: 'major',
+  //         },
+  //         {
+  //           representation: 'B#',
+  //           key: 'B',
+  //           suffix: 'major',
+  //         },
+  //         {
+  //           representation: 'B#',
+  //           key: 'B',
+  //           suffix: 'major',
+  //         },
+  //       ],
+  //     },
+  //   ],
+  // })
 }
 
 // chatgpt function should return an object like this
-function createChord(representation: string, key: string, suffic: string): Chord {
+function createChord(representation: string): Chord {
   return {
     representation: representation,
-    key: key,
-    suffix: suffic,
+    key: 'B',
+    suffix: 'major',
   }
 }
-// # with chat complition
-// function parseChords(chordsString: string): ChordProgression[] {
-//   return chordsString
-//     .split('\n')
-//     .map((item, i) => {
-//       if (i === 0) return { chords: [] }
-//       const elements = item.split('-').map((e) => e.trim().replace(/^\d+\.\s*/, ''))
-//       return { chords: elements }
-//     })
-//     .filter((chordProgression) => chordProgression.chords.length > 0)
-// }
-
-// function validateFoundChords(response: string | undefined) {
-//   if (response?.startsWith('True')) return true
-//   else false
-// }

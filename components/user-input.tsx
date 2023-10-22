@@ -52,7 +52,6 @@ const UserInput: FC<UserInputProps> = (props) => {
         <Icons.random className="h-4 w-10" />
       </Button>
       <Form {...form}>
-        {/* TODO: add a dropdown to select the Key of the chords: */}
         {/* TODO: add a dropdown to select the style of the chords: */}
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-row justify-between gap-3">
           <FormField

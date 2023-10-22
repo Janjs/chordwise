@@ -29,7 +29,7 @@ const ChordProgItem: FC<ChordProgItemProps> = (props) => {
         {chordProgression.chords.map((chord, j) => (
           <h1
             key={j}
-            className={`flex aspect-square items-center justify-center rounded-lg border text-3xl font-bold 
+            className={`flex aspect-square items-center justify-center rounded-lg border text-2xl font-bold 
             ${isChordPlaying(j) ? 'bg-primary' : ''} 
             ${isPlaying(index) ? '' : 'border-card'} 
             p-2`}
