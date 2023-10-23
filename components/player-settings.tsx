@@ -19,15 +19,17 @@ export enum Instrument {
   flute = 771,
 }
 
+export const DEFAULT_TEMPO = 90
+export const DEFAULT_PITCH = 4
 export const MASTER_VOLUME = 0.05
 
 interface PlayerSettingsProps {
   instrumentKey: keyof typeof Instrument
-  tempo: number[]
-  pitch: number[]
+  tempo: number
+  pitch: number
   setInstrumentKey: (instrumentKey: keyof typeof Instrument) => void
-  setTempo: (tempo: number[]) => void
-  setPitch: (pitch: number[]) => void
+  setTempo: (tempo: number) => void
+  setPitch: (pitch: number) => void
 }
 
 const PlayerSettings: FC<PlayerSettingsProps> = (props) => {
@@ -59,9 +61,9 @@ const PlayerSettings: FC<PlayerSettingsProps> = (props) => {
           id="tempo"
           max={300}
           min={5}
-          defaultValue={tempo}
+          defaultValue={[tempo]}
           step={1}
-          onValueChange={setTempo}
+          onValueChange={(tempos) => setTempo(tempos[0])}
           className="[&_[role=slider]]:h-4 [&_[role=slider]]:w-4"
           aria-label="tempo"
         />
@@ -75,9 +77,9 @@ const PlayerSettings: FC<PlayerSettingsProps> = (props) => {
           id="pitch"
           max={8}
           min={1}
-          defaultValue={pitch}
+          defaultValue={[pitch]}
           step={1}
-          onValueChange={setPitch}
+          onValueChange={(pitches) => setPitch(pitches[0])}
           className="[&_[role=slider]]:h-4 [&_[role=slider]]:w-4"
           aria-label="pitch"
         />

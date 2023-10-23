@@ -8,14 +8,14 @@ import './piano.css'
 export interface PianoViewerProps {
   chordProgressionPitches: number[][]
   indexChordPlaying: number
-  pitch: number[]
+  pitch: number
 }
 
 const Piano: FC<PianoViewerProps> = (props) => {
   const { chordProgressionPitches, indexChordPlaying, pitch } = props
 
-  const firstNote = MidiNumbers.fromNote('c' + pitch[0])
-  const lastNote = MidiNumbers.fromNote('b' + (pitch[0] + 1))
+  const firstNote = MidiNumbers.fromNote('c' + pitch)
+  const lastNote = MidiNumbers.fromNote('b' + (pitch + 1))
 
   return (
     <div className="pointer-events-none">

@@ -1,9 +1,8 @@
-export interface ChordProgression {
+export type ChordProgression = {
   chords: Chord[]
 }
 
-export interface Chord {
+export type Chord = {
   representation: string
-  key: string
-  suffix: string
+  root: string
 }

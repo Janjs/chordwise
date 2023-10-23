@@ -1,15 +1,17 @@
 import OpenAI from 'openai'
-import { ChatCompletionMessage, ChatCompletionMessageParam } from 'openai/resources/chat'
-import { Chord, ChordProgression } from '@/types/types'
+import { ChatCompletionMessageParam } from 'openai/resources/chat'
+import { ChordProgression } from '@/types/types'
 import { NextResponse } from 'next/server'
+
+const MOCK = true
+
+const openai = new OpenAI()
 
 export interface GenerateChordsRequest {
   description: string
   musicalKey: string
   musicalScale: string
 }
-
-const openai = new OpenAI()
 
 const functions: OpenAI.Chat.ChatCompletionCreateParams.Function[] = [
   {
@@ -34,8 +36,12 @@ const functions: OpenAI.Chat.ChatCompletionCreateParams.Function[] = [
                   type: 'string',
                   description: 'chord',
                 },
+                root: {
+                  type: 'string',
+                  description: 'the root note of the chord',
+                },
               },
-              required: ['chord'],
+              required: ['chord', 'root'],
             },
           },
         },
@@ -46,6 +52,8 @@ const functions: OpenAI.Chat.ChatCompletionCreateParams.Function[] = [
 ]
 
 export async function POST(req: Request) {
+  if (MOCK) return NextResponse.json(MOCK_DATA)
+
   const userInput: GenerateChordsRequest = await req.json()
 
   const messages: ChatCompletionMessageParam[] = [
@@ -73,6 +81,8 @@ export async function POST(req: Request) {
     return NextResponse.json({})
   }
 
+  console.log(message.function_call.arguments)
+
   const response = JSON.parse(message.function_call.arguments)['chord_progressions']
 
   const chordProgressions: ChordProgression[] = []
@@ -80,48 +90,58 @@ export async function POST(req: Request) {
   for (let chordProgResponse of response) {
     let structuredChordResponse = []
     for (let chordResponse of chordProgResponse) {
-      structuredChordResponse.push(createChord(chordResponse.chord))
+      structuredChordResponse.push({
+        representation: chordResponse.chord,
+        root: chordResponse.root,
+      })
     }
     chordProgressions.push({ chords: structuredChordResponse })
   }
 
   return NextResponse.json({ chordProgressions: chordProgressions })
-
-  // return NextResponse.json({
-  //   chordProgressions: [
-  //     {
-  //       chords: [
-  //         {
-  //           representation: 'B#',
-  //           key: 'B',
-  //           suffix: 'major',
-  //         },
-  //         {
-  //           representation: 'B#',
-  //           key: 'B',
-  //           suffix: 'major',
-  //         },
-  //         {
-  //           representation: 'B#',
-  //           key: 'B',
-  //           suffix: 'major',
-  //         },
-  //         {
-  //           representation: 'B#',
-  //           key: 'B',
-  //           suffix: 'major',
-  //         },
-  //       ],
-  //     },
-  //   ],
-  // })
 }
 
-// chatgpt function should return an object like this
-function createChord(representation: string): Chord {
-  return {
-    representation: representation,
-    key: 'B',
-    suffix: 'major',
-  }
+const MOCK_DATA = {
+  chordProgressions: [
+    {
+      chords: [
+        { representation: 'C', root: 'G' },
+        { representation: 'G', root: 'G' },
+        { representation: 'F', root: 'F' },
+        { representation: 'A#', root: 'A#' },
+      ],
+    },
+    {
+      chords: [
+        { representation: 'Dm', root: 'D' },
+        { representation: 'G', root: 'G' },
+        { representation: 'A#', root: 'A#' },
+        { representation: 'C', root: 'C' },
+      ],
+    },
+    {
+      chords: [
+        { representation: 'F', root: 'F' },
+        { representation: 'A#', root: 'A#' },
+        { representation: 'G', root: 'G' },
+        { representation: 'Dm', root: 'D' },
+      ],
+    },
+    {
+      chords: [
+        { representation: 'G', root: 'G' },
+        { representation: 'A#', root: 'A#' },
+        { representation: 'F', root: 'F' },
+        { representation: 'C', root: 'C' },
+      ],
+    },
+    {
+      chords: [
+        { representation: 'A#', root: 'A#' },
+        { representation: 'C', root: 'C' },
+        { representation: 'G', root: 'G' },
+        { representation: 'Dm', root: 'D' },
+      ],
+    },
+  ],
 }

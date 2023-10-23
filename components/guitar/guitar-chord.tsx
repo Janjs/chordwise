@@ -17,7 +17,6 @@ const GuitarChord: FC<GuitarChordProps> = (props) => {
   let svgChordData
   if (guitar.chords[chord.key]) {
     svgChordData = guitar.chords[chord.key].find((chordOptions: any) => chordOptions.suffix === chord.suffix)
-    // Use chord here
   } else {
     console.log('Invalid property:', chord)
   }
@@ -53,7 +52,7 @@ const GuitarChord: FC<GuitarChordProps> = (props) => {
     <div className="flex flex-col" ref={svgRef}>
       <h1
         className={`flex justify-center p-2 ${
-          props.dialog ? 'scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl' : ''
+          props.dialog ? 'scroll-m-20 text-3xl font-extrabold tracking-tight' : ''
         }`}
       >
         {props.chord.representation}

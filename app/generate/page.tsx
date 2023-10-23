@@ -9,6 +9,8 @@ import Player from '@/components/player'
 import { Icons } from '@/components/icons'
 import { Separator } from '@/components/ui/separator'
 
+const MOCK = true
+
 const Page = () => {
   const [loading, setLoading] = useState(false)
   const [chordProgressions, setChordProgressions] = useState<ChordProgression[]>([])
@@ -33,6 +35,7 @@ const Page = () => {
       })
         .then((res) => res.json())
         .then((data) => {
+          console.log(data)
           setChordProgressions(data.chordProgressions)
         })
         .catch((error) => setError(error))

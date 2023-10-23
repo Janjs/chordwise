@@ -5,7 +5,7 @@ import { ChordProgression } from '@/types/types'
 import ChordProgItem from './list/chord-prog-item'
 import MIDISounds, { MIDISoundsMethods } from 'midi-sounds-react'
 import { Midi, Chord } from 'tonal'
-import PlayerSettings, { Instrument, MASTER_VOLUME } from './player-settings'
+import PlayerSettings, { DEFAULT_PITCH, DEFAULT_TEMPO, Instrument, MASTER_VOLUME } from './player-settings'
 import { Separator } from './ui/separator'
 import { Icons } from './icons'
 import { Progress } from './ui/progress'
@@ -15,30 +15,31 @@ interface PlayerProps {
   chordProgressions: ChordProgression[]
 }
 
-const DEFAULT_TEMPO = 120
-const DEFAULT_PITCH = 5
-
 const Player: FC<PlayerProps> = (props) => {
   const { chordProgressions } = props
 
   // player settings
   const [instrumentKey, setInstrumentKey] = useState<keyof typeof Instrument>('piano')
-  const [tempo, setTempo] = useState<number[]>([DEFAULT_TEMPO])
-  const [pitch, setPitch] = useState<number[]>([DEFAULT_PITCH])
+  const [tempo, setTempo] = useState<number>(DEFAULT_TEMPO)
+  const [pitch, setPitch] = useState<number>(DEFAULT_PITCH)
 
   // player state
   const [chordPlaying, setChordPlaying] = useState<number>(-1)
   const [indexCurrentPlaying, setIndexChordPlaying] = useState<number>(0)
 
-  const getChordsPitches = (chordProgression: ChordProgression) => {
-    return chordProgression.chords.map((chord) => {
-      const notes = Chord.get(chord.representation).notes
+  const getChordsPitches = (chordProgression: ChordProgression) =>
+    chordProgression.chords.map((chord) => {
+      const chordAlias = Chord.get(chord.representation)
 
-      const pitches: number[] = notes.map((note) => Midi.toMidi(note + pitch[0]) as number).filter((note) => !!note)
+      const notes =
+        chordAlias.tonic != null
+          ? Chord.getChord(chordAlias.type, chordAlias.tonic! + pitch, chord.root + pitch).notes
+          : chordAlias.notes
+
+      const pitches: number[] = notes.map((note) => Midi.toMidi(note) as number).filter((note) => !!note)
 
       return pitches
     })
-  }
 
   const [chordProgressionPitches, setChordProgressionPitches] = useState<number[][]>(
     getChordsPitches(chordProgressions[indexCurrentPlaying]),
@@ -51,7 +52,7 @@ const Player: FC<PlayerProps> = (props) => {
   }, [])
 
   const playChordProgression = (indexChordProgression: number) => {
-    const millisecondsPerBeat = 60000 / tempo[0] // Calculate the duration of each beat in milliseconds
+    const millisecondsPerBeat = 60000 / tempo // Calculate the duration of each beat in milliseconds
     const chordProgressionPlaying = chordProgressions[indexChordProgression]
     setChordProgressionPitches(getChordsPitches(chordProgressionPlaying))
     setChordPlaying(indexChordProgression)
