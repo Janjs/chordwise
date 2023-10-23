@@ -17,11 +17,6 @@ const Piano: FC<PianoViewerProps> = (props) => {
   const firstNote = MidiNumbers.fromNote('c' + pitch[0])
   const lastNote = MidiNumbers.fromNote('b' + (pitch[0] + 1))
 
-  useEffect(() => {
-    console.log('firstNote: ', firstNote)
-    console.log('lastNote: ', lastNote)
-  }, [chordProgressionPitches])
-
   return (
     <div className="pointer-events-none">
       <ReactPiano
