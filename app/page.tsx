@@ -7,6 +7,9 @@ import { ChordProgression } from '@/types/types'
 import { Alert, AlertTitle } from '@/components/ui/alert'
 import Player from '@/components/player'
 import { Icons } from '@/components/icons'
+import { Separator } from '@/components/ui/separator'
+
+const MOCK = true
 
 const Page = () => {
   const [loading, setLoading] = useState(false)
@@ -32,6 +35,7 @@ const Page = () => {
       })
         .then((res) => res.json())
         .then((data) => {
+          console.log(data)
           setChordProgressions(data.chordProgressions)
         })
         .catch((error) => setError(error))
@@ -40,8 +44,20 @@ const Page = () => {
   }
 
   return (
-    <div className="flex flex-1 items-center justify-center">
-      <h2 className="text-5xl font-bold">AI-Generated Chord Progression Ideas</h2>
+    <div className="flex h-full max-w-7xl flex-1 flex-col justify-between pb-1 pl-3 pr-3">
+      <div className="flex-1 overflow-auto">
+        {chordProgressions.length > 0 && <Player chordProgressions={chordProgressions} />}
+      </div>
+      {error && (
+        <Alert variant="destructive">
+          <Icons.warning className="h-4 w-4" />
+          <AlertTitle>Something went wrong</AlertTitle>
+        </Alert>
+      )}
+      <Separator className="mb-5 bg-card" />
+      <div className="flex-none rounded-xl border bg-card p-3">
+        <UserInput onSubmit={handleSubmit} loading={loading} />
+      </div>
     </div>
   )
 }

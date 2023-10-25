@@ -4,7 +4,7 @@ import { FC, useEffect, useRef, useState } from 'react'
 import { ChordProgression } from '@/types/types'
 import ChordProgItem from './list/chord-prog-item'
 import MIDISounds, { MIDISoundsMethods } from 'midi-sounds-react'
-import { Midi, Chord } from 'tonal'
+import { Midi as TonalMidi, Chord as TonalChord } from 'tonal'
 import PlayerSettings, { DEFAULT_PITCH, DEFAULT_TEMPO, Instrument, MASTER_VOLUME } from './player-settings'
 import { Separator } from './ui/separator'
 import { Icons } from './icons'
@@ -29,14 +29,14 @@ const Player: FC<PlayerProps> = (props) => {
 
   const getChordsPitches = (chordProgression: ChordProgression) =>
     chordProgression.chords.map((chord) => {
-      const chordAlias = Chord.get(chord.representation)
+      const chordAlias = TonalChord.get(chord.representation)
 
       const notes =
         chordAlias.tonic != null
-          ? Chord.getChord(chordAlias.type, chordAlias.tonic! + pitch, chord.root + pitch).notes
+          ? TonalChord.getChord(chordAlias.type, chordAlias.tonic + pitch, chord.root + pitch).notes
           : chordAlias.notes
 
-      const pitches: number[] = notes.map((note) => Midi.toMidi(note) as number).filter((note) => !!note)
+      const pitches: number[] = notes.map((note) => TonalMidi.toMidi(note) as number).filter((note) => !!note)
 
       return pitches
     })
