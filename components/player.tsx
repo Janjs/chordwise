@@ -88,7 +88,7 @@ const Player: FC<PlayerProps> = (props) => {
 
   return (
     <div className="flex h-full flex-1 flex-col gap-5 md:flex-row">
-      <ul className="flex-1 overflow-auto">
+      <ul className="custom-scrollbar flex-1 overflow-y-auto">
         {chordProgressions.map((chordProgression, index) => (
           <li key={index}>
             <ChordProgItem
