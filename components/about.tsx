@@ -19,8 +19,8 @@ export default function About() {
     <>
       <AlertDialog>
         <AlertDialogTrigger>
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-5">
-            <Icons.info className="absolute rotate-90 scale-0 text-foreground transition-all dark:rotate-0 dark:scale-100" />
+          <Button variant="ghost" className="h-10 w-10">
+            <Icons.info className="absolute scale-100" />
           </Button>
         </AlertDialogTrigger>
         <AlertDialogContent>

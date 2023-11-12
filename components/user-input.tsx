@@ -47,7 +47,7 @@ const UserInput: FC<UserInputProps> = (props) => {
   })
 
   return (
-    <div className="flex flex-1 flex-row justify-between gap-3">
+    <div className="text-md flex flex-1 flex-row justify-between gap-3">
       <Button variant="secondary" size="icon">
         <Icons.random className="h-4 w-10" />
       </Button>
@@ -100,7 +100,7 @@ const UserInput: FC<UserInputProps> = (props) => {
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormControl>
-                  <Input placeholder="Chords in the style of Nirvana" {...field} />
+                  <Input placeholder="Chords in the style of Nirvana" {...field} className="text-md" />
                 </FormControl>
                 <FormMessage />
               </FormItem>

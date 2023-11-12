@@ -39,7 +39,7 @@ const PlayerSettings: FC<PlayerSettingsProps> = (props) => {
     <div className="flex flex-1 flex-row justify-between gap-5 p-5">
       <div className="flex flex-1 flex-col justify-center gap-2">
         <Select onValueChange={(d) => setInstrumentKey(d as keyof typeof Instrument)} defaultValue={instrumentKey}>
-          <SelectTrigger className="outline-none ring-2 ring-ring ring-offset-2">
+          <SelectTrigger className="outline-none">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

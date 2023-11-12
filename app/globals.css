@@ -4,48 +4,60 @@
 
 @layer base {
   :root {
+    --glacier-50: 206 47% 97%;
+    --glacier-100: 201 44% 94%;
+    --glacier-200: 197 44% 86%;
+    --glacier-300: 195 44% 70%;
+    --glacier-400: 194 43% 60%;
+    --glacier-500: 194 41% 48%;
+    --glacier-600: 196 45% 39%;
+    --glacier-700: 197 44% 32%;
+    --glacier-800: 197 41% 27%;
+    --glacier-900: 198 36% 24%;
+    --glacier-950: 201 36% 16%;
+
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
-    --card: 0 0% 80%;
+    --card: var(--glacier-50);
     --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
+    --popover: var(--glacier-0);
     --popover-foreground: 240 10% 3.9%;
-    --primary: 261 75% 60%;
-    --primary-foreground: 355.7 100% 97.3%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 0 0% 100%;
+    --primary: var(--glacier-300);
+    --primary-foreground: 195 80.4% 10%;
+    --secondary: var(--glacier-200);
+    --secondary-foreground: var(--glacier-500);
+    --muted: var(--glacier-900);
+    --muted-foreground: 195 5% 64.9%;
+    --accent: var(--glacier-300);
+    --accent-foreground: var(--glacier-50);
+    --destructive: 10 97% 44%;
+    --destructive-foreground: 0 85.7% 97.3%;
+    --border: var(--glacier-200);
+    --input: var(--glacier-200);
+    --ring: var(--glacier-500);
     --radius: 1rem;
   }
 
   .dark {
-    --background: 20 14.3% 4.1%;
+    --background: 0 0% 0%;
     --foreground: 0 0% 95%;
-    --card: 24 9.8% 10%;
+    --card: var(--glacier-950);
     --card-foreground: 0 0% 95%;
-    --popover: 0 0% 9%;
+    --popover: var(--glacier-950);
     --popover-foreground: 0 0% 95%;
-    --primary: 261 75% 60%;
-    --primary-foreground: 144.9 80.4% 10%;
-    --secondary: 240 3.7% 15.9%;
+    --primary: var(--glacier-300);
+    --primary-foreground: 195 80.4% 10%;
+    --secondary: var(--glacier-800);
     --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 15%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 12 6.5% 15.1%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
+    --muted: var(--glacier-900);
+    --muted-foreground: 195 5% 64.9%;
+    --accent: var(--glacier-300);
+    --accent-foreground: 0 0% 5%;
+    --destructive: 10 97% 44%;
     --destructive-foreground: 0 85.7% 97.3%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 24 9.8% 10%;
+    --border: var(--glacier-600);
+    --input: var(--glacier-600);
+    --ring: var(--glacier-200);
   }
 }
 

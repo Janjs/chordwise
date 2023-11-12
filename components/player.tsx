@@ -106,7 +106,7 @@ const Player: FC<PlayerProps> = (props) => {
       </ul>
 
       <div className="hidden h-full flex-1 flex-col gap-5 md:flex">
-        <div className="flex flex-1 flex-row overflow-auto rounded-xl bg-card p-5 pt-1">
+        <div className="bg-card flex flex-1 flex-row overflow-auto rounded-xl p-5 pt-1">
           <InstrumentViewer
             guitarChordProgViewerProps={{
               index: indexCurrentPlaying,
