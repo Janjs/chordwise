@@ -31,7 +31,7 @@ const ChordProgItem: FC<ChordProgItemProps> = (props) => {
             key={j}
             className={`flex aspect-square items-center justify-center rounded-lg border text-2xl font-bold 
             ${isChordPlaying(j) ? 'bg-primary' : ''} 
-            ${isPlaying(index) ? '' : 'border-card'} 
+            ${isPlaying(index) ? 'border-primary' : 'border-card'} 
             p-2`}
           >
             {chord.representation}
