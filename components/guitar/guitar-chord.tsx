@@ -15,6 +15,7 @@ const instrument = Object.assign(guitar.main, { tunings: guitar.tunings })
 const GuitarChord: FC<GuitarChordProps> = (props) => {
   const chord = props.chord
   let svgChordData
+  console.log(`chord: ${JSON.stringify(chord)}`)
   if (guitar.chords[chord.key]) {
     svgChordData = guitar.chords[chord.key].find((chordOptions: any) => chordOptions.suffix === chord.suffix)
   } else {

@@ -2,6 +2,7 @@ import OpenAI from 'openai'
 import { ChatCompletionMessageParam } from 'openai/resources/chat'
 import { ChordProgression } from '@/types/types'
 import { NextResponse } from 'next/server'
+import { Midi as TonalMidi, Chord as TonalChord } from 'tonal'
 
 const MOCK = true
 
@@ -13,53 +14,21 @@ export interface GenerateChordsRequest {
   musicalScale: string
 }
 
-const functions: OpenAI.Chat.ChatCompletionCreateParams.Function[] = [
-  {
-    name: 'generate',
-    description: 'generate chord progressions',
-    parameters: {
-      name: 'chord_progressions',
-      type: 'object',
-      description: 'Chord progressions',
-      properties: {
-        chord_progressions: {
-          type: 'array',
-          items: {
-            type: 'array',
-            description: 'Chord progression',
-            items: {
-              name: 'chord',
-              type: 'object',
-              description: 'chord',
-              properties: {
-                chord: {
-                  type: 'string',
-                  description: 'chord',
-                },
-                root: {
-                  type: 'string',
-                  description: 'the root note of the chord',
-                },
-              },
-              required: ['chord', 'root'],
-            },
-          },
-        },
-      },
-      required: ['chord_progressions'],
-    },
-  },
-]
-
 export async function POST(req: Request) {
-  if (MOCK) return NextResponse.json(MOCK_DATA)
+  //if (MOCK) return NextResponse.json({ chordProgressions: parseChordProgressions(MOCK_DATA) })
+  if (MOCK) return NextResponse.json(MOCK_DATA_2)
 
   const userInput: GenerateChordsRequest = await req.json()
 
   const messages: ChatCompletionMessageParam[] = [
     {
       role: 'system',
-      content: 'Generate 5 chord progressions. The chord progressions have to fit a user-provided description and key',
+      content: `
+          Analyze the following query and return 5 valid json objects corresponding to these rules:
+
+          "chord_progressions":
+          Generate 5 chord progressions, each chord progression will consist in an array of each chord.
+      `,
     },
     {
       role: 'user',
@@ -70,78 +39,53 @@ export async function POST(req: Request) {
   ]
 
   const completion = await openai.chat.completions.create({
-    model: 'gpt-3.5-turbo',
-    messages,
-    functions: functions,
+    model: 'gpt-3.5-turbo-1106',
+    messages: messages,
+    response_format: { type: 'json_object' },
   })
-  const message = completion.choices[0]!.message
-  messages.push(message)
 
-  if (!message.function_call) {
-    return NextResponse.json({})
+  const response = JSON.parse(completion.choices[0]!.message?.content!)
+
+  if (!response || response === '') {
+    throw new Error('Error while generating chord progressions.')
   }
 
-  console.log(message.function_call.arguments)
+  return NextResponse.json({ chordProgressions: parseChordProgressions(response) })
+}
 
-  const response = JSON.parse(message.function_call.arguments)['chord_progressions']
-
-  const chordProgressions: ChordProgression[] = []
-
-  for (let chordProgResponse of response) {
-    let structuredChordResponse = []
-    for (let chordResponse of chordProgResponse) {
-      structuredChordResponse.push({
-        representation: chordResponse.chord,
-        root: chordResponse.root,
-      })
-    }
-    chordProgressions.push({ chords: structuredChordResponse })
-  }
-
-  return NextResponse.json({ chordProgressions: chordProgressions })
+const parseChordProgressions = (data: typeof MOCK_DATA): ChordProgression[] => {
+  const parsedChordProgression = data.chord_progressions.map((progression) => ({
+    chords: progression.map((chord) => ({ representation: chord })),
+  }))
+  return parsedChordProgression as ChordProgression[]
 }
 
 const MOCK_DATA = {
+  chord_progressions: [
+    ['Cm7', 'Fm7', 'Dm7b5', 'G7'],
+    ['Dm7b5', 'G7', 'Cm7', 'Abmaj7'],
+    ['Gm7', 'Cm7', 'Fm7', 'Bb7'],
+    ['Cm7', 'Ebmaj7', 'Abmaj7', 'G7'],
+    ['Fm7', 'Bb7', 'Ebmaj7', 'Abmaj7'],
+  ],
+}
+
+const MOCK_DATA_2 = {
   chordProgressions: [
     {
-      chords: [
-        { representation: 'C', root: 'G' },
-        { representation: 'G', root: 'G' },
-        { representation: 'F', root: 'F' },
-        { representation: 'A#', root: 'A#' },
-      ],
+      chords: [{ representation: 'G' }, { representation: 'C' }, { representation: 'F' }, { representation: 'A#' }],
     },
     {
-      chords: [
-        { representation: 'Dm', root: 'D' },
-        { representation: 'G', root: 'G' },
-        { representation: 'A#', root: 'A#' },
-        { representation: 'C', root: 'C' },
-      ],
+      chords: [{ representation: 'Dm' }, { representation: 'G' }, { representation: 'A#' }, { representation: 'C' }],
     },
     {
-      chords: [
-        { representation: 'F', root: 'F' },
-        { representation: 'A#', root: 'A#' },
-        { representation: 'G', root: 'G' },
-        { representation: 'Dm', root: 'D' },
-      ],
+      chords: [{ representation: 'F' }, { representation: 'A#' }, { representation: 'G' }, { representation: 'Dm' }],
     },
     {
-      chords: [
-        { representation: 'G', root: 'G' },
-        { representation: 'A#', root: 'A#' },
-        { representation: 'F', root: 'F' },
-        { representation: 'C', root: 'C' },
-      ],
+      chords: [{ representation: 'G' }, { representation: 'A#' }, { representation: 'F' }, { representation: 'C' }],
     },
     {
-      chords: [
-        { representation: 'A#', root: 'A#' },
-        { representation: 'C', root: 'C' },
-        { representation: 'G', root: 'G' },
-        { representation: 'Dm', root: 'D' },
-      ],
+      chords: [{ representation: 'A#' }, { representation: 'C' }, { representation: 'G' }, { representation: 'Dm' }],
     },
   ],
 }

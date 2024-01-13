@@ -35,7 +35,6 @@ const Page = () => {
       })
         .then((res) => res.json())
         .then((data) => {
-          console.log(data)
           setChordProgressions(data.chordProgressions)
         })
         .catch((error) => setError(error))

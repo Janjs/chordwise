@@ -33,8 +33,8 @@ const Player: FC<PlayerProps> = (props) => {
 
       const notes =
         chordAlias.tonic != null
-          ? TonalChord.getChord(chordAlias.type, chordAlias.tonic + pitch, chord.root + pitch).notes
-          : chordAlias.notes
+          ? TonalChord.getChord(chordAlias.type, chordAlias.tonic + pitch).notes
+          : chordAlias.notes.map((note) => note + pitch)
 
       const pitches: number[] = notes.map((note) => TonalMidi.toMidi(note) as number).filter((note) => !!note)
 
