@@ -29,12 +29,12 @@ const Player: FC<PlayerProps> = (props) => {
 
   const getChordsPitches = (chordProgression: ChordProgression) =>
     chordProgression.chords.map((chord) => {
-      const chordAlias = TonalChord.get(chord.representation)
+      const chordInfo = TonalChord.get(chord.representation)
 
       const notes =
-        chordAlias.tonic != null
-          ? TonalChord.getChord(chordAlias.type, chordAlias.tonic + pitch).notes
-          : chordAlias.notes.map((note) => note + pitch)
+        chordInfo.tonic != null
+          ? TonalChord.getChord(chordInfo.type, chordInfo.tonic + pitch).notes
+          : chordInfo.notes.map((note) => note + pitch)
 
       const pitches: number[] = notes.map((note) => TonalMidi.toMidi(note) as number).filter((note) => !!note)
 

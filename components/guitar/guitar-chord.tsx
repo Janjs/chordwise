@@ -2,7 +2,9 @@
 
 import { FC, useEffect, useRef, useState } from 'react'
 import { default as ChordSvg } from '@tombatossals/react-chords/lib/Chord'
+import { Chord as TonalChord } from 'tonal'
 import { Chord } from '@/types/types'
+import { MusicalKey, mapMusicalKeyToGuitarSvg } from '@/lib/utils'
 const guitar = require(`@tombatossals/chords-db/lib/guitar.json`)
 
 interface GuitarChordProps {
@@ -13,13 +15,23 @@ interface GuitarChordProps {
 const instrument = Object.assign(guitar.main, { tunings: guitar.tunings })
 
 const GuitarChord: FC<GuitarChordProps> = (props) => {
-  const chord = props.chord
+  const chordInfo = TonalChord.get(props.chord.representation)
+  const guitarMusicalKey = mapMusicalKeyToGuitarSvg(chordInfo.tonic as MusicalKey)
+
+  // construct guitar SVG
   let svgChordData
-  console.log(`chord: ${JSON.stringify(chord)}`)
-  if (guitar.chords[chord.key]) {
-    svgChordData = guitar.chords[chord.key].find((chordOptions: any) => chordOptions.suffix === chord.suffix)
+  if (guitar.chords[guitarMusicalKey]) {
+    svgChordData = guitar.chords[guitarMusicalKey].find((chordOptions: any) => {
+      return chordOptions.suffix === chordInfo.type
+    })
+    // fallback to major if no suffic matches
+    if (!svgChordData) {
+      svgChordData = guitar.chords[guitarMusicalKey].find((chordOptions: any) => {
+        return chordOptions.suffix === 'major'
+      })
+    }
   } else {
-    console.log('Invalid property:', chord)
+    console.log('Invalid property:', chordInfo)
   }
 
   const lite = false // defaults to false if omitted
@@ -47,7 +59,7 @@ const GuitarChord: FC<GuitarChordProps> = (props) => {
         }
       })
     }
-  }, [chord])
+  }, [chordInfo])
 
   return (
     <div className="flex flex-col" ref={svgRef}>

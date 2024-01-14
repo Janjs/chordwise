@@ -4,5 +4,4 @@ export type ChordProgression = {
 
 export type Chord = {
   representation: string
-  root: string
 }

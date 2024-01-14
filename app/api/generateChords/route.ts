@@ -73,7 +73,7 @@ const MOCK_DATA = {
 const MOCK_DATA_2 = {
   chordProgressions: [
     {
-      chords: [{ representation: 'G' }, { representation: 'C' }, { representation: 'F' }, { representation: 'A#' }],
+      chords: [{ representation: 'G5' }, { representation: 'C' }, { representation: 'F' }, { representation: 'A#' }],
     },
     {
       chords: [{ representation: 'Dm' }, { representation: 'G' }, { representation: 'A#' }, { representation: 'C' }],
