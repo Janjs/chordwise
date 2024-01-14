@@ -12,7 +12,13 @@ interface GuitarChordProps {
   dialog: boolean
 }
 
-const instrument = Object.assign(guitar.main, { tunings: guitar.tunings })
+const INSTRUMENT = Object.assign(guitar.main, { tunings: guitar.tunings })
+const DEFAULT_SVG_CHORD = {
+  frets: [],
+  fingers: [],
+  barres: [],
+  capo: false,
+}
 
 const GuitarChord: FC<GuitarChordProps> = (props) => {
   const chordInfo = TonalChord.get(props.chord.representation)
@@ -25,11 +31,11 @@ const GuitarChord: FC<GuitarChordProps> = (props) => {
       return chordOptions.suffix === chordInfo.type
     })
     // fallback to major if no suffic matches
-    if (!svgChordData) {
-      svgChordData = guitar.chords[guitarMusicalKey].find((chordOptions: any) => {
-        return chordOptions.suffix === 'major'
-      })
-    }
+    // if (!svgChordData) {
+    //   svgChordData = guitar.chords[guitarMusicalKey].find((chordOptions: any) => {
+    //     return chordOptions.suffix === 'major'
+    //   })
+    // }
   } else {
     console.log('Invalid property:', chordInfo)
   }
@@ -70,9 +76,11 @@ const GuitarChord: FC<GuitarChordProps> = (props) => {
       >
         {props.chord.representation}
       </h1>
-      <div>
-        {svgChordData && (
-          <ChordSvg ref={svgRef} chord={svgChordData.positions[0]} instrument={instrument} lite={lite} />
+      <div className="">
+        {svgChordData ? (
+          <ChordSvg ref={svgRef} chord={svgChordData.positions[0]} instrument={INSTRUMENT} lite={lite} />
+        ) : (
+          <ChordSvg ref={svgRef} chord={DEFAULT_SVG_CHORD} instrument={INSTRUMENT} lite={lite} />
         )}
       </div>
     </div>
