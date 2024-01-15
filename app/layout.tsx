@@ -1,10 +1,8 @@
 import Header from './header'
 import './globals.css'
-import { Inter } from 'next/font/google'
+import { GeistSans } from 'geist/font/sans'
 import { ThemeProvider } from '@/components/theme-provider'
 import Footer from './footer'
-
-const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
   title: 'Chordwise',
@@ -13,8 +11,8 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+    <html lang="en" suppressHydrationWarning className={GeistSans.className}>
+      <body>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

@@ -80,6 +80,9 @@ dependencies:
   focus-visible:
     specifier: ^5.2.0
     version: 5.2.0
+  geist:
+    specifier: ^1.2.1
+    version: 1.2.1(next@14.0.0)
   lucide-react:
     specifier: ^0.263.0
     version: 0.263.0(react@18.2.0)
@@ -2948,6 +2951,14 @@ packages:
 
   /functions-have-names@1.2.3:
     resolution: {integrity: sha512-xckBUXyTIqT97tq2x2AMb+g163b5JFysYk0x4qxNFwbfQkmNZoiRHb6sPzI9/QV33WeuvVYBUIiD4NzNIyqaRQ==}
+    dev: false
+
+  /geist@1.2.1(next@14.0.0):
+    resolution: {integrity: sha512-xCl7zWfnWqc+TbCG5qqyeT5tnVlOO4pSJsT3Ei59DN1SR4N2VlauF8Fv0D1pPFXGUJgu6RMoeZX+wsR4T9bMhg==}
+    peerDependencies:
+      next: ^13.2 || ^14
+    dependencies:
+      next: 14.0.0(react-dom@18.2.0)(react@18.2.0)
     dev: false
 
   /get-caller-file@2.0.5:
