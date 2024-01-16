@@ -22,6 +22,7 @@ import {
   X,
   Laptop,
   type Icon as LucideIcon,
+  Pause,
 } from 'lucide-react'
 
 export type Icon = LucideIcon
@@ -40,6 +41,7 @@ export const Icons = {
   arrowRight: ArrowRight,
   help: HelpCircle,
   play: Play,
+  pause: Pause,
   skipBack: SkipBack,
   skipForward: SkipForward,
   repeat: Repeat2,

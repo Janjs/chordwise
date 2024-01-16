@@ -8,7 +8,6 @@ import { Midi as TonalMidi, Chord as TonalChord } from 'tonal'
 import PlayerSettings, { DEFAULT_PITCH, DEFAULT_TEMPO, Instrument, MASTER_VOLUME } from './player-settings'
 import { Separator } from './ui/separator'
 import { Icons } from './icons'
-import { Progress } from './ui/progress'
 import InstrumentViewer from './instrument-viewer'
 
 interface PlayerProps {
@@ -24,8 +23,9 @@ const Player: FC<PlayerProps> = (props) => {
   const [pitch, setPitch] = useState<number>(DEFAULT_PITCH)
 
   // player state
+  const [playing, setPlaying] = useState(false)
   const [chordPlaying, setChordPlaying] = useState<number>(-1)
-  const [indexCurrentPlaying, setIndexChordPlaying] = useState<number>(0)
+  const [indexChordPlaying, setIndexChordPlaying] = useState<number>(0)
 
   const getChordsPitches = (chordProgression: ChordProgression) =>
     chordProgression.chords.map((chord) => {
@@ -42,7 +42,7 @@ const Player: FC<PlayerProps> = (props) => {
     })
 
   const [chordProgressionPitches, setChordProgressionPitches] = useState<number[][]>(
-    getChordsPitches(chordProgressions[indexCurrentPlaying]),
+    getChordsPitches(chordProgressions[indexChordPlaying]),
   )
 
   const midiSoundsRef = useRef<MIDISoundsMethods | null>(null)
@@ -51,14 +51,14 @@ const Player: FC<PlayerProps> = (props) => {
     midiSoundsRef.current?.setMasterVolume(MASTER_VOLUME)
   }, [])
 
-  const playChordProgression = (indexChordProgression: number) => {
+  const playChordProgression = async (indexChordProgression: number) => {
     const millisecondsPerBeat = 60000 / tempo // Calculate the duration of each beat in milliseconds
     const chordProgressionPlaying = chordProgressions[indexChordProgression]
     setChordProgressionPitches(getChordsPitches(chordProgressionPlaying))
     setChordPlaying(indexChordProgression)
     let i = 0
 
-    const playNextChord = () => {
+    const playNextChord = async () => {
       if (i < chordProgressionPitches.length) {
         const chordPitches = chordProgressionPitches[i]
         // Play each chord
@@ -69,17 +69,19 @@ const Player: FC<PlayerProps> = (props) => {
         setTimeout(playNextChord, millisecondsPerBeat)
       } else {
         setChordPlaying(-1)
+        setPlaying(false)
       }
     }
-    playNextChord()
+    await playNextChord()
   }
 
   const handlePlay = (indexChordProgression: number) => {
+    setPlaying(true)
     setIndexChordPlaying(indexChordProgression)
     playChordProgression(indexChordProgression)
   }
 
-  const isPlaying = (i: number) => i === indexCurrentPlaying
+  const isChordProgPlaying = (i: number) => i === indexChordPlaying
 
   const instrumentValues: number[] = Object.values(Instrument)
     .filter((v) => typeof v === 'number')
@@ -95,7 +97,7 @@ const Player: FC<PlayerProps> = (props) => {
               index={index}
               chordProgression={chordProgression}
               handlePlay={handlePlay}
-              isPlaying={isPlaying}
+              isPlaying={isChordProgPlaying}
               indexChordPlaying={chordPlaying}
             />
           </li>
@@ -109,9 +111,9 @@ const Player: FC<PlayerProps> = (props) => {
         <div className="bg-card flex flex-1 flex-row overflow-auto rounded-xl p-5 pt-1">
           <InstrumentViewer
             guitarChordProgViewerProps={{
-              index: indexCurrentPlaying,
-              chordProgression: chordProgressions[indexCurrentPlaying],
-              isPlaying: isPlaying,
+              index: indexChordPlaying,
+              chordProgression: chordProgressions[indexChordPlaying],
+              isPlaying: isChordProgPlaying,
               indexChordPlaying: chordPlaying,
             }}
             pianoViewerProps={{
@@ -131,12 +133,21 @@ const Player: FC<PlayerProps> = (props) => {
             setPitch={setPitch}
           />
           <Separator className="bg-background" />
-          <div className="flex flex-1 flex-row items-center justify-between gap-5 p-5">
-            <Icons.skipBack size={35} />
-            <Icons.play size={35} />
-            <Icons.skipForward size={35} />
-            <Progress value={33} />
-            <Icons.repeat size={35} />
+          <div className="flex flex-1 flex-row items-center justify-around gap-5 p-5">
+            <Icons.skipBack size={25} />
+            {playing ? (
+              <Icons.pause size={25} />
+            ) : (
+              <Icons.play
+                size={25}
+                onClick={() => {
+                  playChordProgression(indexChordPlaying)
+                  setPlaying(true)
+                }}
+              />
+            )}
+            <Icons.skipForward size={25} />
+            <Icons.repeat size={25} />
           </div>
         </div>
       </div>
