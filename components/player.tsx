@@ -24,8 +24,8 @@ const Player: FC<PlayerProps> = (props) => {
 
   // player state
   const [playing, setPlaying] = useState(false)
-  const [chordPlaying, setChordPlaying] = useState<number>(-1)
-  const [indexChordPlaying, setIndexChordPlaying] = useState<number>(0)
+  const [indexChordProg, setIndexChordPlaying] = useState<number>(0)
+  const [indexChord, setChordPlaying] = useState<number>(-1)
 
   const getChordsPitches = (chordProgression: ChordProgression) =>
     chordProgression.chords.map((chord) => {
@@ -42,7 +42,7 @@ const Player: FC<PlayerProps> = (props) => {
     })
 
   const [chordProgressionPitches, setChordProgressionPitches] = useState<number[][]>(
-    getChordsPitches(chordProgressions[indexChordPlaying]),
+    getChordsPitches(chordProgressions[indexChordProg]),
   )
 
   const midiSoundsRef = useRef<MIDISoundsMethods | null>(null)
@@ -81,7 +81,7 @@ const Player: FC<PlayerProps> = (props) => {
     playChordProgression(indexChordProgression)
   }
 
-  const isChordProgPlaying = (i: number) => i === indexChordPlaying
+  const isChordProgPlaying = (i: number) => i === indexChordProg
 
   const instrumentValues: number[] = Object.values(Instrument)
     .filter((v) => typeof v === 'number')
@@ -98,7 +98,7 @@ const Player: FC<PlayerProps> = (props) => {
               chordProgression={chordProgression}
               handlePlay={handlePlay}
               isPlaying={isChordProgPlaying}
-              indexChordPlaying={chordPlaying}
+              indexChordPlaying={indexChord}
             />
           </li>
         ))}
@@ -111,14 +111,14 @@ const Player: FC<PlayerProps> = (props) => {
         <div className="bg-card flex flex-1 flex-row overflow-auto rounded-xl p-5 pt-1">
           <InstrumentViewer
             guitarChordProgViewerProps={{
-              index: indexChordPlaying,
-              chordProgression: chordProgressions[indexChordPlaying],
+              index: indexChordProg,
+              chordProgression: chordProgressions[indexChordProg],
               isPlaying: isChordProgPlaying,
-              indexChordPlaying: chordPlaying,
+              indexChordPlaying: indexChord,
             }}
             pianoViewerProps={{
               chordProgressionPitches,
-              indexChordPlaying: chordPlaying,
+              indexChordPlaying: indexChord,
               pitch: pitch,
             }}
           />
@@ -141,7 +141,7 @@ const Player: FC<PlayerProps> = (props) => {
               <Icons.play
                 size={25}
                 onClick={() => {
-                  playChordProgression(indexChordPlaying)
+                  playChordProgression(indexChordProg)
                   setPlaying(true)
                 }}
               />
