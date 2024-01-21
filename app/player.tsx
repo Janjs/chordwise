@@ -42,7 +42,6 @@ const Player: FC<PlayerProps> = (props) => {
     const progressionPlaying = progressions[indexChordProgression]
 
     let i = 0
-    let newTimeoutIds: NodeJS.Timeout[] = []
 
     const playNextChord = () => {
       if (i < progressionPlaying.chords.length) {
@@ -53,8 +52,7 @@ const Player: FC<PlayerProps> = (props) => {
         midiSoundsRef.current?.playChordNow(Instrument[instrumentKey], midi, 1)
 
         i++
-        const timeoutId = setTimeout(playNextChord, millisecondsPerBeat)
-        setTimeoutIds((prevIds) => [...prevIds, timeoutId])
+        setTimeout(playNextChord, millisecondsPerBeat)
       } else {
         setIsPlaying(false)
         setIndexCurrentChord(-1)
@@ -64,13 +62,7 @@ const Player: FC<PlayerProps> = (props) => {
     stopProgression()
   }
 
-  const stopProgression = () => {
-    // Stop any currently playing chord immediately
-    midiSoundsRef.current?.stopAllSounds()
-    // Clear all scheduled timeouts
-    timeoutIds.forEach((id) => clearTimeout(id))
-    setTimeoutIds([])
-  }
+  const stopProgression = () => {}
 
   const handlePlay = (indexChordProgression: number) => {
     setIndexCurrentProgression(indexChordProgression)
