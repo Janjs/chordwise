@@ -13,6 +13,7 @@ declare module 'midi-sounds-react' {
     playChordNow(channel: number, pitches: number[], duration: number): void
     setMasterVolume(n: number): void
     cancelQueue(): void
+    stopAllSounds(): void
   }
 
   type MIDISoundsComponent = React.ForwardRefExoticComponent<MIDISoundsProps & React.RefAttributes<MIDISoundsMethods>>

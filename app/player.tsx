@@ -2,12 +2,12 @@
 
 import { FC, useEffect, useRef, useState } from 'react'
 import { Progression } from '@/types/types'
-import ProgressionItem from './list/progression-item'
+import ProgressionItem from '../components/list/progression-item'
 import MIDISounds, { MIDISoundsMethods } from 'midi-sounds-react'
-import PlayerSettings, { DEFAULT_PITCH, DEFAULT_TEMPO, Instrument, MASTER_VOLUME } from './player-settings'
-import { Separator } from './ui/separator'
-import { Icons } from './icons'
-import InstrumentViewer from './instrument-viewer'
+import PlayerSettings, { DEFAULT_PITCH, DEFAULT_TEMPO, Instrument, MASTER_VOLUME } from '../components/player-settings'
+import { Separator } from '../components/ui/separator'
+import { Icons } from '../components/icons'
+import InstrumentViewer from '../components/instrument-viewer'
 import { convertToPitch } from '@/lib/utils'
 
 interface PlayerProps {
@@ -23,9 +23,10 @@ const Player: FC<PlayerProps> = (props) => {
   const [pitch, setPitch] = useState<number>(DEFAULT_PITCH)
 
   // player state
-  const [playing, setPlaying] = useState(false)
+  const [isPlaying, setIsPlaying] = useState(false)
   const [indexCurrentProgression, setIndexCurrentProgression] = useState<number>(0)
   const [indexCurrentChord, setIndexCurrentChord] = useState<number>(-1)
+  const [timeoutIds, setTimeoutIds] = useState<NodeJS.Timeout[]>([])
 
   const midiSoundsRef = useRef<MIDISoundsMethods | null>(null)
 
@@ -33,16 +34,17 @@ const Player: FC<PlayerProps> = (props) => {
     midiSoundsRef.current?.setMasterVolume(MASTER_VOLUME)
   }, [])
 
-  const playProgression = async (indexChordProgression: number) => {
-    setPlaying(true)
+  const playProgression = (indexChordProgression: number) => {
+    setIsPlaying(true)
     setIndexCurrentChord(indexChordProgression)
 
     const millisecondsPerBeat = 60000 / tempo // Calculate the duration of each beat in milliseconds
     const progressionPlaying = progressions[indexChordProgression]
 
     let i = 0
+    let newTimeoutIds: NodeJS.Timeout[] = []
 
-    const playNextChord = async () => {
+    const playNextChord = () => {
       if (i < progressionPlaying.chords.length) {
         const midi = progressionPlaying.chords[i].midi.map((midi) => convertToPitch(midi, pitch))
 
@@ -51,13 +53,23 @@ const Player: FC<PlayerProps> = (props) => {
         midiSoundsRef.current?.playChordNow(Instrument[instrumentKey], midi, 1)
 
         i++
-        setTimeout(playNextChord, millisecondsPerBeat)
+        const timeoutId = setTimeout(playNextChord, millisecondsPerBeat)
+        setTimeoutIds((prevIds) => [...prevIds, timeoutId])
       } else {
+        setIsPlaying(false)
         setIndexCurrentChord(-1)
-        setPlaying(false)
       }
     }
-    await playNextChord()
+    playNextChord()
+    stopProgression()
+  }
+
+  const stopProgression = () => {
+    // Stop any currently playing chord immediately
+    midiSoundsRef.current?.stopAllSounds()
+    // Clear all scheduled timeouts
+    timeoutIds.forEach((id) => clearTimeout(id))
+    setTimeoutIds([])
   }
 
   const handlePlay = (indexChordProgression: number) => {
@@ -118,8 +130,8 @@ const Player: FC<PlayerProps> = (props) => {
           <Separator className="bg-background" />
           <div className="flex flex-1 flex-row items-center justify-around gap-5 p-5">
             <Icons.skipBack size={25} />
-            {playing ? (
-              <Icons.pause size={25} />
+            {isPlaying ? (
+              <Icons.pause size={25} onClick={() => stopProgression()} />
             ) : (
               <Icons.play size={25} onClick={() => playProgression(indexCurrentProgression)} />
             )}
