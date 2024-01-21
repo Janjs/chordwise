@@ -2,7 +2,7 @@
 
 import { FC, useRef, useState } from 'react'
 import GuitarChord from './guitar-chord'
-import { ChordProgression } from '@/types/types'
+import { Progression } from '@/types/types'
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -14,7 +14,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 
 export interface GuitarChordProgViewerProps {
   index: number
-  chordProgression: ChordProgression
+  chordProgression: Progression
   isPlaying: (i: number) => boolean
   indexChordPlaying: number
 }

@@ -26,3 +26,7 @@ const musicalKeyMapper: Record<MusicalKey, GuitarSvgSharpAndFlatKey> = {
 }
 
 export const mapMusicalKeyToGuitarSvg = (key: MusicalKey): GuitarSvgSharpAndFlatKey => musicalKeyMapper[key] || key
+
+const NOTES_PER_OCTAVE = 12
+
+export const convertToPitch = (midi: number, pitch: number): number => midi + pitch * NOTES_PER_OCTAVE

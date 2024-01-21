@@ -3,23 +3,21 @@
 import { useState } from 'react'
 import UserInput, { formSchema } from '@/components/user-input'
 import * as z from 'zod'
-import { ChordProgression } from '@/types/types'
+import { Progression } from '@/types/types'
 import { Alert, AlertTitle } from '@/components/ui/alert'
 import Player from '@/components/player'
 import { Icons } from '@/components/icons'
 import { Separator } from '@/components/ui/separator'
 
-const MOCK = true
-
 const Page = () => {
   const [loading, setLoading] = useState(false)
-  const [chordProgressions, setChordProgressions] = useState<ChordProgression[]>([])
+  const [progressions, setProgressions] = useState<Progression[]>([])
   const [error, setError] = useState(null)
 
   const handleSubmit = (values: z.infer<typeof formSchema>) => {
     setLoading(true)
     setError(null)
-    setChordProgressions([])
+    setProgressions([])
 
     setTimeout(() => {
       fetch('/api/generateChords', {
@@ -35,7 +33,7 @@ const Page = () => {
       })
         .then((res) => res.json())
         .then((data) => {
-          setChordProgressions(data.chordProgressions)
+          setProgressions(data.progressions)
         })
         .catch((error) => setError(error))
         .finally(() => setLoading(false))
@@ -44,9 +42,7 @@ const Page = () => {
 
   return (
     <div className="flex h-full max-w-7xl flex-1 flex-col justify-between pb-1 pl-3 pr-3">
-      <div className="flex-1 overflow-auto">
-        {chordProgressions.length > 0 && <Player chordProgressions={chordProgressions} />}
-      </div>
+      <div className="flex-1 overflow-auto">{progressions.length > 0 && <Player progressions={progressions} />}</div>
       {error && (
         <Alert variant="destructive">
           <Icons.warning className="h-4 w-4" />

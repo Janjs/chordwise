@@ -1,6 +1,6 @@
 import OpenAI from 'openai'
 import { ChatCompletionMessageParam } from 'openai/resources/chat'
-import { ChordProgression } from '@/types/types'
+import { Progression } from '@/types/types'
 import { NextResponse } from 'next/server'
 import { Midi as TonalMidi, Chord as TonalChord } from 'tonal'
 
@@ -8,17 +8,17 @@ const MOCK = true
 
 const openai = new OpenAI()
 
-export interface GenerateChordsRequest {
+export interface GenerateProgressionsRequest {
   description: string
   musicalKey: string
   musicalScale: string
 }
 
 export async function POST(req: Request) {
-  //if (MOCK) return NextResponse.json({ chordProgressions: parseChordProgressions(MOCK_DATA) })
-  if (MOCK) return NextResponse.json(MOCK_DATA_2)
+  if (MOCK) return NextResponse.json({ progressions: parseProgressions(MOCK_DATA) })
+  // if (MOCK) return NextResponse.json(MOCK_DATA_2)
 
-  const userInput: GenerateChordsRequest = await req.json()
+  const userInput: GenerateProgressionsRequest = await req.json()
 
   const messages: ChatCompletionMessageParam[] = [
     {
@@ -50,42 +50,36 @@ export async function POST(req: Request) {
     throw new Error('Error while generating chord progressions.')
   }
 
-  return NextResponse.json({ chordProgressions: parseChordProgressions(response) })
+  return NextResponse.json({ progressions: parseProgressions(response) })
 }
 
-const parseChordProgressions = (data: typeof MOCK_DATA): ChordProgression[] => {
-  const parsedChordProgression = data.chord_progressions.map((progression) => ({
-    chords: progression.map((chord) => ({ representation: chord })),
+const parseProgressions = (data: typeof MOCK_DATA): Progression[] => {
+  const parsedProgressions = data.chord_progressions.map((progression) => ({
+    chords: progression.map((chordName) => ({ representation: chordName, midi: getProgressionMidis(chordName) })),
   }))
-  return parsedChordProgression as ChordProgression[]
+
+  return parsedProgressions as Progression[]
+}
+
+const getProgressionMidis = (representation: string) => {
+  const chordInfo = TonalChord.get(representation)
+
+  const notes =
+    chordInfo.tonic != null
+      ? TonalChord.getChord(chordInfo.type, chordInfo.tonic + 0).notes
+      : chordInfo.notes.map((note) => note + 0)
+
+  const midis: number[] = notes.map((note) => TonalMidi.toMidi(note) as number).filter((note) => !!note)
+
+  return midis
 }
 
 const MOCK_DATA = {
   chord_progressions: [
-    ['Cm7', 'Fm7', 'Dm7b5', 'G7'],
+    ['G', 'Fm7', 'Dm7b5', 'G7'],
     ['Dm7b5', 'G7', 'Cm7', 'Abmaj7'],
     ['Gm7', 'Cm7', 'Fm7', 'Bb7'],
     ['Cm7', 'Ebmaj7', 'Abmaj7', 'G7'],
     ['Fm7', 'Bb7', 'Ebmaj7', 'Abmaj7'],
-  ],
-}
-
-const MOCK_DATA_2 = {
-  chordProgressions: [
-    {
-      chords: [{ representation: 'G5' }, { representation: 'C' }, { representation: 'F' }, { representation: 'A#' }],
-    },
-    {
-      chords: [{ representation: 'Dm' }, { representation: 'G' }, { representation: 'A#' }, { representation: 'C' }],
-    },
-    {
-      chords: [{ representation: 'F' }, { representation: 'A#' }, { representation: 'G' }, { representation: 'Dm' }],
-    },
-    {
-      chords: [{ representation: 'G' }, { representation: 'A#' }, { representation: 'F' }, { representation: 'C' }],
-    },
-    {
-      chords: [{ representation: 'A#' }, { representation: 'C' }, { representation: 'G' }, { representation: 'Dm' }],
-    },
   ],
 }

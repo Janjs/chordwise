@@ -1,21 +1,21 @@
 'use client'
 
 import { FC, useEffect, useRef, useState } from 'react'
-import { ChordProgression } from '@/types/types'
-import ChordProgItem from './list/chord-prog-item'
+import { Progression } from '@/types/types'
+import ProgressionItem from './list/progression-item'
 import MIDISounds, { MIDISoundsMethods } from 'midi-sounds-react'
-import { Midi as TonalMidi, Chord as TonalChord } from 'tonal'
 import PlayerSettings, { DEFAULT_PITCH, DEFAULT_TEMPO, Instrument, MASTER_VOLUME } from './player-settings'
 import { Separator } from './ui/separator'
 import { Icons } from './icons'
 import InstrumentViewer from './instrument-viewer'
+import { convertToPitch } from '@/lib/utils'
 
 interface PlayerProps {
-  chordProgressions: ChordProgression[]
+  progressions: Progression[]
 }
 
 const Player: FC<PlayerProps> = (props) => {
-  const { chordProgressions } = props
+  const { progressions } = props
 
   // player settings
   const [instrumentKey, setInstrumentKey] = useState<keyof typeof Instrument>('piano')
@@ -24,26 +24,8 @@ const Player: FC<PlayerProps> = (props) => {
 
   // player state
   const [playing, setPlaying] = useState(false)
-  const [indexChordProg, setIndexChordPlaying] = useState<number>(0)
-  const [indexChord, setChordPlaying] = useState<number>(-1)
-
-  const getChordsPitches = (chordProgression: ChordProgression) =>
-    chordProgression.chords.map((chord) => {
-      const chordInfo = TonalChord.get(chord.representation)
-
-      const notes =
-        chordInfo.tonic != null
-          ? TonalChord.getChord(chordInfo.type, chordInfo.tonic + pitch).notes
-          : chordInfo.notes.map((note) => note + pitch)
-
-      const pitches: number[] = notes.map((note) => TonalMidi.toMidi(note) as number).filter((note) => !!note)
-
-      return pitches
-    })
-
-  const [chordProgressionPitches, setChordProgressionPitches] = useState<number[][]>(
-    getChordsPitches(chordProgressions[indexChordProg]),
-  )
+  const [indexCurrentProgression, setIndexCurrentProgression] = useState<number>(0)
+  const [indexCurrentChord, setIndexCurrentChord] = useState<number>(-1)
 
   const midiSoundsRef = useRef<MIDISoundsMethods | null>(null)
 
@@ -51,24 +33,27 @@ const Player: FC<PlayerProps> = (props) => {
     midiSoundsRef.current?.setMasterVolume(MASTER_VOLUME)
   }, [])
 
-  const playChordProgression = async (indexChordProgression: number) => {
+  const playProgression = async (indexChordProgression: number) => {
+    setPlaying(true)
+    setIndexCurrentChord(indexChordProgression)
+
     const millisecondsPerBeat = 60000 / tempo // Calculate the duration of each beat in milliseconds
-    const chordProgressionPlaying = chordProgressions[indexChordProgression]
-    setChordProgressionPitches(getChordsPitches(chordProgressionPlaying))
-    setChordPlaying(indexChordProgression)
+    const progressionPlaying = progressions[indexChordProgression]
+
     let i = 0
 
     const playNextChord = async () => {
-      if (i < chordProgressionPitches.length) {
-        const chordPitches = chordProgressionPitches[i]
+      if (i < progressionPlaying.chords.length) {
+        const midi = progressionPlaying.chords[i].midi.map((midi) => convertToPitch(midi, pitch))
+
         // Play each chord
-        setChordPlaying(i)
-        midiSoundsRef.current?.playChordNow(Instrument[instrumentKey], chordPitches, 1)
+        setIndexCurrentChord(i)
+        midiSoundsRef.current?.playChordNow(Instrument[instrumentKey], midi, 1)
 
         i++
         setTimeout(playNextChord, millisecondsPerBeat)
       } else {
-        setChordPlaying(-1)
+        setIndexCurrentChord(-1)
         setPlaying(false)
       }
     }
@@ -76,12 +61,11 @@ const Player: FC<PlayerProps> = (props) => {
   }
 
   const handlePlay = (indexChordProgression: number) => {
-    setPlaying(true)
-    setIndexChordPlaying(indexChordProgression)
-    playChordProgression(indexChordProgression)
+    setIndexCurrentProgression(indexChordProgression)
+    playProgression(indexChordProgression)
   }
 
-  const isChordProgPlaying = (i: number) => i === indexChordProg
+  const isProgressionPlaying = (i: number) => i === indexCurrentProgression
 
   const instrumentValues: number[] = Object.values(Instrument)
     .filter((v) => typeof v === 'number')
@@ -91,14 +75,14 @@ const Player: FC<PlayerProps> = (props) => {
   return (
     <div className="flex h-full flex-1 flex-col gap-5 md:flex-row">
       <ul className="custom-scrollbar flex-1 overflow-y-auto">
-        {chordProgressions.map((chordProgression, index) => (
+        {progressions.map((progression, index) => (
           <li key={index}>
-            <ChordProgItem
+            <ProgressionItem
               index={index}
-              chordProgression={chordProgression}
+              progression={progression}
               handlePlay={handlePlay}
-              isPlaying={isChordProgPlaying}
-              indexChordPlaying={indexChord}
+              isPlaying={isProgressionPlaying}
+              indexChordPlaying={indexCurrentChord}
             />
           </li>
         ))}
@@ -111,14 +95,13 @@ const Player: FC<PlayerProps> = (props) => {
         <div className="bg-card flex flex-1 flex-row overflow-auto rounded-xl p-5 pt-1">
           <InstrumentViewer
             guitarChordProgViewerProps={{
-              index: indexChordProg,
-              chordProgression: chordProgressions[indexChordProg],
-              isPlaying: isChordProgPlaying,
-              indexChordPlaying: indexChord,
+              index: indexCurrentProgression,
+              chordProgression: progressions[indexCurrentProgression],
+              isPlaying: isProgressionPlaying,
+              indexChordPlaying: indexCurrentChord,
             }}
             pianoViewerProps={{
-              chordProgressionPitches,
-              indexChordPlaying: indexChord,
+              chord: progressions[indexCurrentProgression].chords[indexCurrentChord],
               pitch: pitch,
             }}
           />
@@ -138,13 +121,7 @@ const Player: FC<PlayerProps> = (props) => {
             {playing ? (
               <Icons.pause size={25} />
             ) : (
-              <Icons.play
-                size={25}
-                onClick={() => {
-                  playChordProgression(indexChordProg)
-                  setPlaying(true)
-                }}
-              />
+              <Icons.play size={25} onClick={() => playProgression(indexCurrentProgression)} />
             )}
             <Icons.skipForward size={25} />
             <Icons.repeat size={25} />
