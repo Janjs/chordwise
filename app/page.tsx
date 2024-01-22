@@ -5,7 +5,7 @@ import UserInput, { formSchema } from '@/components/user-input'
 import * as z from 'zod'
 import { Progression } from '@/types/types'
 import { Alert, AlertTitle } from '@/components/ui/alert'
-import Player from '@/app/player'
+import Player from '@/components/player'
 import { Icons } from '@/components/icons'
 import { Separator } from '@/components/ui/separator'
 

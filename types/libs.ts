@@ -10,10 +10,14 @@ declare module 'midi-sounds-react' {
   }
 
   export interface MIDISoundsMethods {
-    playChordNow(channel: number, pitches: number[], duration: number): void
+    playChordNow(instrument: number, pitches: number[], duration: number): void
+    playChordAt(when: number, instrument: number, pitches: number[], duration: number): void
+    startPlayLoop(beats: any, bpm: number, density: number, fromBeat: number): void
     setMasterVolume(n: number): void
     cancelQueue(): void
     stopAllSounds(): void
+    contextTime(): number
+    beatIndex: number
   }
 
   type MIDISoundsComponent = React.ForwardRefExoticComponent<MIDISoundsProps & React.RefAttributes<MIDISoundsMethods>>
