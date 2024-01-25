@@ -2,10 +2,10 @@ import WebAudioFontPlayer from 'webaudiofont'
 
 class Player {
   constructor(instruments) {
-    ;(this.instruments = instruments), (this.master = 0.05), (this.echoAmount = 0.5), this.initAudio()
-  }
-  componentWillUnmount() {
-    this.stopPlayLoop()
+    this.instruments = instruments
+    this.master = 0.05
+    this.echoAmount = 0.5
+    this.initAudio()
   }
   contextTime() {
     return this.audioContext.currentTime
@@ -18,7 +18,6 @@ class Player {
     }
   }
   initAudio() {
-    console.log('initAudio M♩D♩Sounds')
     if (this.player) {
       if (this.audioContext) {
         this.player.cancelQueue(this.audioContext)
@@ -48,8 +47,8 @@ class Player {
       console.log('cached', n, info.title)
     })
   }
-  startPlayLoop(beats, bpm, density, fromBeat, setIndexCurrentChord) {
-    this.stopPlayLoop()
+  startPlay(beats, bpm, density, fromBeat, loop, setIndexCurrentChord) {
+    this.stopPlay()
     var wholeNoteDuration = (4 * 60) / bpm
     if (fromBeat < beats.length) {
       this.beatIndex = fromBeat
@@ -64,6 +63,10 @@ class Player {
     this.loopIntervalID = setInterval(function () {
       if (me.contextTime() > nextLoopTime - density * wholeNoteDuration) {
         if (me.beatIndex >= beats.length) {
+          // if (!loop) {
+          //   clearInterval(this.loopIntervalID)
+          //   return
+          // }
           me.beatIndex = 0
           setIndexCurrentChord(beats.length - 1)
         } else {
@@ -75,7 +78,7 @@ class Player {
       }
     }, 22)
   }
-  stopPlayLoop() {
+  stopPlay() {
     clearInterval(this.loopIntervalID)
     this.cancelQueue()
   }
@@ -95,7 +98,7 @@ class Player {
         kind = chord[3]
       }
       if (kind === 1) {
-        this.th(when, instrument, pitches, duration * N)
+        this.playStrumDownAt(when, instrument, pitches, duration * N)
       } else {
         if (kind === 2) {
           this.playStrumUpAt(when, instrument, pitches, duration * N)
@@ -133,7 +136,7 @@ class Player {
       this.cacheInstrument(instrument)
     }
   }
-  th(when, instrument, pitches, duration) {
+  playStrumDownAt(when, instrument, pitches, duration) {
     var info = this.player.loader.instrumentInfo(instrument)
     if (window[info.variable]) {
       this.player.queueStrumDown(

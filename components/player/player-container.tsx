@@ -5,11 +5,11 @@ import { Progression } from '@/types/types'
 import ProgressionItem from '@/components/list/progression-item'
 import Player from '@/components/player/player'
 import PlayerSettings, { DEFAULT_PITCH, DEFAULT_TEMPO, Instrument } from './player-settings'
-import { Separator } from '../ui/separator'
-import { Icons } from '../icons'
+import { Separator } from '@/components/ui/separator'
 import InstrumentViewer from './instrument-viewer'
 
 import { convertToPitch } from '@/lib/utils'
+import PlayerControls from './player-controls'
 
 interface PlayerContainerProps {
   progressions: Progression[]
@@ -25,6 +25,7 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
 
   // player state
   const [isPlaying, setIsPlaying] = useState(false)
+  const [loop, setLoop] = useState(false)
   const [indexCurrentProgression, setIndexCurrentProgression] = useState<number>(0)
   const [indexCurrentChord, setIndexCurrentChord] = useState<number>(-1)
 
@@ -34,7 +35,7 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
     player.current = new Player(instrumentValues)
     return () => {
       if (player.current) {
-        player.current?.stopPlayLoop()
+        player.current?.stopPlay()
       }
     }
   }, [])
@@ -46,16 +47,22 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
       const beats = progression.chords.map((chord) => [
         [Instrument[instrumentKey], chord.midi.map((midi) => convertToPitch(midi, pitch)), 1, 1],
       ])
-      player.current?.startPlayLoop(beats, tempo, 1, 0, setIndexCurrentChord)
+      player.current?.startPlay(
+        beats,
+        tempo,
+        1,
+        indexCurrentChord == -1 ? 0 : indexCurrentChord,
+        loop,
+        setIndexCurrentChord,
+      )
     }
   }
-
-  console.log(indexCurrentChord)
 
   const stopProgression = () => {
     setIsPlaying(false)
     if (player.current) {
-      player.current?.stopPlayLoop()
+      if (!loop) setIndexCurrentChord(-1)
+      player.current?.stopPlay()
     }
   }
 
@@ -112,16 +119,16 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
             setPitch={setPitch}
           />
           <Separator className="bg-background" />
-          <div className="flex flex-1 flex-row items-center justify-around gap-5 p-5">
-            <Icons.skipBack size={25} />
-            {isPlaying ? (
-              <Icons.pause size={25} onClick={() => stopProgression()} />
-            ) : (
-              <Icons.play size={25} onClick={() => playProgression(indexCurrentProgression)} />
-            )}
-            <Icons.skipForward size={25} />
-            <Icons.repeat size={25} />
-          </div>
+          <PlayerControls
+            progressionsLength={progressions.length}
+            indexCurrentProgression={indexCurrentProgression}
+            isPlaying={isPlaying}
+            loop={loop}
+            setLoop={setLoop}
+            setIndexCurrentProgression={setIndexCurrentProgression}
+            stopProgression={stopProgression}
+            playProgression={playProgression}
+          />
         </div>
       </div>
     </div>
