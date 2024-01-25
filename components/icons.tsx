@@ -21,11 +21,9 @@ import {
   User,
   X,
   Laptop,
-  type Icon as LucideIcon,
+  type XIcon as LucideIcon,
   Pause,
 } from 'lucide-react'
-
-export type Icon = LucideIcon
 
 type IconProps = React.HTMLAttributes<SVGElement>
 
