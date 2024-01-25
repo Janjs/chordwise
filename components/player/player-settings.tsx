@@ -10,7 +10,6 @@ import {
 } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
-import { Separator } from '../ui/separator'
 
 // list of instruments: https://surikov.github.io/midi-sounds-react-examples/examples/midi-sounds-example3/build/
 export enum Instrument {
