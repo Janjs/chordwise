@@ -46,10 +46,11 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
       const beats = progression.chords.map((chord) => [
         [Instrument[instrumentKey], chord.midi.map((midi) => convertToPitch(midi, pitch)), 1, 1],
       ])
-
-      player.current?.startPlayLoop(beats, tempo, 1, 0)
+      player.current?.startPlayLoop(beats, tempo, 1, 0, setIndexCurrentChord)
     }
   }
+
+  console.log(indexCurrentChord)
 
   const stopProgression = () => {
     setIsPlaying(false)

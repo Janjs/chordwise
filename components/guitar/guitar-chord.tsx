@@ -31,11 +31,11 @@ const GuitarChord: FC<GuitarChordProps> = (props) => {
       return chordOptions.suffix === chordInfo.type
     })
     // fallback to major if no suffic matches
-    // if (!svgChordData) {
-    //   svgChordData = guitar.chords[guitarMusicalKey].find((chordOptions: any) => {
-    //     return chordOptions.suffix === 'major'
-    //   })
-    // }
+    if (!svgChordData) {
+      svgChordData = guitar.chords[guitarMusicalKey].find((chordOptions: any) => {
+        return chordOptions.suffix === 'major'
+      })
+    }
   } else {
     console.log('Invalid property:', chordInfo)
   }

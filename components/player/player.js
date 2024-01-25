@@ -48,7 +48,7 @@ class Player {
       console.log('cached', n, info.title)
     })
   }
-  startPlayLoop(beats, bpm, density, fromBeat) {
+  startPlayLoop(beats, bpm, density, fromBeat, setIndexCurrentChord) {
     this.stopPlayLoop()
     var wholeNoteDuration = (4 * 60) / bpm
     if (fromBeat < beats.length) {
@@ -56,17 +56,22 @@ class Player {
     } else {
       this.beatIndex = 0
     }
+    setIndexCurrentChord(this.beatIndex)
     this.playBeatAt(this.contextTime(), beats[this.beatIndex], bpm)
     var nextLoopTime = this.contextTime() + density * wholeNoteDuration
+    this.beatIndex++
     var me = this
     this.loopIntervalID = setInterval(function () {
       if (me.contextTime() > nextLoopTime - density * wholeNoteDuration) {
-        me.beatIndex++
         if (me.beatIndex >= beats.length) {
           me.beatIndex = 0
+          setIndexCurrentChord(beats.length - 1)
+        } else {
+          setIndexCurrentChord(me.beatIndex - 1)
         }
         me.playBeatAt(nextLoopTime, beats[me.beatIndex], bpm)
         nextLoopTime = nextLoopTime + density * wholeNoteDuration
+        me.beatIndex++
       }
     }, 22)
   }
@@ -79,7 +84,6 @@ class Player {
   }
   playBeatAt(when, beat, bpm) {
     var chords = beat
-    console.log(chords)
     var N = (4 * 60) / bpm
     for (var i = 0; i < chords.length; i++) {
       var chord = chords[i]
@@ -91,7 +95,7 @@ class Player {
         kind = chord[3]
       }
       if (kind === 1) {
-        this.playStrumDownAt(when, instrument, pitches, duration * N)
+        this.th(when, instrument, pitches, duration * N)
       } else {
         if (kind === 2) {
           this.playStrumUpAt(when, instrument, pitches, duration * N)
@@ -129,7 +133,7 @@ class Player {
       this.cacheInstrument(instrument)
     }
   }
-  playStrumDownAt(when, instrument, pitches, duration) {
+  th(when, instrument, pitches, duration) {
     var info = this.player.loader.instrumentInfo(instrument)
     if (window[info.variable]) {
       this.player.queueStrumDown(
@@ -168,7 +172,7 @@ class Player {
     this.playStrumUpAt(0, instrument, pitches, duration)
   }
   playStrumDownNow(instrument, pitches, duration) {
-    this.playStrumDownAt(0, instrument, pitches, duration)
+    this.th(0, instrument, pitches, duration)
   }
   playSnapNow(instrument, pitches, duration) {
     this.playSnapAt(0, instrument, pitches, duration)
