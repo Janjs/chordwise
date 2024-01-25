@@ -2,19 +2,20 @@
 
 import { FC, useEffect, useRef, useState } from 'react'
 import { Progression } from '@/types/types'
-import ProgressionItem from './list/progression-item'
-import MIDISounds from '@/lib/midisoundsreact'
-import PlayerSettings, { DEFAULT_PITCH, DEFAULT_TEMPO, Instrument, MASTER_VOLUME } from './player-settings'
-import { Separator } from './ui/separator'
-import { Icons } from './icons'
+import ProgressionItem from '@/components/list/progression-item'
+import Player from '@/components/player/player'
+import PlayerSettings, { DEFAULT_PITCH, DEFAULT_TEMPO, Instrument } from './player-settings'
+import { Separator } from '../ui/separator'
+import { Icons } from '../icons'
 import InstrumentViewer from './instrument-viewer'
+
 import { convertToPitch } from '@/lib/utils'
 
-interface PlayerProps {
+interface PlayerContainerProps {
   progressions: Progression[]
 }
 
-const Player: FC<PlayerProps> = (props) => {
+const PlayerContainer: FC<PlayerContainerProps> = (props) => {
   const { progressions } = props
 
   // player settings
@@ -27,29 +28,34 @@ const Player: FC<PlayerProps> = (props) => {
   const [indexCurrentProgression, setIndexCurrentProgression] = useState<number>(0)
   const [indexCurrentChord, setIndexCurrentChord] = useState<number>(-1)
 
-  const midiSoundsRef = useRef<MIDISounds | null>(null)
+  const player = useRef<Player | null>(null)
 
   useEffect(() => {
-    midiSoundsRef.current?.setMasterVolume(MASTER_VOLUME)
+    player.current = new Player(instrumentValues)
+    return () => {
+      if (player.current) {
+        player.current?.stopPlayLoop()
+      }
+    }
   }, [])
 
   const playProgression = (indexChordProgression: number) => {
     setIsPlaying(true)
-    if (midiSoundsRef.current) {
+    if (player.current) {
       const progression = progressions[indexChordProgression]
-
       const beats = progression.chords.map((chord) => [
         [Instrument[instrumentKey], chord.midi.map((midi) => convertToPitch(midi, pitch)), 1, 1],
       ])
-      console.log(beats)
-      midiSoundsRef.current?.startPlayLoop(beats, tempo, 1, midiSoundsRef.current?.beatIndex)
+
+      player.current?.startPlayLoop(beats, tempo, 1, 0)
     }
   }
 
   const stopProgression = () => {
-    console.log('stopped')
     setIsPlaying(false)
-    midiSoundsRef.current?.stopPlayLoop()
+    if (player.current) {
+      player.current?.stopPlayLoop()
+    }
   }
 
   const handlePlay = (indexChordProgression: number) => {
@@ -78,9 +84,6 @@ const Player: FC<PlayerProps> = (props) => {
             />
           </li>
         ))}
-        <div className="hidden">
-          <MIDISounds ref={midiSoundsRef} instruments={instrumentValues} />
-        </div>
       </ul>
 
       <div className="hidden h-full flex-1 flex-col gap-5 md:flex">
@@ -124,4 +127,4 @@ const Player: FC<PlayerProps> = (props) => {
   )
 }
 
-export default Player
+export default PlayerContainer

@@ -5,7 +5,7 @@ import UserInput, { formSchema } from '@/components/user-input'
 import * as z from 'zod'
 import { Progression } from '@/types/types'
 import { Alert, AlertTitle } from '@/components/ui/alert'
-import Player from '@/components/player'
+import PlayerContainer from '@/components/player/player-container'
 import { Icons } from '@/components/icons'
 import { Separator } from '@/components/ui/separator'
 
@@ -42,7 +42,9 @@ const Page = () => {
 
   return (
     <div className="flex h-full max-w-7xl flex-1 flex-col justify-between pb-1 pl-3 pr-3">
-      <div className="flex-1 overflow-auto">{progressions.length > 0 && <Player progressions={progressions} />}</div>
+      <div className="flex-1 overflow-auto">
+        {progressions.length > 0 && <PlayerContainer progressions={progressions} />}
+      </div>
       {error && (
         <Alert variant="destructive">
           <Icons.warning className="h-4 w-4" />

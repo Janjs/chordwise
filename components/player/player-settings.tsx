@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
-import { Separator } from './ui/separator'
+import { Separator } from '../ui/separator'
 
 // list of instruments: https://surikov.github.io/midi-sounds-react-examples/examples/midi-sounds-example3/build/
 export enum Instrument {
@@ -21,7 +21,6 @@ export enum Instrument {
 
 export const DEFAULT_TEMPO = 120
 export const DEFAULT_PITCH = 4
-export const MASTER_VOLUME = 0.05
 
 interface PlayerSettingsProps {
   instrumentKey: keyof typeof Instrument

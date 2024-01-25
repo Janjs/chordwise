@@ -1,8 +1,8 @@
 import { FC, useState } from 'react'
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
-import GuitarChordProgViewer, { GuitarChordProgViewerProps } from './guitar/guitar-chord-prog'
-import Piano, { PianoViewerProps } from './piano/piano'
+import GuitarChordProgViewer, { GuitarChordProgViewerProps } from '../guitar/guitar-chord-prog'
+import Piano, { PianoViewerProps } from '../piano/piano'
 
 interface InstrumentViewerProps<GuitarChordProgViewerProps, PianoViewerProps> {
   guitarChordProgViewerProps: GuitarChordProgViewerProps
