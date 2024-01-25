@@ -100,7 +100,7 @@ const UserInput: FC<UserInputProps> = (props) => {
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormControl>
-                  <Input placeholder="Chords in the style of Nirvana" {...field} className="text-md" />
+                  <Input placeholder="Describe the vibe of the chord progression" {...field} className="text-md" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
