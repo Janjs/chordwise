@@ -20,7 +20,7 @@ export enum Instrument {
   flute = 771,
 }
 
-export const DEFAULT_TEMPO = 120
+export const DEFAULT_TEMPO = 300
 export const DEFAULT_PITCH = 4
 
 interface PlayerSettingsProps {

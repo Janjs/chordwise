@@ -26,7 +26,6 @@ const PlayerControls: FC<PlayerControlsProps> = (props) => {
     stopProgression,
     playProgression,
   } = props
-  console.log(indexCurrentProgression)
   return (
     <div className="flex flex-1 flex-row items-center justify-around gap-5 p-5">
       <Button

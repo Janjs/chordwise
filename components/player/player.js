@@ -55,22 +55,16 @@ class Player {
     } else {
       this.beatIndex = 0
     }
-    setIndexCurrentChord(this.beatIndex)
-    this.playBeatAt(this.contextTime(), beats[this.beatIndex], bpm)
-    var nextLoopTime = this.contextTime() + density * wholeNoteDuration
-    this.beatIndex++
+    var nextLoopTime = this.contextTime()
     var me = this
     this.loopIntervalID = setInterval(function () {
-      if (me.contextTime() > nextLoopTime - density * wholeNoteDuration) {
+      if (me.contextTime() > nextLoopTime) {
         if (me.beatIndex >= beats.length) {
-          // if (!loop) {
-          //   clearInterval(this.loopIntervalID)
-          //   return
-          // }
           me.beatIndex = 0
-          setIndexCurrentChord(beats.length - 1)
-        } else {
-          setIndexCurrentChord(me.beatIndex - 1)
+        }
+        setIndexCurrentChord(me.beatIndex)
+        if (me.beatIndex >= beats.length) {
+          me.beatIndex = 0
         }
         me.playBeatAt(nextLoopTime, beats[me.beatIndex], bpm)
         nextLoopTime = nextLoopTime + density * wholeNoteDuration
