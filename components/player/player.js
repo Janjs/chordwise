@@ -47,7 +47,7 @@ class Player {
       console.log('cached', n, info.title)
     })
   }
-  startPlay(beats, bpm, density, fromBeat, loop, setIndexCurrentChord) {
+  startPlay(beats, bpm, density, fromBeat, loop, setIndexCurrentChord, setIsPlaying) {
     this.stopPlay()
     var wholeNoteDuration = (4 * 60) / bpm
     if (fromBeat < beats.length) {
@@ -60,6 +60,11 @@ class Player {
     this.loopIntervalID = setInterval(function () {
       if (me.contextTime() > nextLoopTime) {
         if (me.beatIndex >= beats.length) {
+          if (!loop) {
+            setIndexCurrentChord(-1)
+            setIsPlaying(false)
+            return
+          }
           me.beatIndex = 0
         }
         setIndexCurrentChord(me.beatIndex)

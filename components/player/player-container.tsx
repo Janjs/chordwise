@@ -54,6 +54,7 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
         indexCurrentChord == -1 ? 0 : indexCurrentChord,
         loop,
         setIndexCurrentChord,
+        setIsPlaying,
       )
     }
   }
