@@ -1,7 +1,6 @@
 'use client'
 
 import ModeToggle from '@/components/mode-toggle'
-import ThemedLogo from '@/assets/themed-logo'
 import { Icons } from '@/components/icons'
 import { usePathname } from 'next/navigation'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -10,30 +9,13 @@ import Link from 'next/link'
 
 export default function Header() {
   const pathname = usePathname()
+  console.log(pathname)
   return (
     <header className="bg-transparent">
       <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 px-8" aria-label="Global">
         <Link href="/" className="flex-1">
           <Icons.logo className="h-5 w-auto" />
         </Link>
-        <div className="flex flex-1 justify-center text-center italic">
-          {!(pathname === '/') && (
-            <Tabs defaultValue="generate" className="flex w-[250px] justify-center">
-              <TabsList>
-                <TabsTrigger value="generate" className="gap-2">
-                  Generate
-                  <Icons.generate size={15} />
-                </TabsTrigger>
-                <TabsTrigger value="explore" className="gap-2">
-                  Explore
-                  <Icons.cassette size={18} />
-                </TabsTrigger>
-              </TabsList>
-              <TabsContent value="generate"></TabsContent>
-              <TabsContent value="explore"></TabsContent>
-            </Tabs>
-          )}
-        </div>
         <div className="flex flex-1 justify-end gap-3">
           <About />
           <ModeToggle />

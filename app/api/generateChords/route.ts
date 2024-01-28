@@ -4,7 +4,7 @@ import { Progression } from '@/types/types'
 import { NextResponse } from 'next/server'
 import { Midi as TonalMidi, Chord as TonalChord } from 'tonal'
 
-const MOCK = process.env.MOCK_API === 'false' || true
+const MOCK = process.env.MOCK_API === 'true' || false
 
 const openai = new OpenAI()
 
@@ -17,6 +17,8 @@ export interface GenerateProgressionsRequest {
 export async function POST(req: Request) {
   if (MOCK) return NextResponse.json({ progressions: parseProgressions(MOCK_DATA) })
   // if (MOCK) return NextResponse.json(MOCK_DATA_2)
+
+  console.log(MOCK)
 
   const userInput: GenerateProgressionsRequest = await req.json()
 
@@ -77,8 +79,8 @@ const getProgressionMidis = (representation: string) => {
 const MOCK_DATA = {
   chord_progressions: [
     ['G', 'Fm7', 'Dm7b5', 'G7'],
-    ['Dm7b5', 'G7', 'Cm7', 'Abmaj7'],
-    ['Gm7', 'Cm7', 'Fm7', 'Bb7'],
+    ['Dm7b5', 'G7', 'Cm7'],
+    ['Gm7', 'Cm7', 'Fm7', 'Bb7', 'C'],
     ['Cm7', 'Ebmaj7', 'Abmaj7', 'G7'],
     ['Fm7', 'Bb7', 'Ebmaj7', 'Abmaj7'],
   ],

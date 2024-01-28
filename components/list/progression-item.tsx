@@ -19,23 +19,21 @@ const ProgressionItem: FC<ProgressionItemProps> = (props) => {
   return (
     <div
       onClick={() => handlePlay(index)}
-      className={`mb-4 flex flex-row items-center gap-10 rounded-2xl hover:bg-secondary
-         p-4 ${isPlaying(index) ? 'bg-card' : 'border border-card'} 
+      className={`p-4 mb-4 flex flex-row rounded-2xl hover:bg-secondary overflow-x-auto gap-4
+         ${isPlaying(index) ? 'bg-card' : 'border border-card'} 
       `}
     >
-      <div className="flex-1 columns-4 gap-4 rounded-lg">
-        {progression.chords.map((chord, j) => (
-          <h1
-            key={j}
-            className={`flex aspect-square items-center justify-center rounded-lg border text-2xl font-bold 
+      {progression.chords.map((chord, j) => (
+        <h1
+          key={j}
+          className={`flex-none width-with-gap
+        aspect-square flex items-center justify-center rounded-lg border text-2xl font-bold 
             ${isChordPlaying(j) ? 'bg-primary' : ''} 
-            ${isPlaying(index) ? 'border-primary' : 'border-card'} 
-            p-2`}
-          >
-            {chord.representation}
-          </h1>
-        ))}
-      </div>
+            ${isPlaying(index) ? 'border-primary' : 'border-card'}`}
+        >
+          {chord.representation}
+        </h1>
+      ))}
     </div>
   )
 }

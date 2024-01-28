@@ -70,6 +70,12 @@
   }
 }
 
+@layer components {
+  .width-with-gap {
+    width: calc(25% - 0.75rem); /* Adjusting for 3 gaps */
+  }
+}
+
 .custom-scrollbar::-webkit-scrollbar {
   display: none; /* for Chrome, Safari, and Opera */
 }

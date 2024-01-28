@@ -37,7 +37,7 @@ class Player {
     this.volumesInstrument = []
     this.midiNotes = []
     this.instruments.map((instrument) => {
-      this.setKeyboardInstrument(instrument)
+      this.cacheInstrument(instrument)
     })
   }
   cacheInstrument(n) {
@@ -190,16 +190,6 @@ class Player {
   }
   setInstrumentVolume(instrument, volume) {
     this.volumesInstrument[instrument] = volume
-  }
-  setKeyboardInstrument(n) {
-    var info = this.player.loader.instrumentInfo(n)
-    if (window[info.variable]) {
-      return
-    }
-    this.player.loader.startLoad(this.audioContext, info.url, info.variable)
-    this.player.loader.waitLoad(function () {
-      console.log('cached', n, info.title)
-    })
   }
 }
 
