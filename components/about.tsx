@@ -9,6 +9,7 @@ import {
   AlertDialogFooter,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
+import Footer from '@/app/footer'
 
 export default function About() {
   return (
@@ -21,6 +22,7 @@ export default function About() {
         </AlertDialogTrigger>
         <AlertDialogContent>
           Welcome to Chordwise
+          <Footer />
           <AlertDialogFooter>
             <AlertDialogCancel>close</AlertDialogCancel>
           </AlertDialogFooter>
