@@ -1,15 +1,15 @@
 import { FC, useState } from 'react'
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
-import GuitarChordProgViewer, { GuitarChordProgViewerProps } from '../guitar/guitar-chord-prog'
 import Piano, { PianoViewerProps } from '../piano/piano'
+import GuitarProgViewer, { GuitarProgViewerProps } from '../guitar/guitar-prog'
 
 interface InstrumentViewerProps<GuitarChordProgViewerProps, PianoViewerProps> {
   guitarChordProgViewerProps: GuitarChordProgViewerProps
   pianoViewerProps: PianoViewerProps
 }
 
-const InstrumentViewer: FC<InstrumentViewerProps<GuitarChordProgViewerProps, PianoViewerProps>> = ({
+const InstrumentViewer: FC<InstrumentViewerProps<GuitarProgViewerProps, PianoViewerProps>> = ({
   guitarChordProgViewerProps,
   pianoViewerProps,
 }) => {
@@ -25,7 +25,7 @@ const InstrumentViewer: FC<InstrumentViewerProps<GuitarChordProgViewerProps, Pia
         <AccordionItem value="guitar">
           <AccordionTrigger>Guitar</AccordionTrigger>
           <AccordionContent>
-            <GuitarChordProgViewer {...guitarChordProgViewerProps} />
+            <GuitarProgViewer {...guitarChordProgViewerProps} />
           </AccordionContent>
         </AccordionItem>
       </Accordion>

@@ -11,14 +11,14 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 
-export interface GuitarChordProgViewerProps {
+export interface GuitarProgViewerProps {
   index: number
   chordProgression: Progression
   isPlaying: (i: number) => boolean
   indexChordPlaying: number
 }
 
-const GuitarChordProgViewer: FC<GuitarChordProgViewerProps> = (props) => {
+const GuitarProgViewer: FC<GuitarProgViewerProps> = (props) => {
   const { index, chordProgression, isPlaying, indexChordPlaying } = props
 
   const isChordPlaying = (chord: number) => isPlaying(index) && indexChordPlaying === chord
@@ -46,4 +46,4 @@ const GuitarChordProgViewer: FC<GuitarChordProgViewerProps> = (props) => {
   )
 }
 
-export default GuitarChordProgViewer
+export default GuitarProgViewer
