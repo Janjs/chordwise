@@ -4,7 +4,7 @@ import { Progression } from '@/types/types'
 import { NextResponse } from 'next/server'
 import { Midi as TonalMidi, Chord as TonalChord } from 'tonal'
 
-const MOCK = true
+const MOCK = process.env.MOCK_API === 'false' || true
 
 const openai = new OpenAI()
 
