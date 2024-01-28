@@ -19,8 +19,8 @@ const ProgressionItem: FC<ProgressionItemProps> = (props) => {
   return (
     <div
       onClick={() => handlePlay(index)}
-      className={`mb-4 flex flex-row items-center gap-10 rounded-2xl 
-         p-4 ${isPlaying(index) ? 'bg-card hover:bg-card' : 'border border-card hover:bg-secondary'} 
+      className={`mb-4 flex flex-row items-center gap-10 rounded-2xl hover:bg-secondary
+         p-4 ${isPlaying(index) ? 'bg-card' : 'border border-card'} 
       `}
     >
       <div className="flex-1 columns-4 gap-4 rounded-lg">
