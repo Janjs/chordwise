@@ -26,7 +26,7 @@ const GuitarProgViewer: FC<GuitarProgViewerProps> = (props) => {
   return (
     <AlertDialog>
       <AlertDialogTrigger>
-        <div className="flex-1 columns-4 rounded-sm hover:bg-secondary">
+        <div className="grid grid-cols-4 gap-4 rounded-sm hover:bg-secondary">
           {chordProgression.chords.map((chord, i) => (
             <GuitarChord key={i} chord={chord} dialog={false} />
           ))}
