@@ -8,36 +8,29 @@ import { Alert, AlertTitle } from '@/components/ui/alert'
 import PlayerContainer from '@/components/player/player-container'
 import { Icons } from '@/components/icons'
 import { Separator } from '@/components/ui/separator'
+import { SubmitHandler } from 'react-hook-form'
+import { generateChordProgressions } from './_actions'
+
+type Inputs = z.infer<typeof formSchema>
 
 const Page = () => {
-  const [loading, setLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [progressions, setProgressions] = useState<Progression[]>([])
   const [error, setError] = useState(null)
 
-  const handleSubmit = (values: z.infer<typeof formSchema>) => {
-    setLoading(true)
+  const handleSubmit: SubmitHandler<Inputs> = async (input) => {
+    setIsLoading(true)
     setError(null)
     setProgressions([])
 
-    setTimeout(() => {
-      fetch('/api/generateChords', {
-        method: 'POST',
-        body: JSON.stringify({
-          description: values.description,
-          musicalKey: values.musicalKey,
-          musicalScale: values.musicalScale,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          setProgressions(data.progressions)
-        })
-        .catch((error) => setError(error))
-        .finally(() => setLoading(false))
-    }, 1000)
+    try {
+      const data = await generateChordProgressions(input)
+      setProgressions(data.progressions)
+    } catch (error: any) {
+      setError(error)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -47,13 +40,13 @@ const Page = () => {
       </div>
       {error && (
         <Alert variant="destructive">
-          <Icons.warning className="h-2 w-2" />
+          <Icons.warning className="h-4 w-4" />
           <AlertTitle>Something went wrong</AlertTitle>
         </Alert>
       )}
       <Separator className="mb-5 bg-card" />
       <div className="flex-none rounded-xl border bg-card p-3">
-        <UserInput onSubmit={handleSubmit} loading={loading} />
+        <UserInput onSubmit={handleSubmit} isLoading={isLoading} />
       </div>
     </div>
   )

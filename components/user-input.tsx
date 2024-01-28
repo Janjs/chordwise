@@ -1,28 +1,19 @@
 'use client'
 
 import { FC } from 'react'
-import { Loader2 } from 'lucide-react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 
 import { Button } from '@/components/ui/button'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
-import { Controller, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { Icons } from './icons'
 
 interface UserInputProps {
   onSubmit: (values: z.infer<typeof formSchema>) => void
-  loading: boolean
+  isLoading: boolean
 }
 
 export const formSchema = z.object({
@@ -35,7 +26,7 @@ const MUSICAL_KEYS = ['C', 'Db/C#', 'D', 'Eb', 'E', 'F', 'Gb/F#', 'G', 'Ab', 'A'
 const MUSICAL_SCALES = ['major', 'minor']
 
 const UserInput: FC<UserInputProps> = (props) => {
-  const { onSubmit, loading } = props
+  const { onSubmit, isLoading } = props
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -106,7 +97,7 @@ const UserInput: FC<UserInputProps> = (props) => {
               </FormItem>
             )}
           />
-          {!loading ? (
+          {!isLoading ? (
             <Button type="submit" size="icon">
               <Icons.generate className="h-4 w-10" />
             </Button>

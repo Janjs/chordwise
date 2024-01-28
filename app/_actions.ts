@@ -1,8 +1,13 @@
+'use server'
+
+import { formSchema } from '@/components/user-input'
+import { z } from 'zod'
+import { Progression } from '@/types/types'
+import { Midi as TonalMidi, Chord as TonalChord } from 'tonal'
 import OpenAI from 'openai'
 import { ChatCompletionMessageParam } from 'openai/resources/chat'
-import { Progression } from '@/types/types'
-import { NextResponse } from 'next/server'
-import { Midi as TonalMidi, Chord as TonalChord } from 'tonal'
+
+type Inputs = z.infer<typeof formSchema>
 
 const MOCK = process.env.MOCK_API === 'true' || false
 
@@ -14,13 +19,10 @@ export interface GenerateProgressionsRequest {
   musicalScale: string
 }
 
-export async function POST(req: Request) {
-  if (MOCK) return NextResponse.json({ progressions: parseProgressions(MOCK_DATA) })
-  // if (MOCK) return NextResponse.json(MOCK_DATA_2)
+export const generateChordProgressions = async (data: Inputs) => {
+  if (MOCK) return { progressions: parseProgressions(MOCK_DATA) }
 
-  console.log(MOCK)
-
-  const userInput: GenerateProgressionsRequest = await req.json()
+  const userInput: GenerateProgressionsRequest = data
 
   const messages: ChatCompletionMessageParam[] = [
     {
@@ -48,11 +50,11 @@ export async function POST(req: Request) {
 
   const response = JSON.parse(completion.choices[0]!.message?.content!)
 
-  if (!response || response === '') {
+  if (!response || response === '' || !response.chord_progressions) {
     throw new Error('Error while generating chord progressions.')
   }
 
-  return NextResponse.json({ progressions: parseProgressions(response) })
+  return { progressions: parseProgressions(response) }
 }
 
 const parseProgressions = (data: typeof MOCK_DATA): Progression[] => {
