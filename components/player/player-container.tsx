@@ -10,6 +10,7 @@ import InstrumentViewer from './instrument-viewer'
 
 import { convertToPitch } from '@/lib/utils'
 import PlayerControls from './player-controls'
+import ProgressionList from '@/components/list/progression-list'
 
 interface PlayerContainerProps {
   progressions: Progression[]
@@ -81,19 +82,12 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
 
   return (
     <div className="flex h-full flex-1 flex-col gap-5 md:flex-row">
-      <ul className="custom-scrollbar flex-1 overflow-y-auto">
-        {progressions.map((progression, index) => (
-          <li key={index}>
-            <ProgressionItem
-              index={index}
-              progression={progression}
-              handlePlay={handlePlay}
-              isPlaying={isProgressionPlaying}
-              indexChordPlaying={indexCurrentChord}
-            />
-          </li>
-        ))}
-      </ul>
+      <ProgressionList
+        progressions={progressions}
+        handlePlay={handlePlay}
+        indexCurrentProgression={indexCurrentProgression}
+        indexCurrentChord={indexCurrentChord}
+      />
 
       <div className="hidden h-full flex-1 flex-col gap-5 md:flex">
         <div className="bg-card flex flex-1 flex-row overflow-auto rounded-xl p-5 pt-1">
