@@ -41,13 +41,13 @@ const Page = () => {
   }
 
   return (
-    <div className="flex h-full max-w-7xl flex-1 flex-col justify-between pb-1 pl-3 pr-3">
+    <div className="flex h-full max-w-7xl flex-1 flex-col justify-between p-4">
       <div className="flex-1 overflow-auto">
         {progressions.length > 0 && <PlayerContainer progressions={progressions} />}
       </div>
       {error && (
         <Alert variant="destructive">
-          <Icons.warning className="h-4 w-4" />
+          <Icons.warning className="h-2 w-2" />
           <AlertTitle>Something went wrong</AlertTitle>
         </Alert>
       )}
