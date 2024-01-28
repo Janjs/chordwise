@@ -22,8 +22,8 @@ export const formSchema = z.object({
   musicalScale: z.string(),
 })
 
-const MUSICAL_KEYS = ['C', 'Db/C#', 'D', 'Eb', 'E', 'F', 'Gb/F#', 'G', 'Ab', 'A', 'Bb', 'B/Cb']
-const MUSICAL_SCALES = ['major', 'minor']
+export const MUSICAL_KEYS = ['C', 'Db/C#', 'D', 'Eb', 'E', 'F', 'Gb/F#', 'G', 'Ab', 'A', 'Bb', 'B/Cb']
+export const MUSICAL_SCALES = ['major', 'minor']
 
 const UserInput: FC<UserInputProps> = (props) => {
   const { onSubmit, isLoading } = props

@@ -2,7 +2,7 @@
 
 import { formSchema } from '@/components/user-input'
 import { z } from 'zod'
-import { Progression } from '@/types/types'
+import { GenerateProgressionsRequest, Progression } from '@/types/types'
 import { Midi as TonalMidi, Chord as TonalChord } from 'tonal'
 import OpenAI from 'openai'
 import { ChatCompletionMessageParam } from 'openai/resources/chat'
@@ -13,16 +13,8 @@ const MOCK = process.env.MOCK_API === 'true' || false
 
 const openai = new OpenAI()
 
-export interface GenerateProgressionsRequest {
-  description: string
-  musicalKey: string
-  musicalScale: string
-}
-
-export const generateChordProgressions = async (data: Inputs) => {
+export const generateChordProgressions = async (userInput: GenerateProgressionsRequest) => {
   if (MOCK) return { progressions: parseProgressions(MOCK_DATA) }
-
-  const userInput: GenerateProgressionsRequest = data
 
   const messages: ChatCompletionMessageParam[] = [
     {
