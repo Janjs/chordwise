@@ -18,7 +18,7 @@ export default function About() {
   return (
     <>
       <AlertDialog>
-        <AlertDialogTrigger>
+        <AlertDialogTrigger asChild>
           <Button variant="ghost" className="h-10 w-10">
             <Icons.info className="absolute scale-100" />
           </Button>
