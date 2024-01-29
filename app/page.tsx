@@ -16,7 +16,7 @@ type Inputs = z.infer<typeof formSchema>
 
 const DESCRIPTION_KEY = 'description'
 const MUSICAL_KEY_KEY = 'musicalKey'
-const MUSICAL_SCALE_KEY = 'musicalKey'
+const MUSICAL_SCALE_KEY = 'musicalScale'
 
 const Page = () => {
   const [isLoading, setIsLoading] = useState(false)
