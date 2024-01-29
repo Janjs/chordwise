@@ -8,7 +8,7 @@ export const MUSICAL_SCALE_PARAM_KEY = 'musicalScale'
 
 const useGenerateSearchParams = (): [
   params: GenerateProgressionsRequest,
-  (newParams: GenerateProgressionsRequest) => void,
+  setParams: (newParams: GenerateProgressionsRequest) => void,
 ] => {
   const router = useRouter()
   const pathname = usePathname()
@@ -22,7 +22,6 @@ const useGenerateSearchParams = (): [
     return { description, musicalKey, musicalScale } as GenerateProgressionsRequest
   }, [searchParams])
 
-  // Function to set search parameters
   const setParams = (newParams: GenerateProgressionsRequest) => {
     const params = new URLSearchParams(searchParams.toString())
 
