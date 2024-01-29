@@ -1,19 +1,17 @@
 'use server'
 
-import { formSchema } from '@/components/user-input'
-import { z } from 'zod'
-import { GenerateProgressionsRequest, Progression } from '@/types/types'
+import { GenerateProgressionsRequest, GenerateProgressionsResponse, Progression } from '@/types/types'
 import { Midi as TonalMidi, Chord as TonalChord } from 'tonal'
 import OpenAI from 'openai'
 import { ChatCompletionMessageParam } from 'openai/resources/chat'
-
-type Inputs = z.infer<typeof formSchema>
 
 const MOCK = process.env.MOCK_API === 'true' || false
 
 const openai = new OpenAI()
 
-export const generateChordProgressions = async (userInput: GenerateProgressionsRequest) => {
+export const generateChordProgressions = async (
+  userInput: GenerateProgressionsRequest,
+): Promise<GenerateProgressionsResponse> => {
   if (MOCK) return { progressions: parseProgressions(MOCK_DATA) }
 
   const messages: ChatCompletionMessageParam[] = [
@@ -43,7 +41,7 @@ export const generateChordProgressions = async (userInput: GenerateProgressionsR
   const response = JSON.parse(completion.choices[0]!.message?.content!)
 
   if (!response || response === '' || !response.chord_progressions) {
-    throw new Error('Error while generating chord progressions.')
+    return { error: 'Error while generating chord progressions.' }
   }
 
   return { progressions: parseProgressions(response) }

@@ -20,7 +20,7 @@
     --foreground: 240 10% 3.9%;
     --card: var(--glacier-50);
     --card-foreground: 240 10% 3.9%;
-    --popover: var(--glacier-0);
+    --popover: var(--glacier-50);
     --popover-foreground: 240 10% 3.9%;
     --primary: var(--glacier-300);
     --primary-foreground: 195 80.4% 10%;

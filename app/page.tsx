@@ -3,70 +3,53 @@
 import { useCallback, useEffect, useState } from 'react'
 import UserInput, { formSchema } from '@/components/user-input'
 import * as z from 'zod'
-import { GenerateProgressionsRequest, Progression } from '@/types/types'
+import { GenerateProgressionsRequest, GenerateProgressionsResponse, Progression } from '@/types/types'
 import { Alert, AlertTitle } from '@/components/ui/alert'
 import PlayerContainer from '@/components/player/player-container'
 import { Icons } from '@/components/icons'
 import { Separator } from '@/components/ui/separator'
 import { SubmitHandler } from 'react-hook-form'
 import { generateChordProgressions } from './_actions'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import useGenerateSearchParams from '@/hooks/useGenerateSearchParams'
 
 type Inputs = z.infer<typeof formSchema>
-
-const DESCRIPTION_KEY = 'description'
-const MUSICAL_KEY_KEY = 'musicalKey'
-const MUSICAL_SCALE_KEY = 'musicalScale'
 
 const Page = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [progressions, setProgressions] = useState<Progression[]>([])
-  const [error, setError] = useState(null)
+  const [error, setError] = useState<string | null>(null)
 
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const description = searchParams.get(DESCRIPTION_KEY)
-  const musicalKey = searchParams.get(MUSICAL_KEY_KEY)
-  const musicalScale = searchParams.get(MUSICAL_SCALE_KEY)
+  const [params, setParams] = useGenerateSearchParams()
 
   useEffect(() => {
-    if (description && musicalKey && musicalScale) {
+    if (params.description && params.musicalKey && params.musicalScale) {
       // TODO: validate musicalKey && musicalScale
-      fetchData(description, musicalKey, musicalScale)
+      console.log('fetching')
+      fetchData(params)
     }
-  }, [searchParams])
-
-  const createQueryString = useCallback(
-    (input: Inputs) => {
-      const params = new URLSearchParams(searchParams.toString())
-
-      params.set(DESCRIPTION_KEY, input.description)
-      params.set(MUSICAL_KEY_KEY, input.musicalKey)
-      params.set(MUSICAL_SCALE_KEY, input.musicalScale)
-
-      return params.toString()
-    },
-    [searchParams],
-  )
+  }, [params])
 
   const handleSubmit: SubmitHandler<Inputs> = async (input) => {
-    router.push(pathname + '?' + createQueryString(input))
+    const generateProgressionsRequest: GenerateProgressionsRequest = {
+      description: input.description,
+      musicalKey: input.musicalKey,
+      musicalScale: input.musicalScale,
+    }
+    setParams(generateProgressionsRequest)
   }
 
-  const fetchData = async (description: string, musicalKey: string, musicalScale: string) => {
+  const fetchData = async (generateProgressionsRequest: GenerateProgressionsRequest) => {
     setIsLoading(true)
     setError(null)
     setProgressions([])
 
     try {
-      const generateProgressionsRequest: GenerateProgressionsRequest = {
-        description,
-        musicalKey,
-        musicalScale,
-      }
-      const data = await generateChordProgressions(generateProgressionsRequest)
-      setProgressions(data.progressions)
+      console.log(generateProgressionsRequest)
+      const response: GenerateProgressionsResponse = await generateChordProgressions(generateProgressionsRequest)
+
+      if (response.progressions) setProgressions(response.progressions)
+      else if (response.error) setError(response.error)
+      else throw Error('Error while generating chord progressions.')
     } catch (error: any) {
       setError(error)
     } finally {

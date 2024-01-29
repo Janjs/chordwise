@@ -12,3 +12,8 @@ export interface GenerateProgressionsRequest {
   musicalKey: string
   musicalScale: string
 }
+
+export interface GenerateProgressionsResponse {
+  error?: string
+  progressions?: Progression[]
+}
