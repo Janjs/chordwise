@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import UserInput, { formSchema } from '@/components/user-input'
 import * as z from 'zod'
 import { GenerateProgressionsRequest, GenerateProgressionsResponse, Progression } from '@/types/types'
