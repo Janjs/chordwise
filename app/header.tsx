@@ -14,7 +14,7 @@ export default function Header() {
   const [{ description, musicalKey, musicalScale }, setParams] = useGenerateSearchParams()
   return (
     <header className="bg-transparent">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 px-8" aria-label="Global">
+      <nav className="mx-auto flex gap-4 max-w-7xl items-center justify-between p-6 px-8" aria-label="Global">
         <Icons.logo className="h-5 w-auto" />
         {description && (
           <Popover>

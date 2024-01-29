@@ -45,7 +45,7 @@ const ProgressionItem: FC<ProgressionItemProps> = (props) => {
           key={j}
           ref={(el) => (itemRefs.current[j] = el)}
           className={`flex-none width-with-gap
-        aspect-square flex items-center justify-center rounded-lg border text-xl sm:text-xl md:text-md lg:text-2xl font-bold 
+        aspect-square flex items-center justify-center rounded-lg border text-xl md:text-sm lg:text-2xl font-bold 
             ${isCurrentChord(j) ? 'bg-primary' : ''} 
             ${indexCurrentProgression == index ? 'border-primary' : 'border-card'}
             ${isCurrentChord(j) ? 'selected' : ''}
