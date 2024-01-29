@@ -15,6 +15,8 @@ interface PlayerControlsProps {
   playProgression: (indexChordProgression: number) => void
 }
 
+const ICON_SIZE = 20
+
 const PlayerControls: FC<PlayerControlsProps> = (props) => {
   const {
     progressionsLength,
@@ -27,7 +29,23 @@ const PlayerControls: FC<PlayerControlsProps> = (props) => {
     playProgression,
   } = props
   return (
-    <div className="flex flex-1 flex-row items-center justify-around gap-5 p-5">
+    <div className="flex flex-1 flex-row items-center justify-around p-2">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => {
+          setIndexCurrentProgression((curr) => {
+            let randomIndex
+            do {
+              randomIndex = Math.floor(Math.random() * progressionsLength)
+            } while (randomIndex === curr)
+            playProgression(randomIndex)
+            return randomIndex
+          })
+        }}
+      >
+        <Icons.random size={17} />
+      </Button>
       <Button
         variant="ghost"
         size="icon"
@@ -41,15 +59,15 @@ const PlayerControls: FC<PlayerControlsProps> = (props) => {
           })
         }
       >
-        <Icons.skipBack size={25} />
+        <Icons.skipBack size={20} />
       </Button>
       {isPlaying ? (
         <Button variant="ghost" size="icon" onClick={() => stopProgression()}>
-          <Icons.pause size={25} />
+          <Icons.pause size={20} />
         </Button>
       ) : (
         <Button variant="ghost" size="icon" onClick={() => playProgression(indexCurrentProgression)}>
-          <Icons.play size={25} />
+          <Icons.play size={20} />
         </Button>
       )}
       <Button
@@ -65,10 +83,10 @@ const PlayerControls: FC<PlayerControlsProps> = (props) => {
           })
         }
       >
-        <Icons.skipForward size={25} />
+        <Icons.skipForward size={ICON_SIZE} />
       </Button>
       <Button variant={loop ? 'default' : 'ghost'} onClick={() => setLoop((loop) => !loop)}>
-        <Icons.repeat size={25} />
+        <Icons.repeat size={21} />
       </Button>
     </div>
   )

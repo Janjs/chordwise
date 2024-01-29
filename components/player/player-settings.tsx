@@ -20,6 +20,7 @@ export enum Instrument {
   flute = 771,
 }
 
+export const MASTER_VOLUME = 0.05
 export const DEFAULT_TEMPO = 300
 export const DEFAULT_PITCH = 4
 

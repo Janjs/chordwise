@@ -1,9 +1,9 @@
 import WebAudioFontPlayer from 'webaudiofont'
 
 class Player {
-  constructor(instruments) {
+  constructor(instruments, master) {
     this.instruments = instruments
-    this.master = 0.05
+    this.master = master
     this.echoAmount = 0.5
     this.initAudio()
   }
@@ -183,10 +183,7 @@ class Player {
     this.playSnapAt(0, instrument, pitches, duration)
   }
   setMasterVolume(volume) {
-    this.output.gain.setTargetAtTime(volume, 0, 0.0001)
-    this.setState({
-      master: volume,
-    })
+    this.volume = volume
   }
   setInstrumentVolume(instrument, volume) {
     this.volumesInstrument[instrument] = volume

@@ -33,7 +33,7 @@ const GuitarProgViewer: FC<GuitarProgViewerProps> = (props) => {
         </div>
       </AlertDialogTrigger>
       <AlertDialogContent>
-        <div className="flex-1 columns-2">
+        <div className="grid grid-cols-4">
           {chordProgression.chords.map((chord, i) => (
             <GuitarChord key={i} chord={chord} dialog={true} />
           ))}

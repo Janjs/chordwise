@@ -2,9 +2,8 @@
 
 import { FC, useEffect, useRef, useState } from 'react'
 import { Progression } from '@/types/types'
-import ProgressionItem from '@/components/list/progression-item'
 import Player from '@/components/player/player'
-import PlayerSettings, { DEFAULT_PITCH, DEFAULT_TEMPO, Instrument } from './player-settings'
+import PlayerSettings, { DEFAULT_PITCH, DEFAULT_TEMPO, Instrument, MASTER_VOLUME } from './player-settings'
 import { Separator } from '@/components/ui/separator'
 import InstrumentViewer from './instrument-viewer'
 
@@ -23,6 +22,7 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
   const [instrumentKey, setInstrumentKey] = useState<keyof typeof Instrument>('piano')
   const [tempo, setTempo] = useState<number>(DEFAULT_TEMPO)
   const [pitch, setPitch] = useState<number>(DEFAULT_PITCH)
+  const [muted, setMuted] = useState<boolean>(false)
 
   // player state
   const [isPlaying, setIsPlaying] = useState(false)
@@ -33,7 +33,7 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
   const player = useRef<Player | null>(null)
 
   useEffect(() => {
-    player.current = new Player(instrumentValues)
+    player.current = new Player(instrumentValues, MASTER_VOLUME)
     return () => {
       if (player.current) {
         player.current?.stopPlay()
@@ -52,7 +52,7 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
         beats,
         tempo,
         1,
-        indexCurrentChord == -1 ? 0 : indexCurrentChord,
+        indexCurrentChord == -1 || !loop ? 0 : indexCurrentChord,
         loop,
         setIndexCurrentChord,
         setIsPlaying,
