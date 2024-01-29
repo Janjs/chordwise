@@ -9,7 +9,7 @@ import {
   AlertDialogFooter,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
-import { TwitterIcon, X } from 'lucide-react'
+import { GITHUB_LINK, TWITTER_LINK } from '@/lib/utils'
 
 export default function About() {
   return (
@@ -41,19 +41,19 @@ export default function About() {
           </div>
           <p className="text-sm text-muted-foreground">
             💻 Made by
-            <a href="https://x.com/Janjijs" target="_blank" className="mb-10 underline underline-offset-4">
+            <a href={TWITTER_LINK} target="_blank" className="mb-10 underline underline-offset-4">
               {' '}
               @Janjs.
             </a>
           </p>
           <AlertDialogFooter>
             <div className="hidden sm:flex">
-              <a href="https://github.com/Janjs">
+              <a href={GITHUB_LINK}>
                 <Button variant="ghost" size="icon">
                   <Icons.gitHub className="w-4 h-4 inline" />
                 </Button>
               </a>
-              <a href="https://x.com/Janjijs">
+              <a href={TWITTER_LINK}>
                 <Button variant="ghost" size="icon">
                   <Icons.twitter className="w-4 h-4 inline" />
                 </Button>

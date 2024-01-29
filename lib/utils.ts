@@ -30,3 +30,6 @@ export const mapMusicalKeyToGuitarSvg = (key: MusicalKey): GuitarSvgSharpAndFlat
 const NOTES_PER_OCTAVE = 12
 
 export const convertToPitch = (midi: number, pitch: number): number => midi + pitch * NOTES_PER_OCTAVE
+
+export const GITHUB_LINK = 'https://github.com/Janjs'
+export const TWITTER_LINK = 'https://x.com/Janjijs'

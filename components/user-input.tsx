@@ -38,7 +38,7 @@ const UserInput: FC<UserInputProps> = (props) => {
   })
 
   return (
-    <div className="text-md flex flex-1 flex-row justify-between gap-3">
+    <div className="text-md flex flex-1 flex-row justify-between gap-3 ">
       <Button variant="secondary" size="icon">
         <Icons.random className="h-4 w-10" />
       </Button>

@@ -77,3 +77,10 @@ const MOCK_DATA = {
     ['Fm7', 'Bb7', 'Ebmaj7', 'Abmaj7'],
   ],
 }
+
+import { redirect } from 'next/navigation'
+import { GITHUB_LINK } from '@/lib/utils'
+
+export async function navigateToGithub() {
+  redirect(GITHUB_LINK)
+}
