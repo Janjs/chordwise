@@ -25,7 +25,7 @@ export default function About() {
           <div className="text-md space-y-2">
             <p>
               Chordwise is <b className="font-bold">chord progression generator</b> powered by{' '}
-              <b className="font-bold">AI</b>
+              <b className="font-bold">AI</b>.
             </p>
             <p className="font-light">
               Whether you're a <b className="font-bold">songwriter📝</b> in search of fresh ideas to create your next

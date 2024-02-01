@@ -81,6 +81,6 @@ const MOCK_DATA = {
 import { redirect } from 'next/navigation'
 import { GITHUB_LINK } from '@/lib/utils'
 
-export async function navigateToGithub() {
+export const navigateToGithub = async () => {
   redirect(GITHUB_LINK)
 }

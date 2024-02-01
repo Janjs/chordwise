@@ -17,3 +17,10 @@ export interface GenerateProgressionsResponse {
   error?: string
   progressions?: Progression[]
 }
+
+export interface Suggestion {
+  description: string
+  musicalKey: string
+  musicalScale: string
+  progression: Progression
+}

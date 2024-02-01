@@ -1,0 +1,67 @@
+[
+  {
+    "description": "Power chords like Nirvana",
+    "musicalKey": "F",
+    "musicalScale": "minor",
+    "progression": {
+      "chords": [
+        { "representation": "A" },
+        { "representation": "C#" },
+        { "representation": "F" },
+        { "representation": "Gm" }
+      ]
+    }
+  },
+  {
+    "description": "Power chords like Nirvana",
+    "musicalKey": "F",
+    "musicalScale": "minor",
+    "progression": {
+      "chords": [
+        { "representation": "A" },
+        { "representation": "C#" },
+        { "representation": "F" },
+        { "representation": "Gm" }
+      ]
+    }
+  },
+  {
+    "description": "Power chords like Nirvana",
+    "musicalKey": "F",
+    "musicalScale": "minor",
+    "progression": {
+      "chords": [
+        { "representation": "A" },
+        { "representation": "C#" },
+        { "representation": "F" },
+        { "representation": "Gm" }
+      ]
+    }
+  },
+  {
+    "description": "Power chords like Nirvana",
+    "musicalKey": "F",
+    "musicalScale": "minor",
+    "progression": {
+      "chords": [
+        { "representation": "A" },
+        { "representation": "C#" },
+        { "representation": "F" },
+        { "representation": "Gm" }
+      ]
+    }
+  },
+  {
+    "description": "Power chords like Nirvana",
+    "musicalKey": "F",
+    "musicalScale": "minor",
+    "progression": {
+      "chords": [
+        { "representation": "A" },
+        { "representation": "C#" },
+        { "representation": "F" },
+        { "representation": "Gm" }
+      ]
+    }
+  }
+]

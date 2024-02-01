@@ -12,7 +12,7 @@ import { SubmitHandler } from 'react-hook-form'
 import { generateChordProgressions } from '../_actions'
 import useGenerateSearchParams from '@/hooks/useGenerateSearchParams'
 
-type Inputs = z.infer<typeof formSchema>
+export type Inputs = z.infer<typeof formSchema>
 
 const Page = () => {
   const [isLoading, setIsLoading] = useState(false)
@@ -69,7 +69,7 @@ const Page = () => {
         </Alert>
       )}
       <Separator className="mb-5 bg-card" />
-      <div className="flex-none rounded-xl border bg-card p-3">
+      <div className="md:border md:rounded-lg md:bg-card">
         <UserInput onSubmit={handleSubmit} isLoading={isLoading} />
       </div>
     </div>

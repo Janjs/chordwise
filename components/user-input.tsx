@@ -38,74 +38,77 @@ const UserInput: FC<UserInputProps> = (props) => {
   })
 
   return (
-    <div className="text-md flex flex-1 flex-row justify-between gap-3 ">
-      <Button variant="secondary" size="icon">
-        <Icons.random className="h-4 w-10" />
-      </Button>
+    <div className="md:p-3 text-md flex flex-row justify-between gap-3">
       <Form {...form}>
         {/* TODO: add a dropdown to select the style of the chords: */}
-        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-row justify-between gap-3">
-          <FormField
-            control={form.control}
-            name="musicalKey"
-            render={({ field }) => (
-              <Select onValueChange={field.onChange}>
-                <SelectTrigger className="w-auto">
-                  <SelectValue placeholder={MUSICAL_KEYS[0]} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {MUSICAL_KEYS.map((key) => (
-                      <SelectItem key={key} value={key}>
-                        {key}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col md:flex-row justify-between gap-3">
+          <div className="flex flex-row gap-3 flex-1">
+            <FormField
+              control={form.control}
+              name="musicalKey"
+              render={({ field }) => (
+                <Select onValueChange={field.onChange}>
+                  <SelectTrigger className="w-auto">
+                    <SelectValue placeholder={MUSICAL_KEYS[0]} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {MUSICAL_KEYS.map((key) => (
+                        <SelectItem key={key} value={key}>
+                          {key}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="musicalScale"
+              render={({ field }) => (
+                <Select onValueChange={field.onChange}>
+                  <SelectTrigger className="w-auto">
+                    <SelectValue placeholder={MUSICAL_SCALES[0]} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {MUSICAL_SCALES.map((key) => (
+                        <SelectItem key={key} value={key}>
+                          {key}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormControl>
+                    <Input placeholder="Describe the vibe of the chord progression..." {...field} className="text-md" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="flex-1 md:flex-none">
+            {!isLoading ? (
+              <Button type="submit" className="w-full">
+                <p className="font-semibold">Generate</p>
+                <Icons.generate className="ml-2 h-4 w-4" />
+              </Button>
+            ) : (
+              <Button disabled className="w-full">
+                <p className="font-semibold">Generate</p>
+                <Icons.generate className="h-4 w-10 animate-spin ease-in-out" />
+              </Button>
             )}
-          />
-          <FormField
-            control={form.control}
-            name="musicalScale"
-            render={({ field }) => (
-              <Select onValueChange={field.onChange}>
-                <SelectTrigger className="w-auto">
-                  <SelectValue placeholder={MUSICAL_SCALES[0]} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {MUSICAL_SCALES.map((key) => (
-                      <SelectItem key={key} value={key}>
-                        {key}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormControl>
-                  <Input placeholder="Describe the vibe of the chord progression..." {...field} className="text-md" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          {!isLoading ? (
-            <Button type="submit" size="icon">
-              <Icons.generate className="h-4 w-10" />
-            </Button>
-          ) : (
-            <Button size="icon" disabled>
-              <Icons.generate className="h-4 w-10 animate-spin ease-in-out" />
-            </Button>
-          )}
+          </div>
         </form>
       </Form>
     </div>

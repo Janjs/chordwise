@@ -1,7 +1,7 @@
 'use client'
 
-import { FC, useEffect, useRef, useState } from 'react'
-import { Piano as ReactPiano, KeyboardShortcuts, MidiNumbers } from 'react-piano'
+import { FC } from 'react'
+import { Piano as ReactPiano, MidiNumbers } from 'react-piano'
 import 'react-piano/dist/styles.css'
 import './piano.css'
 import { Chord } from '@/types/types'

@@ -29,7 +29,7 @@ const useGenerateSearchParams = (): [
     params.set(MUSICAL_KEY_PARAM_KEY, newParams.musicalKey)
     params.set(MUSICAL_SCALE_PARAM_KEY, newParams.musicalScale)
 
-    router.push(`${pathname}?${params.toString()}`)
+    router.push(`generate?${params.toString()}`)
   }
 
   return [params, setParams]
