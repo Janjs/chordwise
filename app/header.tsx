@@ -13,7 +13,7 @@ export default function Header() {
   return (
     <header className="bg-transparent">
       <nav className="mx-auto flex gap-4 max-w-7xl items-center justify-between p-6 px-8" aria-label="Global">
-        <Link href="/" className="flex-1">
+        <Link href="/">
           <Icons.logo className="h-5 w-auto" />
         </Link>
         {description && (
