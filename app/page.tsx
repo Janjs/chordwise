@@ -17,9 +17,7 @@ const Page = async () => {
         <h3 className="text-md md:text-xl">Enhance, not replace, your musical creativity🎵✨</h3>
         <UserInputWrapper />
       </div>
-      <div
-        className="flex-1 py-10 overflow-y-scroll overflow-hidden [mask-image:_linear-gradient(to_bottom,transparent_0,_black_70px,_black_calc(100%-70px),transparent_100%)]"
-      >
+      <div className="flex-1 py-10 overflow-y-scroll overflow-hidden [mask-image:_linear-gradient(to_bottom,transparent_0,_black_70px,_black_calc(100%-70px),transparent_100%)]">
         {suggestions.map((suggestion: Suggestion, i: number) => (
           <Card suggestion={suggestion} key={i} />
         ))}

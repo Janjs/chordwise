@@ -8,7 +8,7 @@ export const metadata = {
   title: 'Chordwise',
   description: 'Chords Progressions AI Generator',
   content: 'width=device-width, initial-scale=1',
-  name: 'viewport'
+  name: 'viewport',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

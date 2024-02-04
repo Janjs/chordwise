@@ -105,7 +105,7 @@ const UserInput: FC<UserInputProps> = (props) => {
             ) : (
               <Button disabled className="w-full">
                 <p className="font-semibold">Generate</p>
-                <Icons.generate className="h-4 w-10 animate-spin ease-in-out" />
+                <Icons.generate className="ml-2 h-4 w-4 animate-spin ease-in-out" />
               </Button>
             )}
           </div>
