@@ -70,7 +70,7 @@ const getProgressionMidis = (representation: string) => {
 }
 
 const getSuggestion = async (suggestionIndex: number) => {
-  const suggestionsFile = await fs.readFile(process.cwd() + '/data/suggestions.json', 'utf8')
+  const suggestionsFile = await fs.readFile(process.cwd() + '/app/data/suggestions.json', 'utf8')
   const suggestions: Suggestion[] = JSON.parse(suggestionsFile)
 
   const suggestion = suggestions[suggestionIndex]
