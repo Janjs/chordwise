@@ -7,6 +7,7 @@ import About from '@/components/about'
 import useGenerateSearchParams from '@/hooks/useGenerateSearchParams'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import { DEFAULT_MUSICAL_KEY } from '@/components/user-input'
 
 export default function Header() {
   const [{ description, musicalKey, musicalScale }] = useGenerateSearchParams()
@@ -31,7 +32,7 @@ export default function Header() {
                     <p className="font-medium leading-none">{description}</p>
                   </div>
                 )}
-                {musicalKey && musicalScale && (
+                {musicalKey && musicalScale && musicalKey !== DEFAULT_MUSICAL_KEY && (
                   <div className="space-y-2">
                     <h4 className="text-sm text-muted-foreground">Key</h4>
                     <p className="font-medium leading-none">{`${musicalKey} ${musicalScale}`}</p>
