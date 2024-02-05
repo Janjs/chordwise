@@ -42,15 +42,19 @@ const CardList: FC<CardListProps> = ({ suggestions }) => {
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current
 
-    const handleMouseEnter = () => setIsUserInteracting(true)
-    const handleMouseLeave = () => setIsUserInteracting(false)
+    const startInteraction = () => setIsUserInteracting(true)
+    const endInteraction = () => setIsUserInteracting(false)
 
-    scrollContainer?.addEventListener('mouseenter', handleMouseEnter)
-    scrollContainer?.addEventListener('mouseleave', handleMouseLeave)
+    scrollContainer?.addEventListener('mouseenter', startInteraction)
+    scrollContainer?.addEventListener('mouseleave', endInteraction)
+    scrollContainer?.addEventListener('touchstart', startInteraction, { passive: true })
+    scrollContainer?.addEventListener('touchend', endInteraction, { passive: true })
 
     return () => {
-      scrollContainer?.removeEventListener('mouseenter', handleMouseEnter)
-      scrollContainer?.removeEventListener('mouseleave', handleMouseLeave)
+      scrollContainer?.removeEventListener('mouseenter', startInteraction)
+      scrollContainer?.removeEventListener('mouseleave', endInteraction)
+      scrollContainer?.removeEventListener('touchstart', startInteraction)
+      scrollContainer?.removeEventListener('touchend', endInteraction)
     }
   }, [])
 
