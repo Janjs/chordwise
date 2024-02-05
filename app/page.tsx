@@ -4,7 +4,7 @@ import { Suggestion } from '@/types/types'
 import CardList from '@/components/landing/card-list'
 
 const Page = async () => {
-  const suggestionsFile = await fs.readFile(process.cwd() + '/app/data/suggestions.json', 'utf8')
+  const suggestionsFile = await fs.readFile(process.cwd() + '/data/suggestions.json', 'utf8')
   const suggestions: Suggestion[] = JSON.parse(suggestionsFile)
 
   return (

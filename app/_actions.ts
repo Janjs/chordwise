@@ -5,6 +5,10 @@ import { Midi as TonalMidi, Chord as TonalChord } from 'tonal'
 import OpenAI from 'openai'
 import { promises as fs } from 'fs'
 import { ChatCompletionMessageParam } from 'openai/resources/chat'
+import { redirect } from 'next/navigation'
+import { GITHUB_LINK } from '@/lib/utils'
+import { revalidatePath } from 'next/cache'
+import path from 'path'
 
 const MOCK = false
 
@@ -70,7 +74,7 @@ const getProgressionMidis = (representation: string) => {
 }
 
 const getSuggestion = async (suggestionIndex: number) => {
-  const suggestionsFile = await fs.readFile(process.cwd() + '/app/data/suggestions.json', 'utf8')
+  const suggestionsFile = await fs.readFile(path.join(process.cwd(), '/data/suggestions.json'), 'utf8')
   const suggestions: Suggestion[] = JSON.parse(suggestionsFile)
 
   const suggestion = suggestions[suggestionIndex]
@@ -97,10 +101,6 @@ const MOCK_DATA = {
     ['Fm7', 'Bb7', 'Ebmaj7', 'Abmaj7'],
   ],
 }
-
-import { redirect } from 'next/navigation'
-import { GITHUB_LINK } from '@/lib/utils'
-import { revalidatePath } from 'next/cache'
 
 export const navigateToGithub = async () => {
   redirect(GITHUB_LINK)
