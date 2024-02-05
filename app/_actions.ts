@@ -74,6 +74,7 @@ const getProgressionMidis = (representation: string) => {
 }
 
 const getSuggestion = async (suggestionIndex: number) => {
+  console.log('path: ' + process.cwd())
   const suggestionsFile = readFileSync(path.join(process.cwd(), 'data', 'suggestions.json'), 'utf8')
   const suggestions: Suggestion[] = JSON.parse(suggestionsFile)
 
