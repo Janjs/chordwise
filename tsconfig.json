@@ -16,13 +16,13 @@
     "incremental": true,
     "plugins": [
       {
-        "name": "next"
-      }
+        "name": "next",
+      },
     ],
     "paths": {
-      "@/*": ["./*"]
-    }
+      "@/*": ["./*"],
+    },
   },
   "include": ["**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "components/guitar/guitar-prog.tsx"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
 }
