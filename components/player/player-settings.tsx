@@ -37,7 +37,7 @@ const PlayerSettings: FC<PlayerSettingsProps> = (props) => {
   const { instrumentKey, tempo, pitch, setInstrumentKey, setTempo, setPitch } = props
 
   return (
-    <div className="flex flex-1 flex-row justify-between gap-4 p-4">
+    <div className="hidden md:flex flex-1 flex-row justify-between gap-4 p-4">
       <div className="flex flex-1 flex-col justify-center gap-2">
         <Select onValueChange={(d) => setInstrumentKey(d as keyof typeof Instrument)} defaultValue={instrumentKey}>
           <SelectTrigger className="outline-none">
