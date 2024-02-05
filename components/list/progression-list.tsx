@@ -28,7 +28,7 @@ const ProgressionList: FC<ProgressionListProps> = (props) => {
   }, [indexCurrentProgression])
 
   return (
-    <ul ref={listRef} className="custom-scrollbar flex-1 overflow-y-auto">
+    <ul ref={listRef} className="flex-1 overflow-y-auto">
       {progressions.map((progression, index) => (
         <li key={index} ref={(el) => (itemRefs.current[index] = el)}>
           <ProgressionItem

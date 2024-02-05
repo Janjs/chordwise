@@ -1,0 +1,251 @@
+[
+  {
+    "key": "0",
+    "description": "The Beatles' songwriting style",
+    "musicalKey": "A",
+    "musicalScale": "major",
+    "progressions": [
+      {
+        "chords": [
+          { "representation": "F#m", "midi": [18, 21, 25] },
+          { "representation": "Bm", "midi": [23, 26, 30] },
+          { "representation": "E", "midi": [16, 20, 23] },
+          { "representation": "A", "midi": [21, 25, 28] }
+        ]
+      },
+      {
+        "chords": [
+          { "representation": "A", "midi": [21, 25, 28] },
+          { "representation": "D", "midi": [14, 18, 21] },
+          { "representation": "E", "midi": [16, 20, 23] },
+          { "representation": "A", "midi": [21, 25, 28] }
+        ]
+      },
+      {
+        "chords": [
+          { "representation": "G", "midi": [19, 23, 26] },
+          { "representation": "D", "midi": [14, 18, 21] },
+          { "representation": "A", "midi": [21, 25, 28] },
+          { "representation": "E", "midi": [16, 20, 23] }
+        ]
+      },
+      {
+        "chords": [
+          { "representation": "C#m", "midi": [13, 16, 20] },
+          { "representation": "F#m", "midi": [18, 21, 25] },
+          { "representation": "Bm", "midi": [23, 26, 30] },
+          { "representation": "E", "midi": [16, 20, 23] }
+        ]
+      },
+      {
+        "chords": [
+          { "representation": "D", "midi": [14, 18, 21] },
+          { "representation": "G", "midi": [19, 23, 26] },
+          { "representation": "A", "midi": [21, 25, 28] },
+          { "representation": "D", "midi": [14, 18, 21] }
+        ]
+      }
+    ]
+  },
+  {
+    "key": "1",
+    "description": "Jazz ballad",
+    "musicalKey": "G",
+    "musicalScale": "major",
+    "progressions": [
+      {
+        "chords": [
+          { "representation": "Gmaj7", "midi": [19, 23, 26, 30] },
+          { "representation": "Em7", "midi": [16, 19, 23, 26] },
+          { "representation": "Am7", "midi": [21, 24, 28, 31] },
+          { "representation": "D7", "midi": [14, 18, 21, 24] }
+        ]
+      },
+      {
+        "chords": [
+          { "representation": "Am7", "midi": [21, 24, 28, 31] },
+          { "representation": "D7", "midi": [14, 18, 21, 24] },
+          { "representation": "Gmaj7", "midi": [19, 23, 26, 30] },
+          { "representation": "Bm7", "midi": [23, 26, 30, 33] }
+        ]
+      },
+      {
+        "chords": [
+          { "representation": "Cmaj7", "midi": [12, 16, 19, 23] },
+          { "representation": "Am7", "midi": [21, 24, 28, 31] },
+          { "representation": "D7", "midi": [14, 18, 21, 24] },
+          { "representation": "Gmaj7", "midi": [19, 23, 26, 30] }
+        ]
+      },
+      {
+        "chords": [
+          { "representation": "Bm7", "midi": [23, 26, 30, 33] },
+          { "representation": "Em7", "midi": [16, 19, 23, 26] },
+          { "representation": "Am7", "midi": [21, 24, 28, 31] },
+          { "representation": "D7", "midi": [14, 18, 21, 24] }
+        ]
+      },
+      {
+        "chords": [
+          { "representation": "Gmaj7", "midi": [19, 23, 26, 30] },
+          { "representation": "Cmaj7", "midi": [12, 16, 19, 23] },
+          { "representation": "D7", "midi": [14, 18, 21, 24] },
+          { "representation": "Gmaj7", "midi": [19, 23, 26, 30] }
+        ]
+      }
+    ]
+  },
+  {
+    "key": "2",
+    "description": "chord progressions that use the circle of fifths",
+    "musicalKey": "Key",
+    "progressions": [
+      {
+        "chords": [
+          { "representation": "C", "midi": [12, 16, 19] },
+          { "representation": "G", "midi": [19, 23, 26] },
+          { "representation": "D", "midi": [14, 18, 21] },
+          { "representation": "A", "midi": [21, 25, 28] },
+          { "representation": "E", "midi": [16, 20, 23] },
+          { "representation": "B", "midi": [23, 27, 30] }
+        ]
+      },
+      {
+        "chords": [
+          { "representation": "F", "midi": [17, 21, 24] },
+          { "representation": "C", "midi": [12, 16, 19] },
+          { "representation": "G", "midi": [19, 23, 26] },
+          { "representation": "D", "midi": [14, 18, 21] },
+          { "representation": "A", "midi": [21, 25, 28] },
+          { "representation": "E", "midi": [16, 20, 23] }
+        ]
+      },
+      {
+        "chords": [
+          { "representation": "Bb", "midi": [22, 26, 29] },
+          { "representation": "F", "midi": [17, 21, 24] },
+          { "representation": "C", "midi": [12, 16, 19] },
+          { "representation": "G", "midi": [19, 23, 26] },
+          { "representation": "D", "midi": [14, 18, 21] },
+          { "representation": "A", "midi": [21, 25, 28] }
+        ]
+      },
+      {
+        "chords": [
+          { "representation": "Eb", "midi": [15, 19, 22] },
+          { "representation": "Bb", "midi": [22, 26, 29] },
+          { "representation": "F", "midi": [17, 21, 24] },
+          { "representation": "C", "midi": [12, 16, 19] },
+          { "representation": "G", "midi": [19, 23, 26] },
+          { "representation": "D", "midi": [14, 18, 21] }
+        ]
+      },
+      {
+        "chords": [
+          { "representation": "Ab", "midi": [20, 24, 27] },
+          { "representation": "Eb", "midi": [15, 19, 22] },
+          { "representation": "Bb", "midi": [22, 26, 29] },
+          { "representation": "F", "midi": [17, 21, 24] },
+          { "representation": "C", "midi": [12, 16, 19] },
+          { "representation": "G", "midi": [19, 23, 26] }
+        ]
+      }
+    ]
+  },
+  {
+    "key": "3",
+    "description": "Power chords like Nirvana",
+    "musicalKey": "F",
+    "musicalScale": "minor",
+    "progressions": [
+      {
+        "chords": [
+          { "representation": "F5", "midi": [17, 24] },
+          { "representation": "Bb5", "midi": [22, 29] },
+          { "representation": "Eb5", "midi": [15, 22] },
+          { "representation": "C5", "midi": [12, 19] }
+        ]
+      },
+      {
+        "chords": [
+          { "representation": "D5", "midi": [14, 21] },
+          { "representation": "G5", "midi": [19, 26] },
+          { "representation": "Bb5", "midi": [22, 29] },
+          { "representation": "C5", "midi": [12, 19] }
+        ]
+      },
+      {
+        "chords": [
+          { "representation": "F5", "midi": [17, 24] },
+          { "representation": "C5", "midi": [12, 19] },
+          { "representation": "Eb5", "midi": [15, 22] },
+          { "representation": "G5", "midi": [19, 26] }
+        ]
+      },
+      {
+        "chords": [
+          { "representation": "Bb5", "midi": [22, 29] },
+          { "representation": "D5", "midi": [14, 21] },
+          { "representation": "G5", "midi": [19, 26] },
+          { "representation": "C5", "midi": [12, 19] }
+        ]
+      },
+      {
+        "chords": [
+          { "representation": "G5", "midi": [19, 26] },
+          { "representation": "C5", "midi": [12, 19] },
+          { "representation": "Eb5", "midi": [15, 22] },
+          { "representation": "Bb5", "midi": [22, 29] }
+        ]
+      }
+    ]
+  },
+  {
+    "key": "4",
+    "description": "Backing track to practice the Major 7th Pentatonic Scale",
+    "musicalKey": "Bb",
+    "musicalScale": "major",
+    "progressions": [
+      {
+        "chords": [
+          { "representation": "Bb", "midi": [22, 26, 29] },
+          { "representation": "Cm7", "midi": [12, 15, 19, 22] },
+          { "representation": "Dm7", "midi": [14, 17, 21, 24] },
+          { "representation": "Ebmaj7", "midi": [15, 19, 22, 26] }
+        ]
+      },
+      {
+        "chords": [
+          { "representation": "Bb", "midi": [22, 26, 29] },
+          { "representation": "F7", "midi": [17, 21, 24, 27] },
+          { "representation": "Gm7", "midi": [19, 22, 26, 29] },
+          { "representation": "Ebmaj7", "midi": [15, 19, 22, 26] }
+        ]
+      },
+      {
+        "chords": [
+          { "representation": "Bb", "midi": [22, 26, 29] },
+          { "representation": "Abmaj7", "midi": [20, 24, 27, 31] },
+          { "representation": "Gm7", "midi": [19, 22, 26, 29] },
+          { "representation": "F7", "midi": [17, 21, 24, 27] }
+        ]
+      },
+      {
+        "chords": [
+          { "representation": "Bb", "midi": [22, 26, 29] },
+          { "representation": "Dm7", "midi": [14, 17, 21, 24] },
+          { "representation": "Gm7", "midi": [19, 22, 26, 29] },
+          { "representation": "Cm7", "midi": [12, 15, 19, 22] }
+        ]
+      },
+      {
+        "chords": [
+          { "representation": "Bb", "midi": [22, 26, 29] },
+          { "representation": "F7", "midi": [17, 21, 24, 27] },
+          { "representation": "Ebmaj7", "midi": [15, 19, 22, 26] },
+          { "representation": "Cm7", "midi": [12, 15, 19, 22] }
+        ]
+      }
+    ]
+  }
+]

@@ -22,7 +22,6 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
   const [instrumentKey, setInstrumentKey] = useState<keyof typeof Instrument>('piano')
   const [tempo, setTempo] = useState<number>(DEFAULT_TEMPO)
   const [pitch, setPitch] = useState<number>(DEFAULT_PITCH)
-  const [muted, setMuted] = useState<boolean>(false)
 
   // player state
   const [isPlaying, setIsPlaying] = useState(false)
@@ -46,7 +45,7 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
       setIsPlaying(true)
       const progression = progressions[indexChordProgression]
       const beats = progression.chords.map((chord) => [
-        [Instrument[instrumentKey], chord.midi.map((midi) => convertToPitch(midi, pitch)), 1, 1],
+        [Instrument[instrumentKey], chord.midi.map((midi) => convertToPitch(midi, pitch)), 1],
       ])
       player.current?.startPlay(
         beats,

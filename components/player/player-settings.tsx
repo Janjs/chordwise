@@ -21,8 +21,8 @@ export enum Instrument {
 }
 
 export const MASTER_VOLUME = 0.05
-export const DEFAULT_TEMPO = 300
-export const DEFAULT_PITCH = 4
+export const DEFAULT_TEMPO = 120
+export const DEFAULT_PITCH = 3
 
 interface PlayerSettingsProps {
   instrumentKey: keyof typeof Instrument

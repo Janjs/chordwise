@@ -3,19 +3,19 @@
 import ModeToggle from '@/components/mode-toggle'
 import { Icons } from '@/components/icons'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { useSearchParams } from 'next/navigation'
 import About from '@/components/about'
-import Link from 'next/link'
-import { Label } from '@/components/ui/label'
 import useGenerateSearchParams from '@/hooks/useGenerateSearchParams'
 import { Button } from '@/components/ui/button'
+import Link from 'next/link'
 
 export default function Header() {
-  const [{ description, musicalKey, musicalScale }, setParams] = useGenerateSearchParams()
+  const [{ description, musicalKey, musicalScale }] = useGenerateSearchParams()
   return (
     <header className="bg-transparent">
       <nav className="mx-auto flex gap-4 max-w-7xl items-center justify-between p-6 px-8" aria-label="Global">
-        <Icons.logo className="h-5 w-auto" />
+        <Link href="/">
+          <Icons.logo className="h-5 w-auto" />
+        </Link>
         {description && (
           <Popover>
             <PopoverTrigger asChild>
