@@ -81,7 +81,7 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
     .filter((v) => v!!)
 
   return (
-    <div className="flex h-full flex-1 flex-col gap-5 md:flex-row">
+    <div className="flex h-full flex-1 flex-col gap-4 md:flex-row">
       <ProgressionList
         progressions={progressions}
         handlePlay={handlePlay}
@@ -89,8 +89,8 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
         indexCurrentChord={indexCurrentChord}
       />
 
-      <div className="hidden h-full flex-1 flex-col gap-5 md:flex">
-        <div className="bg-card flex flex-1 flex-row overflow-auto rounded-xl p-5 pt-1">
+      <div className="flex-none md:h-full md:flex-1 flex-col gap-4 md:flex">
+        <div className="hidden bg-card md:flex flex-1 flex-row overflow-auto rounded-xl p-5 pt-1">
           <InstrumentViewer
             guitarChordProgViewerProps={{
               index: indexCurrentProgression,
@@ -104,7 +104,7 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
             }}
           />
         </div>
-        <div className="mb-5 mt-auto flex-none justify-self-end rounded-xl bg-card">
+        <div className="mb-4 mt-auto flex-none justify-self-end rounded-xl bg-card">
           <PlayerSettings
             instrumentKey={instrumentKey}
             tempo={tempo}
