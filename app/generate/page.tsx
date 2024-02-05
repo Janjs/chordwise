@@ -75,7 +75,7 @@ const Page = () => {
         </Alert>
       )}
       <Separator className="mb-4 bg-card hidden md:inline" />
-      <div className="md:border md:rounded-lg md:bg-card">
+      <div className="border rounded-lg bg-card">
         <UserInput onSubmit={handleSubmit} isLoading={isLoading} />
       </div>
     </div>

@@ -57,7 +57,7 @@ const UserInput: FC<UserInputProps> = ({ onSubmit, isLoading }) => {
   })
 
   return (
-    <div className="md:p-3 text-md flex flex-row justify-between gap-3">
+    <div className="p-3 text-md flex flex-row justify-between gap-3">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col md:flex-row justify-between gap-3">
           <div className="flex flex-row gap-3 flex-1">
