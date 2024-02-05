@@ -3,7 +3,7 @@
 import { GenerateProgressionsRequest, GenerateProgressionsResponse, Progression, Suggestion } from '@/types/types'
 import { Midi as TonalMidi, Chord as TonalChord } from 'tonal'
 import OpenAI from 'openai'
-import { promises as fs } from 'fs'
+import { readFileSync } from 'fs'
 import { ChatCompletionMessageParam } from 'openai/resources/chat'
 import { redirect } from 'next/navigation'
 import { GITHUB_LINK } from '@/lib/utils'
@@ -74,7 +74,7 @@ const getProgressionMidis = (representation: string) => {
 }
 
 const getSuggestion = async (suggestionIndex: number) => {
-  const suggestionsFile = await fs.readFile(path.join(process.cwd(), '/data/suggestions.json'), 'utf8')
+  const suggestionsFile = readFileSync(path.join(process.cwd(), 'data', 'suggestions.json'), 'utf8')
   const suggestions: Suggestion[] = JSON.parse(suggestionsFile)
 
   const suggestion = suggestions[suggestionIndex]
