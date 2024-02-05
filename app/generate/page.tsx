@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import UserInput, { formSchema } from '@/components/user-input'
+import UserInput, { existsMusicalKey, existsMusicalScale, formSchema } from '@/components/user-input'
 import * as z from 'zod'
 import { GenerateProgressionsRequest, GenerateProgressionsResponse, Progression } from '@/types/types'
 import { Alert, AlertTitle } from '@/components/ui/alert'
@@ -9,7 +9,7 @@ import PlayerContainer from '@/components/player/player-container'
 import { Icons } from '@/components/icons'
 import { Separator } from '@/components/ui/separator'
 import { SubmitHandler } from 'react-hook-form'
-import { generateChordProgressions } from '../_actions'
+import { generateChordProgressions, reGenerate } from '@/app/_actions'
 import useGenerateSearchParams from '@/hooks/useGenerateSearchParams'
 
 export type Inputs = z.infer<typeof formSchema>
@@ -22,9 +22,7 @@ const Page = () => {
   const [params, setParams] = useGenerateSearchParams()
 
   useEffect(() => {
-    if (params.description && params.musicalKey && params.musicalScale) {
-      // TODO: validate musicalKey && musicalScale
-      console.log('fetching')
+    if (params.description && params.musicalKey && params.musicalScale && existsMusicalKey(params.musicalKey)) {
       fetchData(params)
     }
   }, [params])
@@ -35,7 +33,15 @@ const Page = () => {
       musicalKey: input.musicalKey,
       musicalScale: input.musicalScale,
     }
-    setParams(generateProgressionsRequest)
+    if (
+      input.description === params.description &&
+      input.musicalKey === params.musicalKey &&
+      input.musicalScale === params.musicalScale
+    ) {
+      reGenerate()
+    } else {
+      setParams(generateProgressionsRequest)
+    }
   }
 
   const fetchData = async (generateProgressionsRequest: GenerateProgressionsRequest) => {
@@ -44,7 +50,6 @@ const Page = () => {
     setProgressions([])
 
     try {
-      console.log(generateProgressionsRequest)
       const response: GenerateProgressionsResponse = await generateChordProgressions(generateProgressionsRequest)
 
       if (response.progressions) setProgressions(response.progressions)

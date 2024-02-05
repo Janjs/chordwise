@@ -26,9 +26,7 @@ export const generateChordProgressions = async (
     },
     {
       role: 'user',
-      content: `Generate chord progressions in the key of ${
-        userInput.musicalKey + userInput.musicalScale
-      }, that fit the following description: ${userInput.description}`,
+      content: createUserPrompt(userInput),
     },
   ]
 
@@ -78,9 +76,24 @@ const MOCK_DATA = {
   ],
 }
 
+const createUserPrompt = (userInput: GenerateProgressionsRequest): string => {
+  if (userInput.musicalKey == 'Key') {
+    return `Generate chord progressions that fit the following description: ${userInput.description}`
+  } else {
+    return `Generate chord progressions in the key of ${
+      userInput.musicalKey + userInput.musicalScale
+    }, that fit the following description: ${userInput.description}`
+  }
+}
+
 import { redirect } from 'next/navigation'
 import { GITHUB_LINK } from '@/lib/utils'
+import { revalidatePath } from 'next/cache'
 
 export const navigateToGithub = async () => {
   redirect(GITHUB_LINK)
+}
+
+export const reGenerate = () => {
+  revalidatePath('/')
 }

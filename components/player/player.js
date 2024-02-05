@@ -95,23 +95,7 @@ class Player {
       var instrument = chord[0]
       var pitches = chord[1]
       var duration = chord[2]
-      var kind = 0
-      if (chord.length > 3) {
-        kind = chord[3]
-      }
-      if (kind === 1) {
-        this.playStrumDownAt(when, instrument, pitches, duration * N)
-      } else {
-        if (kind === 2) {
-          this.playStrumUpAt(when, instrument, pitches, duration * N)
-        } else {
-          if (kind === 3) {
-            this.playSnapAt(when, instrument, pitches, duration * N)
-          } else {
-            this.playChordAt(when, instrument, pitches, duration * N)
-          }
-        }
-      }
+      this.playStrumDownAt(when, instrument, pitches, duration * N)
     }
   }
   playChordAt(when, instrument, pitches, duration) {

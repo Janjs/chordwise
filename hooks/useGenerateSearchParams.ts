@@ -11,7 +11,6 @@ const useGenerateSearchParams = (): [
   setParams: (newParams: GenerateProgressionsRequest) => void,
 ] => {
   const router = useRouter()
-  const pathname = usePathname()
   const searchParams = useSearchParams()
 
   const params = useMemo(() => {
