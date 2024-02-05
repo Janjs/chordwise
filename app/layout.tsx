@@ -16,7 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning className={GeistSans.className}>
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <div className="flex h-screen flex-col">
+          <div className="flex h-[100dvh] flex-col">
             <div className="flex-none">
               <Header />
             </div>
