@@ -39,7 +39,7 @@ const Card: FC<CardProps> = ({ suggestion }) => {
           <h1
             key={j}
             className={`flex-none width-with-gap border-primary
-          aspect-square flex items-center justify-center rounded-lg border text-2xl font-bold 
+          aspect-square flex items-center justify-center rounded-lg border text-xl md:text-2xl font-bold 
            `}
           >
             {chord.representation}

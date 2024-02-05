@@ -20,7 +20,7 @@ export default function Header() {
         {description && (
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="title" className="text-ellipsis">
+              <Button variant="title" className="truncate text-left">
                 <i>{`“${description}”`}</i>
               </Button>
             </PopoverTrigger>
