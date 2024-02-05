@@ -2,9 +2,10 @@ import UserInputWrapper from '@/components/user-input-wrapper'
 import { promises as fs } from 'fs'
 import { Suggestion } from '@/types/types'
 import CardList from '@/components/landing/card-list'
+import path from 'path'
 
 const Page = async () => {
-  const suggestionsFile = await fs.readFile(process.cwd() + '/data/suggestions.json', 'utf8')
+  const suggestionsFile = await fs.readFile(path.join(process.cwd(), 'public', 'suggestions.json'), 'utf8')
   const suggestions: Suggestion[] = JSON.parse(suggestionsFile)
 
   return (
