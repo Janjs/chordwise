@@ -42,6 +42,7 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
 
   const playProgression = (indexChordProgression: number) => {
     if (player.current) {
+      player.current?.resume()
       setIsPlaying(true)
       const progression = progressions[indexChordProgression]
       const beats = progression.chords.map((chord) => [

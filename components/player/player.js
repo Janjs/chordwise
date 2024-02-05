@@ -40,6 +40,9 @@ class Player {
       this.cacheInstrument(instrument)
     })
   }
+  resume() {
+    this.audioContext.resume()
+  }
   cacheInstrument(n) {
     var info = this.player.loader.instrumentInfo(n)
     if (window[info.variable]) {
