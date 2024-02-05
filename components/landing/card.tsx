@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { Badge } from './ui/badge'
+import { Badge } from '../ui/badge'
 import { Suggestion } from '@/types/types'
 
 interface CardProps {
