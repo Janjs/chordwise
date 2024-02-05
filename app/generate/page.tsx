@@ -69,7 +69,7 @@ const Page = () => {
         {progressions.length > 0 && <PlayerContainer progressions={progressions} />}
       </div>
       {error && (
-        <Alert variant="destructive">
+        <Alert variant="destructive" className="mb-4">
           <Icons.warning className="h-4 w-4" />
           <AlertTitle>Something went wrong</AlertTitle>
         </Alert>
