@@ -10,7 +10,7 @@ const Page = async () => {
 
   return (
     <div className="flex flex-col mx-4">
-      <div className="pt-[10vh] pb-[5vh] flex flex-col max-w-7xl gap-5 text-center">
+      <div className="pt-[5vh] md:pt-[10vh] pb-[5vh] flex flex-col max-w-7xl gap-5 text-center">
         <h1 className="text-4xl md:text-5xl font-bold">
           <p className="inline bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">AI</p> Chord
           Progression Generator
