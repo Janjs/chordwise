@@ -36,7 +36,8 @@ const Page = () => {
     if (
       input.description === params.description &&
       input.musicalKey === params.musicalKey &&
-      input.musicalScale === params.musicalScale
+      input.musicalScale === params.musicalScale &&
+      params.suggestionIndex === undefined
     ) {
       reGenerate()
     } else {

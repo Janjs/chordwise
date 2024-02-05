@@ -49,7 +49,7 @@ const UserInput: FC<UserInputProps> = ({ onSubmit, isLoading }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      description: params.description ? params.description : '',
+      description: '',
       musicalKey: params.musicalKey && existsMusicalKey(params.musicalKey) ? params.musicalKey : DEFAULT_MUSICAL_KEY,
       musicalScale:
         params.musicalScale && existsMusicalScale(params.musicalScale) ? params.musicalScale : MUSICAL_SCALES[0],

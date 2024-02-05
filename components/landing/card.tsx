@@ -1,24 +1,41 @@
+'use client'
+
 import { FC } from 'react'
 import { Badge } from '../ui/badge'
-import { Suggestion } from '@/types/types'
+import { GenerateProgressionsRequest, Suggestion } from '@/types/types'
+import useGenerateSearchParams from '@/hooks/useGenerateSearchParams'
 
 interface CardProps {
   suggestion: Suggestion
 }
 
 const Card: FC<CardProps> = ({ suggestion }) => {
+  const [params, setParams] = useGenerateSearchParams()
+
+  const handleClick = () => {
+    const generateProgressionsRequest: GenerateProgressionsRequest = {
+      description: suggestion.description,
+      musicalKey: suggestion.musicalKey,
+      musicalScale: suggestion.musicalScale,
+      suggestionIndex: suggestion.key,
+    }
+    setParams(generateProgressionsRequest)
+  }
+
   return (
-    <div className="p-3 mb-4 border border-primary rounded-2xl hover:bg-secondary">
+    <div className="p-3 mb-4 border border-primary rounded-2xl hover:bg-secondary" onClick={handleClick}>
       <div className="mb-3 flex gap-2">
         <Badge>
           <p className="text-sm">{suggestion.description}</p>
         </Badge>
-        <Badge>
-          {suggestion.musicalKey} {suggestion.musicalScale}
-        </Badge>
+        {suggestion.musicalKey && suggestion.musicalScale && (
+          <Badge>
+            {suggestion.musicalKey} {suggestion.musicalScale}
+          </Badge>
+        )}
       </div>
       <div className="flex flex-rowhover:bg-secondary overflow-x-auto gap-4" style={{ scrollSnapType: 'x mandatory' }}>
-        {suggestion.progression.chords.map((chord, j) => (
+        {suggestion.progressions[0].chords.map((chord, j) => (
           <h1
             key={j}
             className={`flex-none width-with-gap border-primary

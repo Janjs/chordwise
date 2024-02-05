@@ -11,6 +11,7 @@ export interface GenerateProgressionsRequest {
   description: string
   musicalKey: string
   musicalScale: string
+  suggestionIndex?: number
 }
 
 export interface GenerateProgressionsResponse {
@@ -19,8 +20,9 @@ export interface GenerateProgressionsResponse {
 }
 
 export interface Suggestion {
+  key: number
   description: string
   musicalKey: string
   musicalScale: string
-  progression: Progression
+  progressions: Progression[]
 }
