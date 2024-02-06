@@ -24,7 +24,7 @@ export default function Footer() {
               onClick={(e) => navigateToGithub()}
               variant="link"
               size="nopadding"
-              className="hover:underline hover:underline-offset-4"
+              className="hover:underline hover:underline-offset-4 text-xs"
             >
               @Janjs.
             </Button>{' '}
