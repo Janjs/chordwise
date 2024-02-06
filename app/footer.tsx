@@ -12,7 +12,7 @@ export default function Footer() {
   return (
     <div
       className={`
-    ${pathname === '/' ? '' : 'hidden'}
+    ${pathname === '/' ? 'pt-7 bg-gradient-to-t from-background from-60%' : 'hidden'}
     md:flex mx-auto gap-4 max-w-7xl items-center justify-between px-2
     `}
     >

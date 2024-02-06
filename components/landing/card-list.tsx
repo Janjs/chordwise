@@ -10,7 +10,7 @@ interface CardListProps {
 
 const CardList: FC<CardListProps> = ({ suggestions }) => {
   return (
-    <div className="pb-5">
+    <div className="pb-10">
       <p className="mb-2 ml-1">Examples:</p>
       <div className="grid md:grid-cols-2 gap-3 pb-4">
         {suggestions.map((suggestion: Suggestion, i: number) => (

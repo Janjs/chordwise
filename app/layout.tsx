@@ -21,7 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Header />
             </div>
             <div className="flex flex-1 justify-center overflow-auto py-5">{children}</div>
-            <div className="absolute bottom-0 left-0 right-0 z-10 pt-10 bg-gradient-to-t from-background">
+            <div className="absolute bottom-0 left-0 right-0 z-10">
               <Footer />
             </div>
           </div>
