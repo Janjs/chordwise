@@ -51,8 +51,6 @@ export const generateChordProgressions = async (
 
   const parsedProgressions = parseProgressions(response)
 
-  console.log(JSON.stringify(parsedProgressions))
-
   return { progressions: parsedProgressions }
 }
 
