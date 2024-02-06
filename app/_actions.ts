@@ -10,7 +10,7 @@ import { GITHUB_LINK } from '@/lib/utils'
 import { revalidatePath } from 'next/cache'
 import path from 'path'
 
-const MOCK = false
+const MOCK = true
 
 const openai = new OpenAI()
 

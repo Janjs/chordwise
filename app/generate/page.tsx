@@ -11,6 +11,7 @@ import { Separator } from '@/components/ui/separator'
 import { SubmitHandler } from 'react-hook-form'
 import { generateChordProgressions, reGenerate } from '@/app/_actions'
 import useGenerateSearchParams from '@/hooks/useGenerateSearchParams'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export type Inputs = z.infer<typeof formSchema>
 
@@ -66,7 +67,22 @@ const Page = () => {
   return (
     <div className="flex h-full max-w-7xl flex-1 flex-col justify-between pb-0 md:pb-4 px-4 pt-10">
       <div className="flex-1 overflow-auto">
-        {progressions.length > 0 && <PlayerContainer progressions={progressions} />}
+        {progressions.length > 0 ? (
+          <PlayerContainer progressions={progressions} />
+        ) : (
+          <div className="w-full h-full overflow-auto grid md:grid-cols-2 gap-4">
+            <div className="grid overflow-y-auto gap-4">
+              <Skeleton className="h-32" />
+              <Skeleton className="h-32" />
+              <Skeleton className="h-32" />
+              <Skeleton className="h-32" />
+              <Skeleton className="h-32" />
+            </div>
+            <div className="flex flex-col gap-4 pb-4">
+              <Skeleton className="h-[8vh] flex-none md:flex-1" />
+            </div>
+          </div>
+        )}
       </div>
       {error && (
         <Alert variant="destructive" className="mb-4">
