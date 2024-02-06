@@ -64,7 +64,7 @@ const Page = () => {
   }
 
   return (
-    <div className="flex h-full max-w-7xl flex-1 flex-col justify-between p-4">
+    <div className="flex h-full max-w-7xl flex-1 flex-col justify-between pb-0 md:pb-4 px-4 pt-10">
       <div className="flex-1 overflow-auto">
         {progressions.length > 0 && <PlayerContainer progressions={progressions} />}
       </div>

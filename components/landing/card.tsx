@@ -23,11 +23,9 @@ const Card: FC<CardProps> = ({ suggestion }) => {
   }
 
   return (
-    <div className="p-3 mb-4 border border-primary rounded-2xl hover:bg-secondary" onClick={handleClick}>
-      <div className="mb-3 flex gap-2">
-        <Badge>
-          <p className="text-sm">{suggestion.description}</p>
-        </Badge>
+    <div className="p-3 border border-primary rounded-2xl hover:bg-secondary" onClick={handleClick}>
+      <div className="mb-3 flex gap-2 text-sm">
+        <Badge>{suggestion.description}</Badge>
         {suggestion.musicalKey && suggestion.musicalScale && (
           <Badge>
             {suggestion.musicalKey} {suggestion.musicalScale}
@@ -39,7 +37,7 @@ const Card: FC<CardProps> = ({ suggestion }) => {
           <h1
             key={j}
             className={`flex-none width-with-gap border-primary
-          aspect-square flex items-center justify-center rounded-lg border text-xl md:text-2xl font-bold 
+          aspect-square flex items-center justify-center rounded-lg border text-xl xl:text-2xl font-bold 
            `}
           >
             {chord.representation}

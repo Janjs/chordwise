@@ -97,7 +97,7 @@
   },
   {
     "key": "2",
-    "description": "chord progressions that use the circle of fifths",
+    "description": "Chord progressions that use the circle of fifths",
     "musicalKey": "Key",
     "progressions": [
       {
@@ -244,6 +244,53 @@
           { "representation": "F7", "midi": [17, 21, 24, 27] },
           { "representation": "Ebmaj7", "midi": [15, 19, 22, 26] },
           { "representation": "Cm7", "midi": [12, 15, 19, 22] }
+        ]
+      }
+    ]
+  },
+  {
+    "key": "5",
+    "description": "Melancholic vibe",
+    "musicalKey": "Key",
+    "progressions": [
+      {
+        "chords": [
+          { "representation": "Am", "midi": [21, 24, 28] },
+          { "representation": "Bb", "midi": [22, 26, 29] },
+          { "representation": "C", "midi": [12, 16, 19] },
+          { "representation": "Dm", "midi": [14, 17, 21] }
+        ]
+      },
+      {
+        "chords": [
+          { "representation": "Em", "midi": [16, 19, 23] },
+          { "representation": "Am", "midi": [21, 24, 28] },
+          { "representation": "Dm", "midi": [14, 17, 21] },
+          { "representation": "G", "midi": [19, 23, 26] }
+        ]
+      },
+      {
+        "chords": [
+          { "representation": "Cm", "midi": [12, 15, 19] },
+          { "representation": "Ab", "midi": [20, 24, 27] },
+          { "representation": "Bb", "midi": [22, 26, 29] },
+          { "representation": "Gm", "midi": [19, 22, 26] }
+        ]
+      },
+      {
+        "chords": [
+          { "representation": "Dm", "midi": [14, 17, 21] },
+          { "representation": "Gm", "midi": [19, 22, 26] },
+          { "representation": "C", "midi": [12, 16, 19] },
+          { "representation": "F", "midi": [17, 21, 24] }
+        ]
+      },
+      {
+        "chords": [
+          { "representation": "Fm", "midi": [17, 20, 24] },
+          { "representation": "Eb", "midi": [15, 19, 22] },
+          { "representation": "Db", "midi": [13, 17, 20] },
+          { "representation": "Ab", "midi": [20, 24, 27] }
         ]
       }
     ]

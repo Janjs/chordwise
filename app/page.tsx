@@ -9,8 +9,8 @@ const Page = async () => {
   const suggestions: Suggestion[] = JSON.parse(suggestionsFile)
 
   return (
-    <div className="flex flex-col mx-4">
-      <div className="pt-[5vh] md:pt-[10vh] pb-[5vh] flex flex-col max-w-7xl gap-4 text-center">
+    <div className="flex flex-col mx-4 items-center">
+      <div className="pt-[8dvh] md:pt-[10dvh] py-[5dvh] md:py-[8dvh] flex flex-col max-w-5xl gap-4 text-center">
         <h1 className="text-3xl md:text-5xl font-bold">
           <p className="inline bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">AI</p> Chord
           Progression Generator

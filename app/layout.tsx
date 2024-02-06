@@ -16,12 +16,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning className={GeistSans.className}>
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <div className="flex h-[100dvh] flex-col">
-            <div className="flex-none">
+          <div className="h-[100dvh] relative flex flex-col">
+            <div className="absolute top-0 left-3 right-0 z-10 bg-transparent">
               <Header />
             </div>
-            <div className="flex flex-1 justify-center overflow-auto">{children}</div>
-            <div className="hidden md:flex flex-col justify-items-end">
+            <div className="flex flex-1 justify-center overflow-auto py-5">{children}</div>
+            <div className="absolute bottom-0 left-0 right-0 z-10 pt-10 bg-gradient-to-t from-background">
               <Footer />
             </div>
           </div>

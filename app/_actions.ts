@@ -49,7 +49,11 @@ export const generateChordProgressions = async (
     return { error: 'Error while generating chord progressions.' }
   }
 
-  return { progressions: parseProgressions(response) }
+  const parsedProgressions = parseProgressions(response)
+
+  console.log(JSON.stringify(parsedProgressions))
+
+  return { progressions: parsedProgressions }
 }
 
 const parseProgressions = (data: typeof MOCK_DATA): Progression[] => {
