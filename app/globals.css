@@ -26,7 +26,7 @@
     --primary-foreground: 195 80.4% 10%;
     --secondary: var(--glacier-200);
     --secondary-foreground: var(--glacier-500);
-    --muted: var(--glacier-900);
+    --muted: var(--glacier-100);
     --muted-foreground: 195 5% 64.9%;
     --accent: var(--glacier-300);
     --accent-foreground: var(--glacier-50);

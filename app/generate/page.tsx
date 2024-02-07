@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import UserInput, { existsMusicalKey, existsMusicalScale, formSchema } from '@/components/user-input'
+import UserInput, { existsMusicalKey, formSchema } from '@/components/user-input'
 import * as z from 'zod'
 import { GenerateProgressionsRequest, GenerateProgressionsResponse, Progression } from '@/types/types'
 import { Alert, AlertTitle } from '@/components/ui/alert'

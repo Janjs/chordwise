@@ -4,7 +4,12 @@ import { FC, useEffect, useRef, useState } from 'react'
 import { default as ChordSvg } from '@tombatossals/react-chords/lib/Chord'
 import { Chord as TonalChord } from 'tonal'
 import { Chord } from '@/types/types'
-import { MusicalKey, mapMusicalKeyToGuitarSvg } from '@/lib/utils'
+import {
+  MusicalKey,
+  MusicalSuffix,
+  mapMusicalKeyToGuitarSvg,
+  mapMusicalSuffixToGuitarSvg,
+} from '@/lib/guitar-svg-utils'
 const guitar = require(`@tombatossals/chords-db/lib/guitar.json`)
 
 interface GuitarChordProps {
@@ -23,13 +28,17 @@ const DEFAULT_SVG_CHORD = {
 const GuitarChord: FC<GuitarChordProps> = (props) => {
   const chordInfo = TonalChord.get(props.chord.representation)
   const guitarMusicalKey = mapMusicalKeyToGuitarSvg(chordInfo.tonic as MusicalKey)
+  const guitarMusicalSuffix = mapMusicalSuffixToGuitarSvg(chordInfo.type as MusicalSuffix)
 
   // construct guitar SVG
   let svgChordData
+  console.log('suffix', chordInfo.type)
+  console.log('guitarChord', guitar.chords[guitarMusicalKey])
   if (guitar.chords[guitarMusicalKey]) {
     svgChordData = guitar.chords[guitarMusicalKey].find((chordOptions: any) => {
-      return chordOptions.suffix === chordInfo.type
+      return chordOptions.suffix === guitarMusicalSuffix
     })
+    console.log('svgChordData', svgChordData)
     // fallback to major if no suffic matches
     if (!svgChordData) {
       svgChordData = guitar.chords[guitarMusicalKey].find((chordOptions: any) => {
