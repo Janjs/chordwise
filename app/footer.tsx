@@ -16,7 +16,7 @@ export default function Footer() {
     md:flex mx-auto gap-4 max-w-7xl items-center justify-between px-2
     `}
     >
-      <p className="max-w-7xl w-full px-4 pb-3 text-right text-xs text-muted-foreground">
+      <p className="max-w-7xl w-full px-4 pb-2 text-right text-xs text-muted-foreground">
         <HoverCard>
           <HoverCardTrigger className="hover:cursor-pointer">
             💻 by{' '}
