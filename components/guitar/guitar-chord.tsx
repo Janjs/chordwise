@@ -49,8 +49,6 @@ const GuitarChord: FC<GuitarChordProps> = (props) => {
     console.log('Invalid property:', chordInfo)
   }
 
-  const lite = false // defaults to false if omitted
-
   const svgRef = useRef<HTMLHeadingElement | null>(null)
 
   useEffect(() => {
@@ -62,11 +60,18 @@ const GuitarChord: FC<GuitarChordProps> = (props) => {
       })
       const texts = svgRef.current.querySelectorAll('text')
       texts.forEach((text) => {
+        const textContent = text.textContent
+        if (textContent?.includes('fr')) {
+          text.setAttribute('y', '1')
+          text.setAttribute('x', '-13')
+          text.setAttribute('font-size', '0.4rem')
+          text.setAttribute('fill', 'hsl(var(--foreground))')
+          return
+        }
         if (!props.dialog) {
           text.setAttribute('visibility', 'hidden')
           return
         }
-        const textContent = text.textContent
         if (textContent !== null && !isNaN(parseFloat(textContent))) {
           text.setAttribute('fill', 'hsl(var(--background))')
         } else {
@@ -85,11 +90,11 @@ const GuitarChord: FC<GuitarChordProps> = (props) => {
       >
         {props.chord.representation}
       </h1>
-      <div className="">
+      <div>
         {svgChordData ? (
-          <ChordSvg ref={svgRef} chord={svgChordData.positions[0]} instrument={INSTRUMENT} lite={lite} />
+          <ChordSvg ref={svgRef} chord={svgChordData.positions[0]} instrument={INSTRUMENT} />
         ) : (
-          <ChordSvg ref={svgRef} chord={DEFAULT_SVG_CHORD} instrument={INSTRUMENT} lite={lite} />
+          <ChordSvg ref={svgRef} chord={DEFAULT_SVG_CHORD} instrument={INSTRUMENT} />
         )}
       </div>
     </div>
