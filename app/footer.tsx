@@ -29,14 +29,14 @@ export default function Footer() {
               @Janjs.
             </Button>{' '}
           </HoverCardTrigger>
-          <HoverCardContent className="w-30">
-            <div className="grid gap-4 text-start text-md text-foreground">
-              <a href={GITHUB_LINK} className="gap-2">
-                <Icons.gitHub className="w-4 h-4 mb-1 inline text-muted-foreground" />{' '}
+          <HoverCardContent className="w-25">
+            <div className="grid grid-rows-2 gap-4 text-start text-md text-foreground items-center">
+              <a href={GITHUB_LINK} className="flex items-center">
+                <Icons.gitHub className="w-3 h-3 mr-2 inline text-muted-foreground" />{' '}
                 <p className="inline hover:underline hover:underline-offset-4">Janjs</p>
               </a>
-              <a href={TWITTER_LINK}>
-                <Icons.twitter className="w-4 h-4 inline text-muted-foreground hover:underline hover:underline-offset-4" />{' '}
+              <a href={TWITTER_LINK} className="flex items-center">
+                <Icons.twitter className="w-3 h-3 mr-2 inline text-muted-foreground hover:underline hover:underline-offset-4" />{' '}
                 <p className="inline hover:underline hover:underline-offset-4">Janjijs</p>
               </a>
             </div>
