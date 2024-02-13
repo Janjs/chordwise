@@ -10,6 +10,8 @@ import {
   mapMusicalKeyToGuitarSvg,
   mapMusicalSuffixToGuitarSvg,
 } from '@/lib/guitar-svg-utils'
+import { Icons } from '@/components/icons'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 const guitar = require(`@tombatossals/chords-db/lib/guitar.json`)
 
 interface GuitarChordProps {
@@ -32,19 +34,10 @@ const GuitarChord: FC<GuitarChordProps> = (props) => {
 
   // construct guitar SVG
   let svgChordData
-  console.log('suffix', chordInfo.type)
-  console.log('guitarChord', guitar.chords[guitarMusicalKey])
   if (guitar.chords[guitarMusicalKey]) {
     svgChordData = guitar.chords[guitarMusicalKey].find((chordOptions: any) => {
       return chordOptions.suffix === guitarMusicalSuffix
     })
-    console.log('svgChordData', svgChordData)
-    // fallback to major if no suffic matches
-    if (!svgChordData) {
-      svgChordData = guitar.chords[guitarMusicalKey].find((chordOptions: any) => {
-        return chordOptions.suffix === 'major'
-      })
-    }
   } else {
     console.log('Invalid property:', chordInfo)
   }
@@ -82,19 +75,31 @@ const GuitarChord: FC<GuitarChordProps> = (props) => {
   }, [chordInfo])
 
   return (
-    <div className="flex flex-col" ref={svgRef}>
+    <div className="flex flex-col">
       <h1
-        className={`flex justify-center p-2 ${
+        className={`flex justify-center items-center p-2 ${
           props.dialog ? 'scroll-m-20 text-3xl font-extrabold tracking-tight' : ''
         }`}
       >
         {props.chord.representation}
+        {!svgChordData && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Icons.warning size={15} className="text-destructive" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Guitar chord not found</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
       </h1>
-      <div>
+      <div ref={svgRef}>
         {svgChordData ? (
-          <ChordSvg ref={svgRef} chord={svgChordData.positions[0]} instrument={INSTRUMENT} />
+          <ChordSvg chord={svgChordData.positions[0]} instrument={INSTRUMENT} />
         ) : (
-          <ChordSvg ref={svgRef} chord={DEFAULT_SVG_CHORD} instrument={INSTRUMENT} />
+          <ChordSvg chord={DEFAULT_SVG_CHORD} instrument={INSTRUMENT} />
         )}
       </div>
     </div>

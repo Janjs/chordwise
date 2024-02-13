@@ -5,7 +5,7 @@ import { Progression } from '@/types/types'
 import Player from '@/components/player/player'
 import PlayerSettings, { DEFAULT_PITCH, DEFAULT_TEMPO, Instrument, MASTER_VOLUME } from './player-settings'
 import { Separator } from '@/components/ui/separator'
-import InstrumentViewer from './instrument-viewer'
+import InstrumentContainer from './instrument-container'
 
 import { convertToPitch } from '@/lib/utils'
 import PlayerControls from './player-controls'
@@ -91,7 +91,7 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
 
       <div className="flex-none md:h-full md:flex-1 flex-col gap-4 md:flex">
         <div className="hidden bg-card md:flex flex-1 flex-row overflow-auto rounded-xl p-5 pt-1">
-          <InstrumentViewer
+          <InstrumentContainer
             guitarChordProgViewerProps={{
               index: indexCurrentProgression,
               chordProgression: progressions[indexCurrentProgression],

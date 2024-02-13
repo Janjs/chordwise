@@ -4,12 +4,12 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import Piano, { PianoViewerProps } from '../piano/piano'
 import GuitarProgViewer, { GuitarProgViewerProps } from '../guitar/guitar-prog'
 
-interface InstrumentViewerProps<GuitarChordProgViewerProps, PianoViewerProps> {
+interface InstrumentContainerProps<GuitarChordProgViewerProps, PianoViewerProps> {
   guitarChordProgViewerProps: GuitarChordProgViewerProps
   pianoViewerProps: PianoViewerProps
 }
 
-const InstrumentViewer: FC<InstrumentViewerProps<GuitarProgViewerProps, PianoViewerProps>> = ({
+const InstrumentContainer: FC<InstrumentContainerProps<GuitarProgViewerProps, PianoViewerProps>> = ({
   guitarChordProgViewerProps,
   pianoViewerProps,
 }) => {
@@ -33,4 +33,4 @@ const InstrumentViewer: FC<InstrumentViewerProps<GuitarProgViewerProps, PianoVie
   )
 }
 
-export default InstrumentViewer
+export default InstrumentContainer
