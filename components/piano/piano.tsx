@@ -19,14 +19,16 @@ const Piano: FC<PianoViewerProps> = (props) => {
   const lastNote = MidiNumbers.fromNote('b' + (pitch + 1))
 
   return (
-    <div className="pointer-events-none w-full">
-      <ReactPiano
-        noteRange={{ first: firstNote, last: lastNote }}
-        activeNotes={chord?.midi.map((midi) => convertToPitch(midi, pitch))}
-        width={'auto'}
-        playNote={(midiNumber: number) => {}}
-        stopNote={(midiNumber: number) => {}}
-      />
+    <div className="p-3">
+      <div className="pointer-events-none w-full">
+        <ReactPiano
+          noteRange={{ first: firstNote, last: lastNote }}
+          activeNotes={chord?.midi.map((midi) => convertToPitch(midi, pitch))}
+          width={'auto'}
+          playNote={(midiNumber: number) => {}}
+          stopNote={(midiNumber: number) => {}}
+        />
+      </div>
     </div>
   )
 }

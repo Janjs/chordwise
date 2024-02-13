@@ -85,9 +85,9 @@ const GuitarChord: FC<GuitarChordProps> = (props) => {
   return (
     <div className="flex flex-col my-auto items-center">
       <h1
-        className={`inline-flex gap-1 items-center pb-2 ${props.carousel ? 'text-3xl font-bold' : 'text-sm'} ${props.current ? 'text-foreground' : 'text-muted-foreground'}`}
+        className={`inline-flex gap-1 items-center pb-2 ${props.carousel ? 'text-2xl font-bold' : 'text-sm'} ${props.current ? 'text-foreground' : 'text-muted-foreground'}`}
       >
-        {props.chord.representation}
+        {!props.carousel && props.chord.representation}
         {!svgChordData && !props.carousel && (
           <TooltipProvider>
             <Tooltip>
