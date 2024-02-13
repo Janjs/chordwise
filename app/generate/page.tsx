@@ -73,10 +73,10 @@ const Page = () => {
           <div className="w-full h-full overflow-auto grid md:grid-cols-2 gap-4">
             <div className="grid overflow-y-auto gap-4">
               <Skeleton className="h-32" />
-              <Skeleton className="h-32" />
-              <Skeleton className="h-32" />
-              <Skeleton className="h-32" />
-              <Skeleton className="h-32" />
+              <Skeleton className="h-32 bg-card" />
+              <Skeleton className="h-32 bg-card" />
+              <Skeleton className="h-32 bg-card" />
+              <Skeleton className="h-32 bg-card" />
             </div>
             <div className="flex flex-col gap-4 pb-4">
               <Skeleton className="h-[8vh] flex-none md:flex-1" />
