@@ -35,6 +35,8 @@
     "autoprefixer": "10.4.14",
     "class-variance-authority": "^0.6.0",
     "clsx": "^1.2.1",
+    "embla-carousel-react": "^8.0.0-rc22",
+    "embla-carousel-wheel-gestures": "^8.0.0-rc05",
     "eslint": "8.40.0",
     "eslint-config-next": "13.4.19",
     "focus-visible": "^5.2.0",

@@ -1,8 +1,8 @@
 import { FC, useState } from 'react'
 
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import Piano, { PianoViewerProps } from '../piano/piano'
 import GuitarProgViewer, { GuitarProgViewerProps } from '../guitar/guitar-prog'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 interface InstrumentContainerProps<GuitarChordProgViewerProps, PianoViewerProps> {
   guitarChordProgViewerProps: GuitarChordProgViewerProps
@@ -14,22 +14,18 @@ const InstrumentContainer: FC<InstrumentContainerProps<GuitarProgViewerProps, Pi
   pianoViewerProps,
 }) => {
   return (
-    <div className="w-full">
-      <Accordion type="multiple" defaultValue={['guitar', 'piano']}>
-        <AccordionItem value="piano">
-          <AccordionTrigger>Piano</AccordionTrigger>
-          <AccordionContent>
-            <Piano {...pianoViewerProps} />
-          </AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="guitar">
-          <AccordionTrigger>Guitar</AccordionTrigger>
-          <AccordionContent>
-            <GuitarProgViewer {...guitarChordProgViewerProps} />
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
-    </div>
+    <Tabs defaultValue="guitar" className="p-3 w-full">
+      <TabsList>
+        <TabsTrigger value="guitar">Guitar</TabsTrigger>
+        <TabsTrigger value="piano">Piano</TabsTrigger>
+      </TabsList>
+      <TabsContent value="guitar">
+        <GuitarProgViewer {...guitarChordProgViewerProps} />
+      </TabsContent>
+      <TabsContent value="piano" className="w-full">
+        <Piano {...pianoViewerProps} />
+      </TabsContent>
+    </Tabs>
   )
 }
 

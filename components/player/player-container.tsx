@@ -90,7 +90,7 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
       />
 
       <div className="flex-none md:h-full md:flex-1 flex-col gap-4 md:flex">
-        <div className="hidden bg-card md:flex flex-1 flex-row overflow-auto rounded-xl p-5 pt-1">
+        <div className="hidden bg-card md:flex flex-1 flex-row overflow-auto rounded-xl">
           <InstrumentContainer
             guitarChordProgViewerProps={{
               index: indexCurrentProgression,

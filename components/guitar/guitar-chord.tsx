@@ -75,12 +75,8 @@ const GuitarChord: FC<GuitarChordProps> = (props) => {
   }, [chordInfo])
 
   return (
-    <div className="flex flex-col">
-      <h1
-        className={`flex justify-center items-center p-2 ${
-          props.dialog ? 'scroll-m-20 text-3xl font-extrabold tracking-tight' : ''
-        }`}
-      >
+    <div className="flex flex-col my-auto justify-center items-center">
+      <h1 className={`p-2 ${props.dialog ? 'scroll-m-20 text-3xl font-extrabold tracking-tight' : ''}`}>
         {props.chord.representation}
         {!svgChordData && (
           <TooltipProvider>
@@ -95,7 +91,7 @@ const GuitarChord: FC<GuitarChordProps> = (props) => {
           </TooltipProvider>
         )}
       </h1>
-      <div ref={svgRef}>
+      <div ref={svgRef} className="max-w-[300px]">
         {svgChordData ? (
           <ChordSvg chord={svgChordData.positions[0]} instrument={INSTRUMENT} />
         ) : (

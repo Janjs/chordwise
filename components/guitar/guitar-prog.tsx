@@ -1,15 +1,11 @@
 'use client'
 
-import { FC, useRef, useState } from 'react'
+import { FC } from 'react'
 import GuitarChord from './guitar-chord'
 import { Progression } from '@/types/types'
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
+
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
+import { WheelGesturesPlugin } from 'embla-carousel-wheel-gestures'
 
 export interface GuitarProgViewerProps {
   index: number
@@ -24,25 +20,17 @@ const GuitarProgViewer: FC<GuitarProgViewerProps> = (props) => {
   const isChordPlaying = (chord: number) => isPlaying(index) && indexChordPlaying === chord
 
   return (
-    <AlertDialog>
-      <AlertDialogTrigger>
-        <div className="grid grid-cols-4 gap-4 rounded-sm hover:bg-secondary">
+    <>
+      <Carousel plugins={[WheelGesturesPlugin()]}>
+        <CarouselContent>
           {chordProgression.chords.map((chord, i) => (
-            <GuitarChord key={i} chord={chord} dialog={false} />
+            <CarouselItem>
+              <GuitarChord key={i} chord={chord} dialog={false} />
+            </CarouselItem>
           ))}
-        </div>
-      </AlertDialogTrigger>
-      <AlertDialogContent>
-        <div className="grid grid-cols-4">
-          {chordProgression.chords.map((chord, i) => (
-            <GuitarChord key={i} chord={chord} dialog={true} />
-          ))}
-        </div>
-        <AlertDialogFooter>
-          <AlertDialogCancel>close</AlertDialogCancel>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+        </CarouselContent>
+      </Carousel>
+    </>
   )
 }
 
