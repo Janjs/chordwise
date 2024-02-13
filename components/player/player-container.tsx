@@ -63,7 +63,6 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
   const stopProgression = () => {
     if (player.current) {
       setIsPlaying(false)
-      if (!loop) setIndexCurrentChord(-1)
       player.current?.stopPlay()
     }
   }
@@ -95,8 +94,8 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
             guitarChordProgViewerProps={{
               index: indexCurrentProgression,
               chordProgression: progressions[indexCurrentProgression],
+              indexCurrentChord: indexCurrentChord,
               isPlaying: isProgressionPlaying,
-              indexChordPlaying: indexCurrentChord,
             }}
             pianoViewerProps={{
               chord: progressions[indexCurrentProgression].chords[indexCurrentChord],

@@ -16,7 +16,8 @@ const guitar = require(`@tombatossals/chords-db/lib/guitar.json`)
 
 interface GuitarChordProps {
   chord: Chord
-  dialog: boolean
+  current: boolean
+  carousel: boolean
 }
 
 const INSTRUMENT = Object.assign(guitar.main, { tunings: guitar.tunings })
@@ -46,10 +47,17 @@ const GuitarChord: FC<GuitarChordProps> = (props) => {
 
   useEffect(() => {
     if (svgRef.current) {
+      const svg = svgRef.current.querySelector('svg')
+      svg?.setAttribute('viewBox', '0 5 78 66')
       const shapes = svgRef.current.querySelectorAll('path, circle, rect')
       shapes.forEach((shape) => {
-        shape.setAttribute('fill', 'hsl(var(--foreground))')
-        shape.setAttribute('stroke', 'hsl(var(--foreground))')
+        if (props.current) {
+          shape.setAttribute('fill', 'hsl(var(--foreground))')
+          shape.setAttribute('stroke', 'hsl(var(--foreground))')
+        } else {
+          shape.setAttribute('fill', 'hsl(var(--muted-foreground))')
+          shape.setAttribute('stroke', 'hsl(var(--muted-foreground))')
+        }
       })
       const texts = svgRef.current.querySelectorAll('text')
       texts.forEach((text) => {
@@ -61,7 +69,7 @@ const GuitarChord: FC<GuitarChordProps> = (props) => {
           text.setAttribute('fill', 'hsl(var(--foreground))')
           return
         }
-        if (!props.dialog) {
+        if (!props.carousel) {
           text.setAttribute('visibility', 'hidden')
           return
         }
@@ -75,10 +83,12 @@ const GuitarChord: FC<GuitarChordProps> = (props) => {
   }, [chordInfo])
 
   return (
-    <div className="flex flex-col my-auto justify-center items-center">
-      <h1 className={`p-2 ${props.dialog ? 'scroll-m-20 text-3xl font-extrabold tracking-tight' : ''}`}>
+    <div className="flex flex-col my-auto items-center">
+      <h1
+        className={`inline-flex gap-1 items-center pb-2 ${props.carousel ? 'text-3xl font-bold' : 'text-sm'} ${props.current ? 'text-foreground' : 'text-muted-foreground'}`}
+      >
         {props.chord.representation}
-        {!svgChordData && (
+        {!svgChordData && !props.carousel && (
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -91,7 +101,7 @@ const GuitarChord: FC<GuitarChordProps> = (props) => {
           </TooltipProvider>
         )}
       </h1>
-      <div ref={svgRef} className="max-w-[300px]">
+      <div ref={svgRef} className="max-w-[270px] mb-2">
         {svgChordData ? (
           <ChordSvg chord={svgChordData.positions[0]} instrument={INSTRUMENT} />
         ) : (

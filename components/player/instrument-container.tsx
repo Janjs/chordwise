@@ -14,8 +14,8 @@ const InstrumentContainer: FC<InstrumentContainerProps<GuitarProgViewerProps, Pi
   pianoViewerProps,
 }) => {
   return (
-    <Tabs defaultValue="guitar" className="p-3 w-full">
-      <TabsList>
+    <Tabs defaultValue="guitar" className="w-full">
+      <TabsList className="p-3 mt-3">
         <TabsTrigger value="guitar">Guitar</TabsTrigger>
         <TabsTrigger value="piano">Piano</TabsTrigger>
       </TabsList>
