@@ -10,10 +10,14 @@
   @apply bg-black;
 }
 
-.ReactPiano__Key--active {
-  @apply bg-primary;
-}
-
 .ReactPiano__Key--active.ReactPiano__Key--natural {
   @apply h-full;
+}
+
+.ReactPiano__Key--active {
+  @apply bg-muted-foreground rounded-b-[3px] border-2 border-black !important;
+}
+
+.carousel .ReactPiano__Key--active {
+  @apply bg-primary rounded-b-[3px] border-2 border-black !important;
 }

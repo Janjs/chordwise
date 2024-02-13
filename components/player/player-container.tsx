@@ -91,16 +91,11 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
       <div className="flex-none md:h-full md:flex-1 flex-col gap-4 md:flex">
         <div className="hidden bg-card md:flex flex-1 flex-row overflow-auto rounded-xl">
           <InstrumentContainer
-            guitarChordProgViewerProps={{
-              index: indexCurrentProgression,
-              chordProgression: progressions[indexCurrentProgression],
-              indexCurrentChord: indexCurrentChord,
-              isPlaying: isProgressionPlaying,
-            }}
-            pianoViewerProps={{
-              chord: progressions[indexCurrentProgression].chords[indexCurrentChord],
-              pitch: pitch,
-            }}
+            index={indexCurrentProgression}
+            chordProgression={progressions[indexCurrentProgression]}
+            indexCurrentChord={indexCurrentChord}
+            isPlaying={isProgressionPlaying}
+            pitch={pitch}
           />
         </div>
         <div className="mb-4 mt-auto flex-none justify-self-end rounded-xl bg-card">

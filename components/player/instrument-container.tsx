@@ -1,19 +1,22 @@
 import { FC, useState } from 'react'
 
-import Piano, { PianoViewerProps } from '../piano/piano'
-import GuitarProgViewer, { GuitarProgViewerProps } from '../guitar/guitar-prog'
+import Piano from '../piano/piano'
+import GuitarProgViewer from '../guitar/guitar-prog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
+import { Progression } from '@/types/types'
+import PianoList from '@/components/piano/piano-list'
 
-interface InstrumentContainerProps<GuitarChordProgViewerProps, PianoViewerProps> {
-  guitarChordProgViewerProps: GuitarChordProgViewerProps
-  pianoViewerProps: PianoViewerProps
+export interface InstrumentContainerProps {
+  index: number
+  chordProgression: Progression
+  indexCurrentChord: number
+  isPlaying: (i: number) => boolean
+  pitch: number
 }
 
-const InstrumentContainer: FC<InstrumentContainerProps<GuitarProgViewerProps, PianoViewerProps>> = ({
-  guitarChordProgViewerProps,
-  pianoViewerProps,
-}) => {
+const InstrumentContainer: FC<InstrumentContainerProps> = (props) => {
+  const { chordProgression, indexCurrentChord } = props
   return (
     <Tabs defaultValue="guitar" className="w-full">
       <div className="flex flex-row justify-between h-14">
@@ -21,13 +24,15 @@ const InstrumentContainer: FC<InstrumentContainerProps<GuitarProgViewerProps, Pi
           <TabsTrigger value="guitar">Guitar</TabsTrigger>
           <TabsTrigger value="piano">Piano</TabsTrigger>
         </TabsList>
-        {pianoViewerProps.chord && <Badge className="m-3 text-md">{pianoViewerProps.chord.representation}</Badge>}
+        {chordProgression.chords[indexCurrentChord] && (
+          <Badge className="m-3 text-md">{chordProgression.chords[indexCurrentChord].representation}</Badge>
+        )}
       </div>
       <TabsContent value="guitar">
-        <GuitarProgViewer {...guitarChordProgViewerProps} />
+        <GuitarProgViewer {...props} />
       </TabsContent>
       <TabsContent value="piano" className="w-full">
-        <Piano {...pianoViewerProps} />
+        <PianoList {...props} />
       </TabsContent>
     </Tabs>
   )
