@@ -52,11 +52,11 @@ const GuitarChord: FC<GuitarChordProps> = (props) => {
       const shapes = svgRef.current.querySelectorAll('path, circle, rect')
       shapes.forEach((shape) => {
         if (props.current) {
-          shape.setAttribute('fill', 'hsl(var(--foreground))')
-          shape.setAttribute('stroke', 'hsl(var(--foreground))')
+          shape.setAttribute('fill', 'var(--color-foreground)')
+          shape.setAttribute('stroke', 'var(--color-foreground)')
         } else {
-          shape.setAttribute('fill', 'hsl(var(--muted-foreground))')
-          shape.setAttribute('stroke', 'hsl(var(--muted-foreground))')
+          shape.setAttribute('fill', 'var(--color-muted-foreground)')
+          shape.setAttribute('stroke', 'var(--color-muted-foreground)')
         }
       })
       const texts = svgRef.current.querySelectorAll('text')
@@ -66,7 +66,7 @@ const GuitarChord: FC<GuitarChordProps> = (props) => {
           text.setAttribute('y', '1')
           text.setAttribute('x', '-13')
           text.setAttribute('font-size', '0.4rem')
-          text.setAttribute('fill', 'hsl(var(--foreground))')
+          text.setAttribute('fill', 'var(--color-foreground)')
           return
         }
         if (!props.carousel) {
@@ -74,9 +74,9 @@ const GuitarChord: FC<GuitarChordProps> = (props) => {
           return
         }
         if (textContent !== null && !isNaN(parseFloat(textContent))) {
-          text.setAttribute('fill', 'hsl(var(--background))')
+          text.setAttribute('fill', 'var(--color-background)')
         } else {
-          text.setAttribute('fill', 'hsl(var(--foreground))')
+          text.setAttribute('fill', 'var(--color-foreground)')
         }
       })
     }
