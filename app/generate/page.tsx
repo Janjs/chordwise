@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import UserInput, { existsMusicalKey, formSchema } from '@/components/user-input'
 import * as z from 'zod'
 import { GenerateProgressionsRequest, GenerateProgressionsResponse, Progression } from '@/types/types'
@@ -15,7 +15,10 @@ import { Skeleton } from '@/components/ui/skeleton'
 
 export type Inputs = z.infer<typeof formSchema>
 
-const Page = () => {
+export const dynamic = 'force-dynamic'
+
+
+const GenerateContent = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [progressions, setProgressions] = useState<Progression[]>([])
   const [error, setError] = useState<string | null>(null)
@@ -95,6 +98,29 @@ const Page = () => {
         <UserInput onSubmit={handleSubmit} isLoading={isLoading} />
       </div>
     </div>
+  )
+}
+
+const Page = () => {
+  return (
+    <Suspense fallback={
+      <div className="flex h-full max-w-7xl flex-1 flex-col justify-between pb-0 md:pb-4 px-4 pt-10">
+        <div className="w-full h-full overflow-auto grid md:grid-cols-2 gap-4">
+          <div className="grid overflow-y-auto gap-4">
+            <Skeleton className="h-32" />
+            <Skeleton className="h-32 bg-card" />
+            <Skeleton className="h-32 bg-card" />
+            <Skeleton className="h-32 bg-card" />
+            <Skeleton className="h-32 bg-card" />
+          </div>
+          <div className="flex flex-col gap-4 pb-4">
+            <Skeleton className="h-[8vh] flex-none md:flex-1" />
+          </div>
+        </div>
+      </div>
+    }>
+      <GenerateContent />
+    </Suspense>
   )
 }
 

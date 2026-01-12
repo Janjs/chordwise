@@ -17,7 +17,7 @@ const ProgressionItem: FC<ProgressionItemProps> = (props) => {
   const isCurrentChord = (chord: number) => indexCurrentProgression == index && indexCurrentChord === chord
 
   const listRef = useRef<HTMLDivElement>(null)
-  const itemRefs = useRef<(HTMLDivElement | null)[]>([])
+  const itemRefs = useRef<(HTMLHeadingElement | null)[]>([])
 
   useEffect(() => {
     if (itemRefs.current[indexCurrentChord] && indexCurrentProgression == index) {
@@ -43,7 +43,7 @@ const ProgressionItem: FC<ProgressionItemProps> = (props) => {
       {progression.chords.map((chord, j) => (
         <h1
           key={j}
-          ref={(el) => (itemRefs.current[j] = el)}
+          ref={(el) => { itemRefs.current[j] = el }}
           className={`flex-none width-with-gap
         aspect-square flex items-center justify-center rounded-lg border text-xl md:text-sm lg:text-2xl font-bold 
             ${isCurrentChord(j) ? 'bg-primary' : ''} 

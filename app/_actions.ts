@@ -88,9 +88,8 @@ const createUserPrompt = (userInput: GenerateProgressionsRequest): string => {
   if (userInput.musicalKey === 'Key') {
     return `Generate chord progressions that fit the following description: ${userInput.description}`
   } else {
-    return `Generate chord progressions in the key of ${
-      userInput.musicalKey + userInput.musicalScale
-    }, that fit the following description: ${userInput.description}`
+    return `Generate chord progressions in the key of ${userInput.musicalKey + userInput.musicalScale
+      }, that fit the following description: ${userInput.description}`
   }
 }
 
@@ -108,6 +107,6 @@ export const navigateToGithub = async () => {
   redirect(GITHUB_LINK)
 }
 
-export const reGenerate = () => {
+export const reGenerate = async () => {
   revalidatePath('/')
 }

@@ -1,4 +1,4 @@
-import WebAudioFontPlayer from 'webaudiofont'
+import WebAudioFontPlayer from './webaudiofont'
 
 class Player {
   constructor(instruments, master) {

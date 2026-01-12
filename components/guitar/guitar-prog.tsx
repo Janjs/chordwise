@@ -29,8 +29,8 @@ const GuitarProgViewer: FC<InstrumentContainerProps> = (props) => {
       <Carousel plugins={[WheelGesturesPlugin()]} setApi={setApi}>
         <CarouselContent>
           {chordProgression.chords.map((chord, i) => (
-            <CarouselItem>
-              <GuitarChord key={i} chord={chord} current={true} carousel={true} />
+            <CarouselItem key={i}>
+              <GuitarChord chord={chord} current={true} carousel={true} />
             </CarouselItem>
           ))}
         </CarouselContent>

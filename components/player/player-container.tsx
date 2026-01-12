@@ -2,7 +2,7 @@
 
 import { FC, useEffect, useRef, useState } from 'react'
 import { Progression } from '@/types/types'
-import Player from '@/components/player/player'
+// import Player from '@/components/player/player'
 import PlayerSettings, { DEFAULT_PITCH, DEFAULT_TEMPO, Instrument, MASTER_VOLUME } from './player-settings'
 import { Separator } from '@/components/ui/separator'
 import InstrumentContainer from './instrument-container'
@@ -29,10 +29,16 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
   const [indexCurrentProgression, setIndexCurrentProgression] = useState<number>(0)
   const [indexCurrentChord, setIndexCurrentChord] = useState<number>(-1)
 
-  const player = useRef<Player | null>(null)
+  // Use any to avoid type issues with dynamic import if types are missing
+  const player = useRef<any>(null)
 
   useEffect(() => {
-    player.current = new Player(instrumentValues, MASTER_VOLUME)
+    const initPlayer = async () => {
+      const PlayerModule = (await import('@/components/player/player')).default
+      player.current = new PlayerModule(instrumentValues, MASTER_VOLUME)
+    }
+    initPlayer()
+
     return () => {
       if (player.current) {
         player.current?.stopPlay()

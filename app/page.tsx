@@ -1,8 +1,11 @@
+import { Suspense } from 'react'
 import UserInputWrapper from '@/components/user-input-wrapper'
 import { promises as fs } from 'fs'
 import { Suggestion } from '@/types/types'
 import CardList from '@/components/landing/card-list'
 import path from 'path'
+
+export const dynamic = 'force-dynamic'
 
 const Page = async () => {
   const suggestionsFile = await fs.readFile(path.join(process.cwd(), 'public', 'suggestions.json'), 'utf8')
@@ -16,7 +19,9 @@ const Page = async () => {
           Progression Generator
         </h1>
         <h3 className="text-md md:text-xl text-muted-foreground">Enhance, not replace, your musical creativity🎵✨</h3>
-        <UserInputWrapper />
+        <Suspense fallback={null}>
+          <UserInputWrapper />
+        </Suspense>
       </div>
       <CardList suggestions={suggestions} />
     </div>

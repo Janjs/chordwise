@@ -30,7 +30,7 @@ const ProgressionList: FC<ProgressionListProps> = (props) => {
   return (
     <ul ref={listRef} className="flex-1 overflow-y-auto">
       {progressions.map((progression, index) => (
-        <li key={index} ref={(el) => (itemRefs.current[index] = el)}>
+        <li key={index} ref={(el) => { itemRefs.current[index] = el }}>
           <ProgressionItem
             index={index}
             progression={progression}
