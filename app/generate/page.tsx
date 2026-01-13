@@ -95,7 +95,7 @@ const GenerateContent = () => {
       )}
       <Separator className="mb-4 bg-card hidden md:inline" />
       <div className="border rounded-lg bg-card">
-        <UserInput onSubmit={handleSubmit} isLoading={isLoading} />
+        <UserInput onSubmit={handleSubmit} isLoading={isLoading} showIcon />
       </div>
     </div>
   )

@@ -9,12 +9,13 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '@/component
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
 import { useForm } from 'react-hook-form'
-import { Icons } from './icons'
 import useGenerateSearchParams from '@/hooks/useGenerateSearchParams'
+import { Icons } from './icons'
 
 interface UserInputProps {
   onSubmit: (values: z.infer<typeof formSchema>) => void
   isLoading: boolean
+  showIcon?: boolean
 }
 
 export const formSchema = z.object({
@@ -43,7 +44,7 @@ export const MUSICAL_SCALES = ['major', 'minor']
 export const existsMusicalKey = (musicalKey: string) => MUSICAL_KEYS.some((el) => el === musicalKey)
 export const existsMusicalScale = (musicalScale: string) => MUSICAL_SCALES.some((el) => el === musicalScale)
 
-const UserInput: FC<UserInputProps> = ({ onSubmit, isLoading }) => {
+const UserInput: FC<UserInputProps> = ({ onSubmit, isLoading, showIcon }) => {
   const [params, setParams] = useGenerateSearchParams()
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -117,13 +118,13 @@ const UserInput: FC<UserInputProps> = ({ onSubmit, isLoading }) => {
             />
           </div>
           <div className="flex-1 md:flex-none">
-            {!isLoading ? (
-              <Button size="icon" type="submit">
-                <Icons.mascot className="h-7 w-7" />
+            {showIcon ? (
+              <Button size="icon" type="submit" disabled={isLoading}>
+                {isLoading ? <Icons.mascotSleeping className="h-7 w-7" /> : <Icons.mascot className="h-7 w-7" />}
               </Button>
             ) : (
-              <Button size="icon" disabled>
-                <Icons.mascotSleeping className="h-7 w-7" />
+              <Button type="submit" disabled={isLoading}>
+                Generate
               </Button>
             )}
           </div>

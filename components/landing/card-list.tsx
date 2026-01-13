@@ -13,7 +13,7 @@ const CardList: FC<CardListProps> = ({ suggestions }) => {
   return (
     <div className="pb-10">
       <div className="mb-4 flex items-center gap-2 text-muted-foreground">
-        <Icons.lightbulb className="h-4 w-4" />
+        <Icons.mascot className="h-5 w-5" />
         <p className="text-sm">Need inspiration? Try one of these:</p>
       </div>
       <div className="grid md:grid-cols-2 gap-3 pb-4">
