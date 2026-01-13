@@ -5,6 +5,7 @@ import {
   CassetteTape,
   Command,
   HelpCircle,
+  Lightbulb,
   Loader2,
   LucideProps,
   Moon,
@@ -48,6 +49,7 @@ export const Icons = {
   moon: Moon,
   cassette: CassetteTape,
   generate: Music2,
+  lightbulb: Lightbulb,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"
