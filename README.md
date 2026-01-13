@@ -1,7 +1,70 @@
-## Chordwise
+# Chordwise 🎵
 
-Chords progressions AI generator, powered by ChatGPT.
+An AI-powered chord progression generator that helps musicians discover fresh harmonic ideas. Whether you're a songwriter searching for inspiration or a guitarist looking for backing tracks, Chordwise enhances your musical creativity.
 
-Made with NextJS.
+## ✨ Features
 
-Demo: https://chordwise.vercel.app/
+- **AI-Generated Progressions** — Describe the mood or style you want, and get chord progressions that match
+- **Piano & Guitar Visualization** — See your chords displayed on both instruments
+- **Audio Playback** — Listen to your progressions with built-in Web Audio
+- **Key Selection** — Generate in any key or let the AI decide
+- **Curated Suggestions** — Browse pre-made progressions for inspiration
+- **Dark/Light Mode** — Easy on the eyes, day or night
+
+## 🛠 Tech Stack
+
+- [Next.js 16](https://nextjs.org/) — React framework
+- [OpenAI](https://openai.com/) — AI chord generation
+- [Tonal](https://github.com/tonaljs/tonal) — Music theory library
+- [Tone.js](https://tonejs.github.io/) — Web Audio framework
+- [Tailwind CSS](https://tailwindcss.com/) — Styling
+- [Radix UI](https://www.radix-ui.com/) — Accessible components
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- pnpm (recommended) or npm
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/Janjs/chordwise.git
+cd chordwise
+
+# Install dependencies
+pnpm install
+
+# Set up environment variables
+cp .env.example .env.local
+# Add your OpenAI API key to .env.local
+```
+
+### Development
+
+```bash
+pnpm dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### Production Build
+
+```bash
+pnpm build
+pnpm start
+```
+
+## 🔗 Demo
+
+**[chordwise.janjs.dev](https://chordwise.janjs.dev)**
+
+## 👤 Author
+
+Made by [@Janjs](https://x.com/Janjijs)
+
+## 📄 License
+
+MIT

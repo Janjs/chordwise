@@ -38,7 +38,7 @@ export const generateChordProgressions = async (
   ]
 
   const completion = await openai.chat.completions.create({
-    model: 'gpt-5',
+    model: 'gpt-3.5-turbo-1106',
     messages: messages,
     response_format: { type: 'json_object' },
   })

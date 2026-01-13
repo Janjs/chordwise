@@ -118,14 +118,12 @@ const UserInput: FC<UserInputProps> = ({ onSubmit, isLoading }) => {
           </div>
           <div className="flex-1 md:flex-none">
             {!isLoading ? (
-              <Button type="submit" className="w-full">
-                <p className="font-semibold">Generate</p>
-                <Icons.generate className="ml-2 h-4 w-4" />
+              <Button size="icon" type="submit">
+                <Icons.mascot className="h-7 w-7" />
               </Button>
             ) : (
-              <Button disabled className="w-full">
-                <p className="font-semibold">Generate</p>
-                <Icons.generate className="ml-2 h-4 w-4 animate-spin ease-in-out" />
+              <Button size="icon" disabled>
+                <Icons.mascotSleeping className="h-7 w-7" />
               </Button>
             )}
           </div>
