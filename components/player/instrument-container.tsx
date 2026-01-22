@@ -2,6 +2,7 @@ import { FC, useState } from 'react'
 
 import Piano from '../piano/piano'
 import GuitarProgViewer from '../guitar/guitar-prog'
+import MidiVisualizer from '../midi/midi-visualizer'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { Progression } from '@/types/types'
@@ -18,9 +19,10 @@ export interface InstrumentContainerProps {
 const InstrumentContainer: FC<InstrumentContainerProps> = (props) => {
   const { chordProgression, indexCurrentChord } = props
   return (
-    <Tabs defaultValue="guitar" className="w-full">
+    <Tabs defaultValue="midi" className="w-full h-full flex flex-col">
       <div className="flex flex-row justify-between h-14">
         <TabsList className="p-3 mt-3">
+          <TabsTrigger value="midi">MIDI</TabsTrigger>
           <TabsTrigger value="guitar">Guitar</TabsTrigger>
           <TabsTrigger value="piano">Piano</TabsTrigger>
         </TabsList>
@@ -33,6 +35,9 @@ const InstrumentContainer: FC<InstrumentContainerProps> = (props) => {
       </TabsContent>
       <TabsContent value="piano" className="w-full">
         <PianoList {...props} />
+      </TabsContent>
+      <TabsContent value="midi" className="w-full flex-1 overflow-hidden data-[state=active]:flex data-[state=active]:flex-col">
+        <MidiVisualizer {...props} />
       </TabsContent>
     </Tabs>
   )
