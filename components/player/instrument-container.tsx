@@ -36,7 +36,7 @@ const InstrumentContainer: FC<InstrumentContainerProps> = (props) => {
       <TabsContent value="piano" className="w-full">
         <PianoList {...props} />
       </TabsContent>
-      <TabsContent value="midi" className="w-full flex-1 overflow-hidden data-[state=active]:flex data-[state=active]:flex-col">
+      <TabsContent value="midi" className="w-full flex-1 overflow-hidden mt-0 data-[state=active]:flex data-[state=active]:flex-col">
         <MidiVisualizer {...props} />
       </TabsContent>
     </Tabs>

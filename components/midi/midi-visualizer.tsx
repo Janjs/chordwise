@@ -208,15 +208,14 @@ const MidiVisualizer: FC<InstrumentContainerProps> = (props) => {
 
     return (
         <div ref={containerRef} className="w-full h-full flex flex-col overflow-hidden">
-            {/* Note grid - only this scrolls vertically */}
             <div
                 ref={scrollRef}
-                className="flex-1 overflow-y-auto overflow-x-hidden"
+                className="flex-1 overflow-y-auto overflow-x-hidden min-h-0"
             >
                 <canvas ref={canvasRef} className="block" />
             </div>
 
-            {/* Timeline - fixed at bottom */}
+            {/* Chord count bar - fixed at bottom */}
             <div
                 className="flex-shrink-0 bg-[#1a3a45] border-t border-[#2a5060]"
                 style={{ height: TIMELINE_HEIGHT, paddingLeft: LEFT_MARGIN }}
