@@ -58,14 +58,16 @@ const MidiVisualizer: FC<InstrumentContainerProps> = (props) => {
         chordProgression.chords.forEach((chord, chordIndex) => {
             if (chord.midi) {
                 chord.midi.forEach((midiNote) => {
-                    const adjustedMidi = midiNote + (pitch || 0)
-                    const clampedMidi = Math.max(MIN_MIDI, Math.min(MAX_MIDI, adjustedMidi))
-                    events.push({
-                        midi: clampedMidi,
-                        startTime: chordIndex,
-                        duration: 1,
-                        chordIndex,
-                    })
+                    const adjustedMidi = midiNote + (pitch || 0) // Pitch is in semitones
+                    // Only show notes within the visible range
+                    if (adjustedMidi >= MIN_MIDI && adjustedMidi <= MAX_MIDI) {
+                        events.push({
+                            midi: adjustedMidi,
+                            startTime: chordIndex,
+                            duration: 1,
+                            chordIndex,
+                        })
+                    }
                 })
             }
         })

@@ -7,42 +7,182 @@
     "progressions": [
       {
         "chords": [
-          { "representation": "F#m", "midi": [18, 21, 25] },
-          { "representation": "Bm", "midi": [23, 26, 30] },
-          { "representation": "E", "midi": [16, 20, 23] },
-          { "representation": "A", "midi": [21, 25, 28] }
+          {
+            "representation": "F#m",
+            "midi": [
+              42,
+              45,
+              49
+            ]
+          },
+          {
+            "representation": "Bm",
+            "midi": [
+              47,
+              50,
+              54
+            ]
+          },
+          {
+            "representation": "E",
+            "midi": [
+              40,
+              44,
+              47
+            ]
+          },
+          {
+            "representation": "A",
+            "midi": [
+              45,
+              49,
+              52
+            ]
+          }
         ]
       },
       {
         "chords": [
-          { "representation": "A", "midi": [21, 25, 28] },
-          { "representation": "D", "midi": [14, 18, 21] },
-          { "representation": "E", "midi": [16, 20, 23] },
-          { "representation": "A", "midi": [21, 25, 28] }
+          {
+            "representation": "A",
+            "midi": [
+              45,
+              49,
+              52
+            ]
+          },
+          {
+            "representation": "D",
+            "midi": [
+              38,
+              42,
+              45
+            ]
+          },
+          {
+            "representation": "E",
+            "midi": [
+              40,
+              44,
+              47
+            ]
+          },
+          {
+            "representation": "A",
+            "midi": [
+              45,
+              49,
+              52
+            ]
+          }
         ]
       },
       {
         "chords": [
-          { "representation": "G", "midi": [19, 23, 26] },
-          { "representation": "D", "midi": [14, 18, 21] },
-          { "representation": "A", "midi": [21, 25, 28] },
-          { "representation": "E", "midi": [16, 20, 23] }
+          {
+            "representation": "G",
+            "midi": [
+              43,
+              47,
+              50
+            ]
+          },
+          {
+            "representation": "D",
+            "midi": [
+              38,
+              42,
+              45
+            ]
+          },
+          {
+            "representation": "A",
+            "midi": [
+              45,
+              49,
+              52
+            ]
+          },
+          {
+            "representation": "E",
+            "midi": [
+              40,
+              44,
+              47
+            ]
+          }
         ]
       },
       {
         "chords": [
-          { "representation": "C#m", "midi": [13, 16, 20] },
-          { "representation": "F#m", "midi": [18, 21, 25] },
-          { "representation": "Bm", "midi": [23, 26, 30] },
-          { "representation": "E", "midi": [16, 20, 23] }
+          {
+            "representation": "C#m",
+            "midi": [
+              37,
+              40,
+              44
+            ]
+          },
+          {
+            "representation": "F#m",
+            "midi": [
+              42,
+              45,
+              49
+            ]
+          },
+          {
+            "representation": "Bm",
+            "midi": [
+              47,
+              50,
+              54
+            ]
+          },
+          {
+            "representation": "E",
+            "midi": [
+              40,
+              44,
+              47
+            ]
+          }
         ]
       },
       {
         "chords": [
-          { "representation": "D", "midi": [14, 18, 21] },
-          { "representation": "G", "midi": [19, 23, 26] },
-          { "representation": "A", "midi": [21, 25, 28] },
-          { "representation": "D", "midi": [14, 18, 21] }
+          {
+            "representation": "D",
+            "midi": [
+              38,
+              42,
+              45
+            ]
+          },
+          {
+            "representation": "G",
+            "midi": [
+              43,
+              47,
+              50
+            ]
+          },
+          {
+            "representation": "A",
+            "midi": [
+              45,
+              49,
+              52
+            ]
+          },
+          {
+            "representation": "D",
+            "midi": [
+              38,
+              42,
+              45
+            ]
+          }
         ]
       }
     ]
@@ -55,42 +195,202 @@
     "progressions": [
       {
         "chords": [
-          { "representation": "Gmaj7", "midi": [19, 23, 26, 30] },
-          { "representation": "Em7", "midi": [16, 19, 23, 26] },
-          { "representation": "Am7", "midi": [21, 24, 28, 31] },
-          { "representation": "D7", "midi": [14, 18, 21, 24] }
+          {
+            "representation": "Gmaj7",
+            "midi": [
+              43,
+              47,
+              50,
+              54
+            ]
+          },
+          {
+            "representation": "Em7",
+            "midi": [
+              40,
+              43,
+              47,
+              50
+            ]
+          },
+          {
+            "representation": "Am7",
+            "midi": [
+              45,
+              48,
+              52,
+              55
+            ]
+          },
+          {
+            "representation": "D7",
+            "midi": [
+              38,
+              42,
+              45,
+              48
+            ]
+          }
         ]
       },
       {
         "chords": [
-          { "representation": "Am7", "midi": [21, 24, 28, 31] },
-          { "representation": "D7", "midi": [14, 18, 21, 24] },
-          { "representation": "Gmaj7", "midi": [19, 23, 26, 30] },
-          { "representation": "Bm7", "midi": [23, 26, 30, 33] }
+          {
+            "representation": "Am7",
+            "midi": [
+              45,
+              48,
+              52,
+              55
+            ]
+          },
+          {
+            "representation": "D7",
+            "midi": [
+              38,
+              42,
+              45,
+              48
+            ]
+          },
+          {
+            "representation": "Gmaj7",
+            "midi": [
+              43,
+              47,
+              50,
+              54
+            ]
+          },
+          {
+            "representation": "Bm7",
+            "midi": [
+              47,
+              50,
+              54,
+              57
+            ]
+          }
         ]
       },
       {
         "chords": [
-          { "representation": "Cmaj7", "midi": [12, 16, 19, 23] },
-          { "representation": "Am7", "midi": [21, 24, 28, 31] },
-          { "representation": "D7", "midi": [14, 18, 21, 24] },
-          { "representation": "Gmaj7", "midi": [19, 23, 26, 30] }
+          {
+            "representation": "Cmaj7",
+            "midi": [
+              36,
+              40,
+              43,
+              47
+            ]
+          },
+          {
+            "representation": "Am7",
+            "midi": [
+              45,
+              48,
+              52,
+              55
+            ]
+          },
+          {
+            "representation": "D7",
+            "midi": [
+              38,
+              42,
+              45,
+              48
+            ]
+          },
+          {
+            "representation": "Gmaj7",
+            "midi": [
+              43,
+              47,
+              50,
+              54
+            ]
+          }
         ]
       },
       {
         "chords": [
-          { "representation": "Bm7", "midi": [23, 26, 30, 33] },
-          { "representation": "Em7", "midi": [16, 19, 23, 26] },
-          { "representation": "Am7", "midi": [21, 24, 28, 31] },
-          { "representation": "D7", "midi": [14, 18, 21, 24] }
+          {
+            "representation": "Bm7",
+            "midi": [
+              47,
+              50,
+              54,
+              57
+            ]
+          },
+          {
+            "representation": "Em7",
+            "midi": [
+              40,
+              43,
+              47,
+              50
+            ]
+          },
+          {
+            "representation": "Am7",
+            "midi": [
+              45,
+              48,
+              52,
+              55
+            ]
+          },
+          {
+            "representation": "D7",
+            "midi": [
+              38,
+              42,
+              45,
+              48
+            ]
+          }
         ]
       },
       {
         "chords": [
-          { "representation": "Gmaj7", "midi": [19, 23, 26, 30] },
-          { "representation": "Cmaj7", "midi": [12, 16, 19, 23] },
-          { "representation": "D7", "midi": [14, 18, 21, 24] },
-          { "representation": "Gmaj7", "midi": [19, 23, 26, 30] }
+          {
+            "representation": "Gmaj7",
+            "midi": [
+              43,
+              47,
+              50,
+              54
+            ]
+          },
+          {
+            "representation": "Cmaj7",
+            "midi": [
+              36,
+              40,
+              43,
+              47
+            ]
+          },
+          {
+            "representation": "D7",
+            "midi": [
+              38,
+              42,
+              45,
+              48
+            ]
+          },
+          {
+            "representation": "Gmaj7",
+            "midi": [
+              43,
+              47,
+              50,
+              54
+            ]
+          }
         ]
       }
     ]
@@ -102,52 +402,262 @@
     "progressions": [
       {
         "chords": [
-          { "representation": "C", "midi": [12, 16, 19] },
-          { "representation": "G", "midi": [19, 23, 26] },
-          { "representation": "D", "midi": [14, 18, 21] },
-          { "representation": "A", "midi": [21, 25, 28] },
-          { "representation": "E", "midi": [16, 20, 23] },
-          { "representation": "B", "midi": [23, 27, 30] }
+          {
+            "representation": "C",
+            "midi": [
+              36,
+              40,
+              43
+            ]
+          },
+          {
+            "representation": "G",
+            "midi": [
+              43,
+              47,
+              50
+            ]
+          },
+          {
+            "representation": "D",
+            "midi": [
+              38,
+              42,
+              45
+            ]
+          },
+          {
+            "representation": "A",
+            "midi": [
+              45,
+              49,
+              52
+            ]
+          },
+          {
+            "representation": "E",
+            "midi": [
+              40,
+              44,
+              47
+            ]
+          },
+          {
+            "representation": "B",
+            "midi": [
+              47,
+              51,
+              54
+            ]
+          }
         ]
       },
       {
         "chords": [
-          { "representation": "F", "midi": [17, 21, 24] },
-          { "representation": "C", "midi": [12, 16, 19] },
-          { "representation": "G", "midi": [19, 23, 26] },
-          { "representation": "D", "midi": [14, 18, 21] },
-          { "representation": "A", "midi": [21, 25, 28] },
-          { "representation": "E", "midi": [16, 20, 23] }
+          {
+            "representation": "F",
+            "midi": [
+              41,
+              45,
+              48
+            ]
+          },
+          {
+            "representation": "C",
+            "midi": [
+              36,
+              40,
+              43
+            ]
+          },
+          {
+            "representation": "G",
+            "midi": [
+              43,
+              47,
+              50
+            ]
+          },
+          {
+            "representation": "D",
+            "midi": [
+              38,
+              42,
+              45
+            ]
+          },
+          {
+            "representation": "A",
+            "midi": [
+              45,
+              49,
+              52
+            ]
+          },
+          {
+            "representation": "E",
+            "midi": [
+              40,
+              44,
+              47
+            ]
+          }
         ]
       },
       {
         "chords": [
-          { "representation": "Bb", "midi": [22, 26, 29] },
-          { "representation": "F", "midi": [17, 21, 24] },
-          { "representation": "C", "midi": [12, 16, 19] },
-          { "representation": "G", "midi": [19, 23, 26] },
-          { "representation": "D", "midi": [14, 18, 21] },
-          { "representation": "A", "midi": [21, 25, 28] }
+          {
+            "representation": "Bb",
+            "midi": [
+              46,
+              50,
+              53
+            ]
+          },
+          {
+            "representation": "F",
+            "midi": [
+              41,
+              45,
+              48
+            ]
+          },
+          {
+            "representation": "C",
+            "midi": [
+              36,
+              40,
+              43
+            ]
+          },
+          {
+            "representation": "G",
+            "midi": [
+              43,
+              47,
+              50
+            ]
+          },
+          {
+            "representation": "D",
+            "midi": [
+              38,
+              42,
+              45
+            ]
+          },
+          {
+            "representation": "A",
+            "midi": [
+              45,
+              49,
+              52
+            ]
+          }
         ]
       },
       {
         "chords": [
-          { "representation": "Eb", "midi": [15, 19, 22] },
-          { "representation": "Bb", "midi": [22, 26, 29] },
-          { "representation": "F", "midi": [17, 21, 24] },
-          { "representation": "C", "midi": [12, 16, 19] },
-          { "representation": "G", "midi": [19, 23, 26] },
-          { "representation": "D", "midi": [14, 18, 21] }
+          {
+            "representation": "Eb",
+            "midi": [
+              39,
+              43,
+              46
+            ]
+          },
+          {
+            "representation": "Bb",
+            "midi": [
+              46,
+              50,
+              53
+            ]
+          },
+          {
+            "representation": "F",
+            "midi": [
+              41,
+              45,
+              48
+            ]
+          },
+          {
+            "representation": "C",
+            "midi": [
+              36,
+              40,
+              43
+            ]
+          },
+          {
+            "representation": "G",
+            "midi": [
+              43,
+              47,
+              50
+            ]
+          },
+          {
+            "representation": "D",
+            "midi": [
+              38,
+              42,
+              45
+            ]
+          }
         ]
       },
       {
         "chords": [
-          { "representation": "Ab", "midi": [20, 24, 27] },
-          { "representation": "Eb", "midi": [15, 19, 22] },
-          { "representation": "Bb", "midi": [22, 26, 29] },
-          { "representation": "F", "midi": [17, 21, 24] },
-          { "representation": "C", "midi": [12, 16, 19] },
-          { "representation": "G", "midi": [19, 23, 26] }
+          {
+            "representation": "Ab",
+            "midi": [
+              44,
+              48,
+              51
+            ]
+          },
+          {
+            "representation": "Eb",
+            "midi": [
+              39,
+              43,
+              46
+            ]
+          },
+          {
+            "representation": "Bb",
+            "midi": [
+              46,
+              50,
+              53
+            ]
+          },
+          {
+            "representation": "F",
+            "midi": [
+              41,
+              45,
+              48
+            ]
+          },
+          {
+            "representation": "C",
+            "midi": [
+              36,
+              40,
+              43
+            ]
+          },
+          {
+            "representation": "G",
+            "midi": [
+              43,
+              47,
+              50
+            ]
+          }
         ]
       }
     ]
@@ -160,42 +670,162 @@
     "progressions": [
       {
         "chords": [
-          { "representation": "F5", "midi": [17, 24] },
-          { "representation": "Bb5", "midi": [22, 29] },
-          { "representation": "Eb5", "midi": [15, 22] },
-          { "representation": "C5", "midi": [12, 19] }
+          {
+            "representation": "F5",
+            "midi": [
+              41,
+              48
+            ]
+          },
+          {
+            "representation": "Bb5",
+            "midi": [
+              46,
+              53
+            ]
+          },
+          {
+            "representation": "Eb5",
+            "midi": [
+              39,
+              46
+            ]
+          },
+          {
+            "representation": "C5",
+            "midi": [
+              36,
+              43
+            ]
+          }
         ]
       },
       {
         "chords": [
-          { "representation": "D5", "midi": [14, 21] },
-          { "representation": "G5", "midi": [19, 26] },
-          { "representation": "Bb5", "midi": [22, 29] },
-          { "representation": "C5", "midi": [12, 19] }
+          {
+            "representation": "D5",
+            "midi": [
+              38,
+              45
+            ]
+          },
+          {
+            "representation": "G5",
+            "midi": [
+              43,
+              50
+            ]
+          },
+          {
+            "representation": "Bb5",
+            "midi": [
+              46,
+              53
+            ]
+          },
+          {
+            "representation": "C5",
+            "midi": [
+              36,
+              43
+            ]
+          }
         ]
       },
       {
         "chords": [
-          { "representation": "F5", "midi": [17, 24] },
-          { "representation": "C5", "midi": [12, 19] },
-          { "representation": "Eb5", "midi": [15, 22] },
-          { "representation": "G5", "midi": [19, 26] }
+          {
+            "representation": "F5",
+            "midi": [
+              41,
+              48
+            ]
+          },
+          {
+            "representation": "C5",
+            "midi": [
+              36,
+              43
+            ]
+          },
+          {
+            "representation": "Eb5",
+            "midi": [
+              39,
+              46
+            ]
+          },
+          {
+            "representation": "G5",
+            "midi": [
+              43,
+              50
+            ]
+          }
         ]
       },
       {
         "chords": [
-          { "representation": "Bb5", "midi": [22, 29] },
-          { "representation": "D5", "midi": [14, 21] },
-          { "representation": "G5", "midi": [19, 26] },
-          { "representation": "C5", "midi": [12, 19] }
+          {
+            "representation": "Bb5",
+            "midi": [
+              46,
+              53
+            ]
+          },
+          {
+            "representation": "D5",
+            "midi": [
+              38,
+              45
+            ]
+          },
+          {
+            "representation": "G5",
+            "midi": [
+              43,
+              50
+            ]
+          },
+          {
+            "representation": "C5",
+            "midi": [
+              36,
+              43
+            ]
+          }
         ]
       },
       {
         "chords": [
-          { "representation": "G5", "midi": [19, 26] },
-          { "representation": "C5", "midi": [12, 19] },
-          { "representation": "Eb5", "midi": [15, 22] },
-          { "representation": "Bb5", "midi": [22, 29] }
+          {
+            "representation": "G5",
+            "midi": [
+              43,
+              50
+            ]
+          },
+          {
+            "representation": "C5",
+            "midi": [
+              36,
+              43
+            ]
+          },
+          {
+            "representation": "Eb5",
+            "midi": [
+              39,
+              46
+            ]
+          },
+          {
+            "representation": "Bb5",
+            "midi": [
+              46,
+              53
+            ]
+          }
         ]
       }
     ]
@@ -208,42 +838,197 @@
     "progressions": [
       {
         "chords": [
-          { "representation": "Bb", "midi": [22, 26, 29] },
-          { "representation": "Cm7", "midi": [12, 15, 19, 22] },
-          { "representation": "Dm7", "midi": [14, 17, 21, 24] },
-          { "representation": "Ebmaj7", "midi": [15, 19, 22, 26] }
+          {
+            "representation": "Bb",
+            "midi": [
+              46,
+              50,
+              53
+            ]
+          },
+          {
+            "representation": "Cm7",
+            "midi": [
+              36,
+              39,
+              43,
+              46
+            ]
+          },
+          {
+            "representation": "Dm7",
+            "midi": [
+              38,
+              41,
+              45,
+              48
+            ]
+          },
+          {
+            "representation": "Ebmaj7",
+            "midi": [
+              39,
+              43,
+              46,
+              50
+            ]
+          }
         ]
       },
       {
         "chords": [
-          { "representation": "Bb", "midi": [22, 26, 29] },
-          { "representation": "F7", "midi": [17, 21, 24, 27] },
-          { "representation": "Gm7", "midi": [19, 22, 26, 29] },
-          { "representation": "Ebmaj7", "midi": [15, 19, 22, 26] }
+          {
+            "representation": "Bb",
+            "midi": [
+              46,
+              50,
+              53
+            ]
+          },
+          {
+            "representation": "F7",
+            "midi": [
+              41,
+              45,
+              48,
+              51
+            ]
+          },
+          {
+            "representation": "Gm7",
+            "midi": [
+              43,
+              46,
+              50,
+              53
+            ]
+          },
+          {
+            "representation": "Ebmaj7",
+            "midi": [
+              39,
+              43,
+              46,
+              50
+            ]
+          }
         ]
       },
       {
         "chords": [
-          { "representation": "Bb", "midi": [22, 26, 29] },
-          { "representation": "Abmaj7", "midi": [20, 24, 27, 31] },
-          { "representation": "Gm7", "midi": [19, 22, 26, 29] },
-          { "representation": "F7", "midi": [17, 21, 24, 27] }
+          {
+            "representation": "Bb",
+            "midi": [
+              46,
+              50,
+              53
+            ]
+          },
+          {
+            "representation": "Abmaj7",
+            "midi": [
+              44,
+              48,
+              51,
+              55
+            ]
+          },
+          {
+            "representation": "Gm7",
+            "midi": [
+              43,
+              46,
+              50,
+              53
+            ]
+          },
+          {
+            "representation": "F7",
+            "midi": [
+              41,
+              45,
+              48,
+              51
+            ]
+          }
         ]
       },
       {
         "chords": [
-          { "representation": "Bb", "midi": [22, 26, 29] },
-          { "representation": "Dm7", "midi": [14, 17, 21, 24] },
-          { "representation": "Gm7", "midi": [19, 22, 26, 29] },
-          { "representation": "Cm7", "midi": [12, 15, 19, 22] }
+          {
+            "representation": "Bb",
+            "midi": [
+              46,
+              50,
+              53
+            ]
+          },
+          {
+            "representation": "Dm7",
+            "midi": [
+              38,
+              41,
+              45,
+              48
+            ]
+          },
+          {
+            "representation": "Gm7",
+            "midi": [
+              43,
+              46,
+              50,
+              53
+            ]
+          },
+          {
+            "representation": "Cm7",
+            "midi": [
+              36,
+              39,
+              43,
+              46
+            ]
+          }
         ]
       },
       {
         "chords": [
-          { "representation": "Bb", "midi": [22, 26, 29] },
-          { "representation": "F7", "midi": [17, 21, 24, 27] },
-          { "representation": "Ebmaj7", "midi": [15, 19, 22, 26] },
-          { "representation": "Cm7", "midi": [12, 15, 19, 22] }
+          {
+            "representation": "Bb",
+            "midi": [
+              46,
+              50,
+              53
+            ]
+          },
+          {
+            "representation": "F7",
+            "midi": [
+              41,
+              45,
+              48,
+              51
+            ]
+          },
+          {
+            "representation": "Ebmaj7",
+            "midi": [
+              39,
+              43,
+              46,
+              50
+            ]
+          },
+          {
+            "representation": "Cm7",
+            "midi": [
+              36,
+              39,
+              43,
+              46
+            ]
+          }
         ]
       }
     ]
@@ -255,42 +1040,182 @@
     "progressions": [
       {
         "chords": [
-          { "representation": "Am", "midi": [21, 24, 28] },
-          { "representation": "Bb", "midi": [22, 26, 29] },
-          { "representation": "C", "midi": [12, 16, 19] },
-          { "representation": "Dm", "midi": [14, 17, 21] }
+          {
+            "representation": "Am",
+            "midi": [
+              45,
+              48,
+              52
+            ]
+          },
+          {
+            "representation": "Bb",
+            "midi": [
+              46,
+              50,
+              53
+            ]
+          },
+          {
+            "representation": "C",
+            "midi": [
+              36,
+              40,
+              43
+            ]
+          },
+          {
+            "representation": "Dm",
+            "midi": [
+              38,
+              41,
+              45
+            ]
+          }
         ]
       },
       {
         "chords": [
-          { "representation": "Em", "midi": [16, 19, 23] },
-          { "representation": "Am", "midi": [21, 24, 28] },
-          { "representation": "Dm", "midi": [14, 17, 21] },
-          { "representation": "G", "midi": [19, 23, 26] }
+          {
+            "representation": "Em",
+            "midi": [
+              40,
+              43,
+              47
+            ]
+          },
+          {
+            "representation": "Am",
+            "midi": [
+              45,
+              48,
+              52
+            ]
+          },
+          {
+            "representation": "Dm",
+            "midi": [
+              38,
+              41,
+              45
+            ]
+          },
+          {
+            "representation": "G",
+            "midi": [
+              43,
+              47,
+              50
+            ]
+          }
         ]
       },
       {
         "chords": [
-          { "representation": "Cm", "midi": [12, 15, 19] },
-          { "representation": "Ab", "midi": [20, 24, 27] },
-          { "representation": "Bb", "midi": [22, 26, 29] },
-          { "representation": "Gm", "midi": [19, 22, 26] }
+          {
+            "representation": "Cm",
+            "midi": [
+              36,
+              39,
+              43
+            ]
+          },
+          {
+            "representation": "Ab",
+            "midi": [
+              44,
+              48,
+              51
+            ]
+          },
+          {
+            "representation": "Bb",
+            "midi": [
+              46,
+              50,
+              53
+            ]
+          },
+          {
+            "representation": "Gm",
+            "midi": [
+              43,
+              46,
+              50
+            ]
+          }
         ]
       },
       {
         "chords": [
-          { "representation": "Dm", "midi": [14, 17, 21] },
-          { "representation": "Gm", "midi": [19, 22, 26] },
-          { "representation": "C", "midi": [12, 16, 19] },
-          { "representation": "F", "midi": [17, 21, 24] }
+          {
+            "representation": "Dm",
+            "midi": [
+              38,
+              41,
+              45
+            ]
+          },
+          {
+            "representation": "Gm",
+            "midi": [
+              43,
+              46,
+              50
+            ]
+          },
+          {
+            "representation": "C",
+            "midi": [
+              36,
+              40,
+              43
+            ]
+          },
+          {
+            "representation": "F",
+            "midi": [
+              41,
+              45,
+              48
+            ]
+          }
         ]
       },
       {
         "chords": [
-          { "representation": "Fm", "midi": [17, 20, 24] },
-          { "representation": "Eb", "midi": [15, 19, 22] },
-          { "representation": "Db", "midi": [13, 17, 20] },
-          { "representation": "Ab", "midi": [20, 24, 27] }
+          {
+            "representation": "Fm",
+            "midi": [
+              41,
+              44,
+              48
+            ]
+          },
+          {
+            "representation": "Eb",
+            "midi": [
+              39,
+              43,
+              46
+            ]
+          },
+          {
+            "representation": "Db",
+            "midi": [
+              37,
+              41,
+              44
+            ]
+          },
+          {
+            "representation": "Ab",
+            "midi": [
+              44,
+              48,
+              51
+            ]
+          }
         ]
       }
     ]

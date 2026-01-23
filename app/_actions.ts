@@ -72,7 +72,8 @@ const getProgressionMidis = (representation: string) => {
 
   const midis: number[] = notes.map((note) => TonalMidi.toMidi(note) as number).filter((note) => !!note)
 
-  return midis
+  // Raise notes to octave 3 (24 semitones = 2 octaves)
+  return midis.map((midi) => midi + 24)
 }
 
 const getSuggestion = async (suggestionIndex: number) => {

@@ -72,7 +72,7 @@ const PlayerSettings: FC<PlayerSettingsProps> = (props) => {
       <div className="flex flex-1 flex-col gap-4">
         <div className="flex items-center justify-between">
           <Label htmlFor="pitch">Pitch</Label>
-          <span className="text-right text-sm text-muted-foreground min-w-8">{pitch}</span>
+          <span className="text-right text-sm text-muted-foreground min-w-8">{pitch > 0 ? `+${pitch}` : pitch}</span>
         </div>
         <Slider
           id="pitch"
