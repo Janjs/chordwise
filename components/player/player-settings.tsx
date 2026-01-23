@@ -22,7 +22,7 @@ export enum Instrument {
 
 export const MASTER_VOLUME = 0.05
 export const DEFAULT_TEMPO = 120
-export const DEFAULT_PITCH = 3
+export const DEFAULT_PITCH = 0
 
 interface PlayerSettingsProps {
   instrumentKey: keyof typeof Instrument
@@ -72,12 +72,12 @@ const PlayerSettings: FC<PlayerSettingsProps> = (props) => {
       <div className="flex flex-1 flex-col gap-4">
         <div className="flex items-center justify-between">
           <Label htmlFor="pitch">Pitch</Label>
-          <span className="text-right text-sm text-muted-foreground">{pitch}</span>
+          <span className="text-right text-sm text-muted-foreground min-w-8">{pitch}</span>
         </div>
         <Slider
           id="pitch"
-          max={8}
-          min={1}
+          max={12}
+          min={-12}
           defaultValue={[pitch]}
           step={1}
           onValueChange={(pitches) => setPitch(pitches[0])}
