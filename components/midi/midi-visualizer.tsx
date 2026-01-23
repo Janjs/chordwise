@@ -96,10 +96,17 @@ const MidiVisualizer: FC<InstrumentContainerProps> = (props) => {
                 cancelAnimationFrame(animationRef.current)
                 animationRef.current = null
             }
+            chordStartTimeRef.current = null
             if (indexCurrentChord < 0) {
                 setPlayheadProgress(0)
             }
             return
+        }
+
+        // Force a reset if we are just starting/resuming
+        // This ensures visualizer syncs with audio player which restarts chord on resume
+        if (chordStartTimeRef.current === null) {
+            lastChordIndexRef.current = -1
         }
 
         const animate = () => {
