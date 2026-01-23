@@ -102,6 +102,8 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
             indexCurrentChord={indexCurrentChord}
             isPlaying={isProgressionPlaying}
             pitch={pitch}
+            tempo={tempo}
+            isCurrentlyPlaying={isPlaying}
           />
         </div>
         <div className="mb-4 mt-auto flex-none justify-self-end rounded-xl bg-card">

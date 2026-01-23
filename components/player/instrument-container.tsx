@@ -14,6 +14,8 @@ export interface InstrumentContainerProps {
   indexCurrentChord: number
   isPlaying: (i: number) => boolean
   pitch: number
+  tempo: number
+  isCurrentlyPlaying: boolean
 }
 
 const InstrumentContainer: FC<InstrumentContainerProps> = (props) => {

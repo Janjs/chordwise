@@ -21,12 +21,18 @@ const midiToNoteName = (midi: number): string => {
 }
 
 const MidiVisualizer: FC<InstrumentContainerProps> = (props) => {
-    const { chordProgression, indexCurrentChord, pitch } = props
+    const { chordProgression, indexCurrentChord, pitch, tempo, isCurrentlyPlaying } = props
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const containerRef = useRef<HTMLDivElement>(null)
     const scrollRef = useRef<HTMLDivElement>(null)
     const hasScrolledRef = useRef(false)
     const containerWidthRef = useRef<number>(0)
+
+    // Animation state
+    const animationRef = useRef<number | null>(null)
+    const chordStartTimeRef = useRef<number | null>(null)
+    const lastChordIndexRef = useRef<number>(-1)
+    const [playheadProgress, setPlayheadProgress] = useState(0) // 0 to 1 within current chord
 
     // Track theme changes to trigger redraw
     const [isDark, setIsDark] = useState(false)
@@ -74,6 +80,63 @@ const MidiVisualizer: FC<InstrumentContainerProps> = (props) => {
 
         return events
     }, [chordProgression, pitch])
+
+    // Refs for animation loop to access latest props without re-triggering effect
+    const indexCurrentChordRef = useRef(indexCurrentChord)
+    const tempoRef = useRef(tempo)
+
+    // Update refs on every render
+    indexCurrentChordRef.current = indexCurrentChord
+    tempoRef.current = tempo
+
+    // Animation loop for smooth playhead
+    useEffect(() => {
+        if (!isCurrentlyPlaying) {
+            if (animationRef.current) {
+                cancelAnimationFrame(animationRef.current)
+                animationRef.current = null
+            }
+            if (indexCurrentChord < 0) {
+                setPlayheadProgress(0)
+            }
+            return
+        }
+
+        const animate = () => {
+            const currentChordIndex = indexCurrentChordRef.current
+            const currentTempo = tempoRef.current
+
+            // Reset when chord changes
+            if (currentChordIndex !== lastChordIndexRef.current) {
+                chordStartTimeRef.current = performance.now()
+                lastChordIndexRef.current = currentChordIndex
+                setPlayheadProgress(0)
+            }
+
+            if (!chordStartTimeRef.current) {
+                chordStartTimeRef.current = performance.now()
+            }
+
+            // The player logic uses whole notes (4 beats) for each chord transition
+            // wholeNoteDuration = (4 * 60) / bpm
+            const msPerChord = ((4 * 60) / currentTempo) * 1000
+            const elapsed = performance.now() - chordStartTimeRef.current
+            const progress = Math.min(elapsed / msPerChord, 1)
+
+            setPlayheadProgress(progress)
+
+            animationRef.current = requestAnimationFrame(animate)
+        }
+
+        animationRef.current = requestAnimationFrame(animate)
+
+        return () => {
+            if (animationRef.current) {
+                cancelAnimationFrame(animationRef.current)
+                animationRef.current = null
+            }
+        }
+    }, [isCurrentlyPlaying]) // Only re-run if play status changes
 
     // Scroll to center on initial render
     useLayoutEffect(() => {
@@ -206,38 +269,30 @@ const MidiVisualizer: FC<InstrumentContainerProps> = (props) => {
 
             if (isPlaying) {
                 ctx.fillStyle = primaryColor
-                ctx.shadowBlur = 12
-                ctx.shadowColor = primaryColor
             } else if (event.chordIndex < indexCurrentChord) {
                 ctx.fillStyle = mutedFgColor
                 ctx.globalAlpha = 0.5
-                ctx.shadowBlur = 0
             } else {
                 ctx.fillStyle = foregroundColor
-                ctx.shadowBlur = 0
             }
 
             const radius = Math.min(rectHeight / 3, 4)
             ctx.beginPath()
             ctx.roundRect(x, y, noteWidth, rectHeight, radius)
             ctx.fill()
-            ctx.shadowBlur = 0
             ctx.globalAlpha = 1
         })
 
-        // Playhead
-        const playheadX = LEFT_MARGIN + (indexCurrentChord * chordWidth) + chordWidth / 2
+        // Playhead - now animated within the chord based on playheadProgress
+        const playheadX = LEFT_MARGIN + (indexCurrentChord * chordWidth) + (playheadProgress * chordWidth)
         ctx.strokeStyle = primaryColor
         ctx.lineWidth = 2
-        ctx.shadowBlur = 8
-        ctx.shadowColor = primaryColor
         ctx.beginPath()
         ctx.moveTo(playheadX, 0)
         ctx.lineTo(playheadX, noteAreaHeight)
         ctx.stroke()
-        ctx.shadowBlur = 0
 
-    }, [noteEvents, indexCurrentChord, chordProgression.chords.length, isDark])
+    }, [noteEvents, indexCurrentChord, chordProgression.chords.length, isDark, playheadProgress])
 
     const totalChords = chordProgression.chords.length
 
