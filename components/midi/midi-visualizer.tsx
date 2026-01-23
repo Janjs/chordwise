@@ -75,22 +75,22 @@ const MidiVisualizer: FC<InstrumentContainerProps> = (props) => {
         return events
     }, [chordProgression, pitch])
 
-    // Scroll to bottom on initial render
+    // Scroll to center on initial render
     useLayoutEffect(() => {
         if (hasScrolledRef.current) return
         const scrollContainer = scrollRef.current
         if (!scrollContainer) return
 
-        const scrollToBottom = () => {
+        const scrollToCenter = () => {
             const maxScroll = scrollContainer.scrollHeight - scrollContainer.clientHeight
             if (maxScroll > 0) {
-                scrollContainer.scrollTop = maxScroll
+                scrollContainer.scrollTop = maxScroll / 2
                 hasScrolledRef.current = true
             }
         }
 
-        scrollToBottom()
-        const timeoutId = setTimeout(scrollToBottom, 50)
+        scrollToCenter()
+        const timeoutId = setTimeout(scrollToCenter, 50)
         return () => clearTimeout(timeoutId)
     }, [])
 
