@@ -8,6 +8,8 @@ import { Badge } from '@/components/ui/badge'
 import { Progression } from '@/types/types'
 import PianoList from '@/components/piano/piano-list'
 
+import MidiExportButton from '../midi/midi-export-button'
+
 export interface InstrumentContainerProps {
   index: number
   chordProgression: Progression
@@ -19,18 +21,25 @@ export interface InstrumentContainerProps {
 }
 
 const InstrumentContainer: FC<InstrumentContainerProps> = (props) => {
-  const { chordProgression, indexCurrentChord } = props
+  const { chordProgression, indexCurrentChord, pitch, tempo } = props
   return (
     <Tabs defaultValue="midi" className="w-full h-full flex flex-col">
-      <div className="flex flex-row justify-between h-14">
-        <TabsList className="p-3 mt-3">
+      <div className="flex flex-row justify-between items-center h-14 px-3">
+        <TabsList>
           <TabsTrigger value="midi">MIDI</TabsTrigger>
           <TabsTrigger value="guitar">Guitar</TabsTrigger>
           <TabsTrigger value="piano">Piano</TabsTrigger>
         </TabsList>
-        {chordProgression.chords[indexCurrentChord] && (
-          <Badge className="m-3 text-md">{chordProgression.chords[indexCurrentChord].representation}</Badge>
-        )}
+        <div className="flex items-center gap-2">
+          <MidiExportButton
+            chordProgression={chordProgression}
+            pitch={pitch}
+            tempo={tempo}
+          />
+          {chordProgression.chords[indexCurrentChord] && (
+            <Badge className="text-md">{chordProgression.chords[indexCurrentChord].representation}</Badge>
+          )}
+        </div>
       </div>
       <TabsContent value="guitar">
         <GuitarProgViewer {...props} />
