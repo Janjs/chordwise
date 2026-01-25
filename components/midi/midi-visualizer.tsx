@@ -145,24 +145,42 @@ const MidiVisualizer: FC<InstrumentContainerProps> = (props) => {
         }
     }, [isCurrentlyPlaying]) // Only re-run if play status changes
 
-    // Scroll to center on initial render
-    useLayoutEffect(() => {
-        if (hasScrolledRef.current) return
+    // Function to scroll to center on the actual notes
+    const scrollToNotes = useCallback(() => {
         const scrollContainer = scrollRef.current
-        if (!scrollContainer) return
+        if (!scrollContainer || noteEvents.length === 0) return
 
-        const scrollToCenter = () => {
-            const maxScroll = scrollContainer.scrollHeight - scrollContainer.clientHeight
-            if (maxScroll > 0) {
-                scrollContainer.scrollTop = maxScroll / 2
+        // Find the min and max MIDI notes that are actually used
+        const midiValues = noteEvents.map(e => e.midi)
+        const minNote = Math.min(...midiValues)
+        const maxNote = Math.max(...midiValues)
+
+        // Calculate Y positions using same formula as canvas drawing
+        const noteAreaHeight = NOTE_RANGE * NOTE_ROW_HEIGHT
+        const minRowIndex = minNote - MIN_MIDI
+        const maxRowIndex = maxNote - MIN_MIDI
+
+        // Y coordinates (higher notes = lower Y value, i.e. top of canvas)
+        const topY = noteAreaHeight - ((maxRowIndex + 1) * NOTE_ROW_HEIGHT)
+        const bottomY = noteAreaHeight - (minRowIndex * NOTE_ROW_HEIGHT)
+        const centerY = (topY + bottomY) / 2
+
+        // Scroll so that centerY is in the middle of the viewport
+        const targetScroll = centerY - (scrollContainer.clientHeight / 2)
+        scrollContainer.scrollTop = Math.max(0, targetScroll)
+    }, [noteEvents])
+
+    // Scroll to center on notes when component loads
+    useEffect(() => {
+        if (!hasScrolledRef.current && noteEvents.length > 0) {
+            // Use a small delay to ensure canvas is rendered
+            const timer = setTimeout(() => {
+                scrollToNotes()
                 hasScrolledRef.current = true
-            }
+            }, 50)
+            return () => clearTimeout(timer)
         }
-
-        scrollToCenter()
-        const timeoutId = setTimeout(scrollToCenter, 50)
-        return () => clearTimeout(timeoutId)
-    }, [])
+    }, [noteEvents, scrollToNotes])
 
     // Auto-scroll horizontally to keep current chord visible
     useEffect(() => {
