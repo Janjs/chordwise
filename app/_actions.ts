@@ -3,8 +3,9 @@
 import { GenerateProgressionsRequest, GenerateProgressionsResponse, Progression, Suggestion } from '@/types/types'
 import { Midi as TonalMidi, Chord as TonalChord } from 'tonal'
 import OpenAI from 'openai'
+import { zodTextFormat } from 'openai/helpers/zod'
+import { z } from 'zod'
 import { readFileSync } from 'fs'
-import { ChatCompletionMessageParam } from 'openai/resources/chat'
 import { redirect } from 'next/navigation'
 import { GITHUB_LINK } from '@/lib/utils'
 import { revalidatePath } from 'next/cache'
@@ -14,6 +15,11 @@ const MOCK = false
 
 const openai = new OpenAI()
 
+// Zod schema for structured output
+const ChordProgressionsSchema = z.object({
+  chord_progressions: z.array(z.array(z.string())).describe('5 chord progressions, each as an array of chord names'),
+})
+
 export const generateChordProgressions = async (
   userInput: GenerateProgressionsRequest,
 ): Promise<GenerateProgressionsResponse> => {
@@ -21,40 +27,27 @@ export const generateChordProgressions = async (
 
   if (MOCK) return { progressions: parseProgressions(MOCK_DATA) }
 
-  const messages: ChatCompletionMessageParam[] = [
-    {
-      role: 'system',
-      content: `
-          Analyze the following query and return 5 valid json objects corresponding to these rules:
-
-          "chord_progressions":
-          Generate 5 chord progressions, each chord progression will consist in an array of each chord.
-      `,
+  const response = await openai.responses.parse({
+    model: 'gpt-4o-mini',
+    instructions: `Generate 5 chord progressions based on the user's request. Each progression should be an array of chord names (e.g., "Am", "Dm7", "G7", "Cmaj7").`,
+    input: createUserPrompt(userInput),
+    text: {
+      format: zodTextFormat(ChordProgressionsSchema, 'chord_progressions'),
     },
-    {
-      role: 'user',
-      content: createUserPrompt(userInput),
-    },
-  ]
-
-  const completion = await openai.chat.completions.create({
-    model: 'gpt-3.5-turbo-1106',
-    messages: messages,
-    response_format: { type: 'json_object' },
   })
 
-  const response = JSON.parse(completion.choices[0]!.message?.content!)
+  const parsed = response.output_parsed
 
-  if (!response || response === '' || !response.chord_progressions) {
+  if (!parsed || !parsed.chord_progressions) {
     return { error: 'Error while generating chord progressions.' }
   }
 
-  const parsedProgressions = parseProgressions(response)
+  const parsedProgressions = parseProgressions(parsed)
 
   return { progressions: parsedProgressions }
 }
 
-const parseProgressions = (data: typeof MOCK_DATA): Progression[] => {
+const parseProgressions = (data: z.infer<typeof ChordProgressionsSchema>): Progression[] => {
   const parsedProgressions = data.chord_progressions.map((progression) => ({
     chords: progression.map((chordName) => ({ representation: chordName, midi: getProgressionMidis(chordName) })),
   }))
@@ -65,15 +58,18 @@ const parseProgressions = (data: typeof MOCK_DATA): Progression[] => {
 const getProgressionMidis = (representation: string) => {
   const chordInfo = TonalChord.get(representation)
 
-  const notes =
-    chordInfo.tonic != null
-      ? TonalChord.getChord(chordInfo.type, chordInfo.tonic + 0).notes
-      : chordInfo.notes.map((note) => note + 0)
+  if (!chordInfo.notes || chordInfo.notes.length === 0) {
+    return []
+  }
 
-  const midis: number[] = notes.map((note) => TonalMidi.toMidi(note) as number).filter((note) => !!note)
+  // Manually add octave 3 to each note since getChord doesn't include octaves
+  const notesWithOctave = chordInfo.notes.map((note) => note + '3')
 
-  // Raise notes to octave 3 (24 semitones = 2 octaves)
-  return midis.map((midi) => midi + 24)
+  const midis: number[] = notesWithOctave
+    .map((note) => TonalMidi.toMidi(note) as number)
+    .filter((midi) => midi != null)
+
+  return midis
 }
 
 const getSuggestion = async (suggestionIndex: number) => {
