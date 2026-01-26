@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useChat } from '@ai-sdk/react'
 import { Progression } from '@/types/types'
 import {
@@ -100,16 +100,20 @@ function SuggestionsWithFade({ children, className }: { children: React.ReactNod
   )
 }
 
-function ConversationWithFade({ children, className }: { children: React.ReactNode; className?: string }) {
+function ConversationWithFade({ children, className, onViewportReady }: { children: React.ReactNode; className?: string; onViewportReady?: (viewport: HTMLElement | null) => void }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [showTopFade, setShowTopFade] = useState(false)
   const [showBottomFade, setShowBottomFade] = useState(false)
   const viewportRef = useRef<HTMLElement | null>(null)
   const observerRef = useRef<MutationObserver | null>(null)
+  const onViewportReadyRef = useRef(onViewportReady)
+  onViewportReadyRef.current = onViewportReady
 
   useEffect(() => {
     const container = containerRef.current
     if (!container) return
+
+    let timeoutId: ReturnType<typeof setTimeout> | null = null
 
     const findScrollableElement = (): HTMLElement | null => {
       const elements = Array.from(container.querySelectorAll('*'))
@@ -134,27 +138,25 @@ function ConversationWithFade({ children, className }: { children: React.ReactNo
 
     const attachListeners = () => {
       const viewport = findScrollableElement()
-      if (!viewport) return false
+      if (!viewport) {
+        timeoutId = setTimeout(attachListeners, 50)
+        return
+      }
 
       viewportRef.current = viewport
+      onViewportReadyRef.current?.(viewport)
       checkScroll()
       viewport.addEventListener('scroll', checkScroll)
+      window.addEventListener('resize', checkScroll)
 
       observerRef.current = new MutationObserver(checkScroll)
       observerRef.current.observe(viewport, { childList: true, subtree: true })
-
-      return true
     }
 
-    // Try to attach immediately, or retry after render
-    if (!attachListeners()) {
-      const timeout = setTimeout(attachListeners, 50)
-      return () => clearTimeout(timeout)
-    }
-
-    window.addEventListener('resize', checkScroll)
+    attachListeners()
 
     return () => {
+      if (timeoutId) clearTimeout(timeoutId)
       if (viewportRef.current) {
         viewportRef.current.removeEventListener('scroll', checkScroll)
       }
@@ -190,6 +192,13 @@ function ChatbotContent({ onGenerate, onProgressionsGenerated, isLoading }: Chat
   const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const lastAutoPromptRef = useRef<string>('')
+  const latestUserMessageRef = useRef<HTMLDivElement>(null)
+  const prevMessagesLengthRef = useRef(0)
+  const scrollViewportRef = useRef<HTMLElement | null>(null)
+
+  const handleViewportReady = useCallback((viewport: HTMLElement | null) => {
+    scrollViewportRef.current = viewport
+  }, [])
 
   const { textInput } = usePromptInputController()
 
@@ -231,13 +240,36 @@ function ChatbotContent({ onGenerate, onProgressionsGenerated, isLoading }: Chat
     if (status === 'error') {
       const lastMessage = messages[messages.length - 1]
       if (lastMessage && 'error' in lastMessage && lastMessage.error) {
-        const errorMessage = typeof lastMessage.error === 'string' 
-          ? lastMessage.error 
+        const errorMessage = typeof lastMessage.error === 'string'
+          ? lastMessage.error
           : (lastMessage.error as any)?.message || 'An error occurred. Please try again.'
         setError(errorMessage)
       }
     }
   }, [status, messages])
+
+  // Scroll latest user message to top when a new message is added
+  useEffect(() => {
+    const lastMessage = messages[messages.length - 1]
+    if (
+      messages.length > prevMessagesLengthRef.current &&
+      lastMessage?.role === 'user'
+    ) {
+      // Wait for DOM to update and layout to complete
+      requestAnimationFrame(() => {
+        const viewport = scrollViewportRef.current
+        const messageEl = latestUserMessageRef.current
+        if (!viewport || !messageEl) return
+
+        // Calculate position relative to scroll container using bounding rects
+        const viewportRect = viewport.getBoundingClientRect()
+        const messageRect = messageEl.getBoundingClientRect()
+        const scrollTop = viewport.scrollTop + (messageRect.top - viewportRect.top)
+        viewport.scrollTo({ top: scrollTop, behavior: 'smooth' })
+      })
+    }
+    prevMessagesLengthRef.current = messages.length
+  }, [messages])
 
   const constructPrompt = () => {
     const parts: string[] = []
@@ -332,11 +364,15 @@ function ChatbotContent({ onGenerate, onProgressionsGenerated, isLoading }: Chat
           </AlertDescription>
         </Alert>
       )}
-      <ConversationWithFade className="flex-1 min-h-0">
+      <ConversationWithFade className="flex-1 min-h-0" onViewportReady={handleViewportReady}>
         <Conversation className="flex-1 min-h-0">
-          <ConversationContent>
-          {messages.map((message) => (
-            <div key={message.id}>
+          <ConversationContent className="pt-8 gap-4">
+          {messages.map((message, index) => (
+            <div
+              key={message.id}
+              className="flex flex-col gap-2"
+              ref={message.role === 'user' && index === messages.length - 1 ? latestUserMessageRef : undefined}
+            >
               {message.parts ? (
                 message.parts.map((part, i) => {
                   if (part.type === 'text' && 'text' in part) {
@@ -388,6 +424,8 @@ function ChatbotContent({ onGenerate, onProgressionsGenerated, isLoading }: Chat
               )}
             </div>
           ))}
+          {/* Spacer to allow scrolling last user message to top */}
+          {messages.length > 0 && <div className="min-h-[50vh]" />}
           </ConversationContent>
           <ConversationScrollButton />
         </Conversation>
