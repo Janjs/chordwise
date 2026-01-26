@@ -30,7 +30,7 @@ export default function Header() {
           )}
         </div>
         {isGeneratePage && instrumentViewer && (
-          <div className="hidden md:flex absolute" style={{ left: 'calc(1rem + 20rem + 1rem)' }}>
+          <div className="hidden md:flex absolute" style={{ left: 'calc(1rem + 25rem + 1rem)' }}>
             <Tabs value={instrumentViewer.activeTab} onValueChange={(v) => instrumentViewer.setActiveTab(v as InstrumentTab)}>
               <TabsList className="gap-1 bg-transparent p-0">
                 <TabsTrigger 

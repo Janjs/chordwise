@@ -695,8 +695,8 @@ export const PromptInput = ({
     const text = usingProvider
       ? controller.textInput.value
       : (() => {
-          const formData = new FormData(form);
-          return (formData.get("message") as string) || "";
+          const textarea = form.querySelector<HTMLTextAreaElement>('textarea[name="message"]');
+          return textarea?.value || "";
         })();
 
     // Reset form immediately after capturing text to avoid race condition

@@ -20,9 +20,10 @@ import {
   PromptInputTextarea,
   PromptInputFooter,
   PromptInputSubmit,
+  PromptInputProvider,
+  usePromptInputController,
   type PromptInputMessage,
 } from '@/components/ai-elements/prompt-input'
-import { Loader } from '@/components/ai-elements/loader'
 import {
   Tool,
   ToolHeader,
@@ -40,11 +41,23 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
-import { ChevronDownIcon } from 'lucide-react'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { ChevronDownIcon, XIcon } from 'lucide-react'
 
 const MOODS = ['Happy', 'Sad', 'Dreamy', 'Energetic', 'Chill', 'Melancholic', 'Romantic', 'Mysterious']
 const GENRES = ['Jazz', 'Pop', 'R&B', 'Classical', 'Lo-fi', 'Rock', 'Blues', 'Folk']
 const KEYS = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+
+const TOOL_DISPLAY_NAMES: Record<string, string> = {
+  generateChordProgressions: 'Generate Chord Progressions',
+}
+
+function getToolDisplayName(toolName: string): string {
+  return TOOL_DISPLAY_NAMES[toolName] || toolName
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/^./, (str) => str.toUpperCase())
+    .trim()
+}
 
 function SuggestionsWithFade({ children, className }: { children: React.ReactNode; className?: string }) {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -87,22 +100,28 @@ function SuggestionsWithFade({ children, className }: { children: React.ReactNod
   )
 }
 
+
 interface ChatbotProps {
   onGenerate: (prompt: string, key: string, scale: string) => void
   onProgressionsGenerated?: (progressions: Progression[]) => void
   isLoading: boolean
 }
 
-export default function Chatbot({ onGenerate, onProgressionsGenerated, isLoading }: ChatbotProps) {
+function ChatbotContent({ onGenerate, onProgressionsGenerated, isLoading }: ChatbotProps) {
   const [selectedMood, setSelectedMood] = useState<string | null>(null)
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null)
   const [selectedKey, setSelectedKey] = useState<string | null>(null)
   const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const lastAutoPromptRef = useRef<string>('')
+
+  const { textInput } = usePromptInputController()
 
   const { messages, sendMessage, status } = useChat({
     api: '/api/chat',
-    onError: (error) => {
+    onError: (error: Error) => {
       console.error('Chat error:', error)
+      setError(error.message || 'An error occurred. Please try again.')
     },
   } as any)
 
@@ -133,6 +152,15 @@ export default function Chatbot({ onGenerate, onProgressionsGenerated, isLoading
     if (status === 'submitted' || (messages.length > 0 && messages[messages.length - 1]?.role === 'user')) {
       setIsSuggestionsOpen(false)
     }
+    if (status === 'error') {
+      const lastMessage = messages[messages.length - 1]
+      if (lastMessage && 'error' in lastMessage && lastMessage.error) {
+        const errorMessage = typeof lastMessage.error === 'string' 
+          ? lastMessage.error 
+          : (lastMessage.error as any)?.message || 'An error occurred. Please try again.'
+        setError(errorMessage)
+      }
+    }
   }, [status, messages])
 
   const constructPrompt = () => {
@@ -142,7 +170,7 @@ export default function Chatbot({ onGenerate, onProgressionsGenerated, isLoading
     if (selectedKey) parts.push(`in ${selectedKey} major`)
 
     if (parts.length === 0) {
-      return 'What would you like to know?'
+      return 'e.g., happy jazz progressions in C major'
     }
 
     let prompt = parts.join(' ') + ' chord progressions'
@@ -154,14 +182,43 @@ export default function Chatbot({ onGenerate, onProgressionsGenerated, isLoading
     return prompt
   }
 
+  useEffect(() => {
+    const prompt = constructPrompt()
+    if (prompt !== 'e.g., happy jazz progressions in C major') {
+      const currentText = textInput.value || ''
+      if (currentText === '' || currentText === lastAutoPromptRef.current) {
+        textInput.setInput(prompt)
+        lastAutoPromptRef.current = prompt
+      }
+    } else {
+      if (!textInput.value || textInput.value === lastAutoPromptRef.current) {
+        textInput.setInput('')
+      }
+      lastAutoPromptRef.current = ''
+    }
+  }, [selectedMood, selectedGenre, selectedKey])
+
+  const handleMoodClick = (mood: string) => {
+    setSelectedMood(selectedMood === mood ? null : mood)
+  }
+
+  const handleGenreClick = (genre: string) => {
+    setSelectedGenre(selectedGenre === genre ? null : genre)
+  }
+
+  const handleKeyClick = (key: string) => {
+    setSelectedKey(selectedKey === key ? null : key)
+  }
+
   const handleSubmit = (message: PromptInputMessage) => {
     console.log('handleSubmit called', message)
-    const hasText = Boolean(message.text)
+    const hasText = Boolean(message.text?.trim())
     if (!hasText) {
       console.log('No text in message, returning early')
       return
     }
 
+    setError(null)
     const textToSend = message.text || constructPrompt()
     console.log('Sending message:', textToSend)
 
@@ -169,7 +226,7 @@ export default function Chatbot({ onGenerate, onProgressionsGenerated, isLoading
       { text: textToSend },
       {
         body: {
-          model: 'gpt-4o-mini',
+          model: 'gpt-4o',
         },
       }
     )
@@ -182,13 +239,25 @@ export default function Chatbot({ onGenerate, onProgressionsGenerated, isLoading
 
   const defaultPrompt = constructPrompt()
   const hasSelections = selectedMood || selectedGenre || selectedKey
+  const hasText = Boolean(textInput.value?.trim()) || hasSelections
 
   return (
     <div className="flex flex-col h-full">
-      
+      {error && (
+        <Alert variant="destructive" className="mb-4">
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>
+            <span>{error}</span>
+            <button
+              onClick={() => setError(null)}
+            >
+              <XIcon className="size-4" />
+            </button>
+          </AlertDescription>
+        </Alert>
+      )}
       <Conversation className="flex-1">
-        
-        <ConversationContent>
+          <ConversationContent>
           {messages.map((message) => (
             <div key={message.id}>
               {message.parts ? (
@@ -207,18 +276,23 @@ export default function Chatbot({ onGenerate, onProgressionsGenerated, isLoading
                     'state' in part &&
                     'input' in part
                   ) {
-                    const toolName = 'toolName' in part ? part.toolName : undefined
+                    const toolName = 'toolName' in part ? part.toolName : (typeof part.type === 'string' ? part.type.replace('tool-', '') : 'tool')
+                    const toolDisplayName = getToolDisplayName(toolName)
                     return (
-                      <Tool key={`${message.id}-${i}`} defaultOpen={false}>
+                      <Tool key={i} defaultOpen={part.state === 'output-available' || part.state === 'output-error'}>
                         <ToolHeader
                           type={part.type as any}
                           state={part.state as any}
                           toolName={toolName}
+                          title={toolDisplayName}
                         />
                         <ToolContent>
                           <ToolInput input={part.input} />
-                          {'state' in part && part.state === 'output-available' && 'output' in part && (
-                            <ToolOutput output={part.output} errorText={'errorText' in part ? part.errorText : undefined} />
+                          {'state' in part && (part.state === 'output-available' || part.state === 'output-error') && (
+                            <ToolOutput 
+                              output={'output' in part ? part.output : undefined}
+                              errorText={'errorText' in part ? part.errorText : undefined}
+                            />
                           )}
                         </ToolContent>
                       </Tool>
@@ -229,18 +303,19 @@ export default function Chatbot({ onGenerate, onProgressionsGenerated, isLoading
               ) : (
                 <Message from={message.role}>
                   <MessageContent>
-                    <MessageResponse>{'content' in message ? String(message.content || '') : ''}</MessageResponse>
+                    <MessageResponse>
+                      {'content' in message ? String(message.content || '') : ''}
+                    </MessageResponse>
                   </MessageContent>
                 </Message>
               )}
             </div>
           ))}
-          {status === 'submitted' && <Loader />}
-        </ConversationContent>
-        <ConversationScrollButton />
-      </Conversation>
+          </ConversationContent>
+          <ConversationScrollButton />
+        </Conversation>
       <Collapsible open={isSuggestionsOpen} onOpenChange={setIsSuggestionsOpen} className="group">
-        <CollapsibleTrigger className="flex items-center gap-2 mb-1.5 w-full">
+        <CollapsibleTrigger className="flex items-center justify-between gap-2 mb-1.5 w-full">
           <Label className="text-sm font-semibold text-muted-foreground">Suggestions</Label>
           <ChevronDownIcon className="size-3.5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
         </CollapsibleTrigger>
@@ -254,7 +329,7 @@ export default function Chatbot({ onGenerate, onProgressionsGenerated, isLoading
                     key={mood}
                     suggestion={mood}
                     selected={selectedMood === mood}
-                    onClick={() => setSelectedMood(selectedMood === mood ? null : mood)}
+                    onClick={handleMoodClick}
                   />
                 ))}
                 </Suggestions>
@@ -267,7 +342,7 @@ export default function Chatbot({ onGenerate, onProgressionsGenerated, isLoading
                     key={genre}
                     suggestion={genre}
                     selected={selectedGenre === genre}
-                    onClick={() => setSelectedGenre(selectedGenre === genre ? null : genre)}
+                    onClick={handleGenreClick}
                   />
                 ))}
                 </Suggestions>
@@ -280,24 +355,37 @@ export default function Chatbot({ onGenerate, onProgressionsGenerated, isLoading
                     key={key}
                     suggestion={key}
                     selected={selectedKey === key}
-                    onClick={() => setSelectedKey(selectedKey === key ? null : key)}
+                    onClick={handleKeyClick}
                   />
                 ))}
               </Suggestions>
           </SuggestionsWithFade>
         </CollapsibleContent>
       </Collapsible>
-      <PromptInput onSubmit={handleSubmit}>
+
+        <PromptInput onSubmit={handleSubmit}>
         <PromptInputBody>
           <PromptInputTextarea placeholder={defaultPrompt} />
         </PromptInputBody>
         <PromptInputFooter className="flex w-full justify-end">
           <PromptInputSubmit 
-            disabled={status === 'error' || status === 'submitted' || status === 'streaming'} 
+            disabled={!hasText || status === 'error' || status === 'submitted' || status === 'streaming'} 
             status={status} 
           />
         </PromptInputFooter>
-      </PromptInput>
+        </PromptInput>
     </div>
+  )
+}
+
+export default function Chatbot({ onGenerate, onProgressionsGenerated, isLoading }: ChatbotProps) {
+  return (
+    <PromptInputProvider>
+      <ChatbotContent 
+        onGenerate={onGenerate} 
+        onProgressionsGenerated={onProgressionsGenerated} 
+        isLoading={isLoading} 
+      />
+    </PromptInputProvider>
   )
 }

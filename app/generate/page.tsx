@@ -100,7 +100,7 @@ const GenerateContent = () => {
   return (
     <div className="flex w-full h-full gap-4 px-4 pb-4 overflow-hidden">
       {/* Left sidebar */}
-      <div className="hidden md:flex w-80 min-w-80 flex-col gap-4 flex-shrink-0">
+      <div className="hidden md:flex w-[25rem] flex-col gap-4 flex-shrink-0">
         {error && (
           <Alert variant="destructive">
             <Icons.warning className="h-4 w-4" />

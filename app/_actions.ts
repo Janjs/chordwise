@@ -2,8 +2,8 @@
 
 import { GenerateProgressionsRequest, GenerateProgressionsResponse, Progression, Suggestion } from '@/types/types'
 import { Midi as TonalMidi, Chord as TonalChord } from 'tonal'
-import OpenAI from 'openai'
-import { zodTextFormat } from 'openai/helpers/zod'
+import { generateObject } from 'ai'
+import { openai } from '@ai-sdk/openai'
 import { z } from 'zod'
 import { readFileSync } from 'fs'
 import { redirect } from 'next/navigation'
@@ -13,9 +13,6 @@ import path from 'path'
 
 const MOCK = false
 
-const openai = new OpenAI()
-
-// Zod schema for structured output
 const ChordProgressionsSchema = z.object({
   chord_progressions: z.array(z.array(z.string())).describe('5 chord progressions, each as an array of chord names'),
 })
@@ -27,24 +24,23 @@ export const generateChordProgressions = async (
 
   if (MOCK) return { progressions: parseProgressions(MOCK_DATA) }
 
-  const response = await openai.responses.parse({
-    model: 'gpt-4o-mini',
-    instructions: `Generate 5 chord progressions based on the user's request. Each progression should be an array of chord names (e.g., "Am", "Dm7", "G7", "Cmaj7").`,
-    input: createUserPrompt(userInput),
-    text: {
-      format: zodTextFormat(ChordProgressionsSchema, 'chord_progressions'),
-    },
-  })
+  try {
+    const { object } = await generateObject({
+      model: openai('gpt-4o-mini'),
+      schema: ChordProgressionsSchema,
+      prompt: `Generate 5 chord progressions based on the user's request. Each progression should be an array of chord names (e.g., "Am", "Dm7", "G7", "Cmaj7").\n\n${createUserPrompt(userInput)}`,
+    })
 
-  const parsed = response.output_parsed
+    if (!object || !object.chord_progressions) {
+      return { error: 'Error while generating chord progressions.' }
+    }
 
-  if (!parsed || !parsed.chord_progressions) {
-    return { error: 'Error while generating chord progressions.' }
+    const parsedProgressions = parseProgressions(object)
+
+    return { progressions: parsedProgressions }
+  } catch (error: any) {
+    return { error: error.message || 'Error while generating chord progressions.' }
   }
-
-  const parsedProgressions = parseProgressions(parsed)
-
-  return { progressions: parsedProgressions }
 }
 
 const parseProgressions = (data: z.infer<typeof ChordProgressionsSchema>): Progression[] => {

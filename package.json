@@ -10,7 +10,7 @@
     "pretty": "prettier --write \"./**/*.{js,jsx,ts,tsx,json}\""
   },
   "dependencies": {
-    "@ai-sdk/openai": "^1.0.0",
+    "@ai-sdk/openai": "^3.0.19",
     "@ai-sdk/react": "^3.0.52",
     "@hookform/resolvers": "^5.2.2",
     "@magenta/music": "^1.23.1",
