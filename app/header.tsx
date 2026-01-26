@@ -12,8 +12,8 @@ import { DEFAULT_MUSICAL_KEY } from '@/components/user-input'
 export default function Header() {
   const [{ description, musicalKey, musicalScale }] = useGenerateSearchParams()
   return (
-    <header className="bg-transparent">
-      <nav className="mx-auto flex gap-4 max-w-7xl items-center justify-between py-2 px-2 md:px-8" aria-label="Global">
+    <header className="flex-shrink-0">
+      <nav className="flex gap-4 items-center justify-between px-4 py-2" aria-label="Global">
         <Link href="/">
           <Icons.logo className="h-5 w-auto" />
         </Link>

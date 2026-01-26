@@ -276,10 +276,7 @@ const MidiVisualizer: FC<InstrumentContainerProps> = (props) => {
         for (let midi = MIN_MIDI; midi <= MAX_MIDI; midi++) {
             const rowIndex = midi - MIN_MIDI
             const y = noteAreaHeight - ((rowIndex + 0.5) * NOTE_ROW_HEIGHT)
-            const noteInOctave = midi % 12
-            if ([0, 2, 4, 5, 7, 9, 11].includes(noteInOctave)) {
-                ctx.fillText(midiToNoteName(midi), LEFT_MARGIN - 4, y)
-            }
+            ctx.fillText(midiToNoteName(midi), LEFT_MARGIN - 4, y)
         }
 
         // Notes

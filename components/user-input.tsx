@@ -7,15 +7,12 @@ import * as z from 'zod'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Input } from '@/components/ui/input'
 import { useForm } from 'react-hook-form'
 import useGenerateSearchParams from '@/hooks/useGenerateSearchParams'
-import { Icons } from './icons'
 
 interface UserInputProps {
   onSubmit: (values: z.infer<typeof formSchema>) => void
   isLoading: boolean
-  showIcon?: boolean
 }
 
 export const formSchema = z.object({
@@ -28,11 +25,13 @@ export const DEFAULT_MUSICAL_KEY = 'Key'
 export const MUSICAL_KEYS = [
   DEFAULT_MUSICAL_KEY,
   'C',
+  'C#',
   'Db/C#',
   'D',
   'Eb',
   'E',
   'F',
+  'F#',
   'Gb/F#',
   'G',
   'Ab',
@@ -44,7 +43,7 @@ export const MUSICAL_SCALES = ['major', 'minor']
 export const existsMusicalKey = (musicalKey: string) => MUSICAL_KEYS.some((el) => el === musicalKey)
 export const existsMusicalScale = (musicalScale: string) => MUSICAL_SCALES.some((el) => el === musicalScale)
 
-const UserInput: FC<UserInputProps> = ({ onSubmit, isLoading, showIcon }) => {
+const UserInput: FC<UserInputProps> = ({ onSubmit, isLoading }) => {
   const [params, setParams] = useGenerateSearchParams()
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -58,21 +57,41 @@ const UserInput: FC<UserInputProps> = ({ onSubmit, isLoading, showIcon }) => {
   })
 
   return (
-    <div className="p-3 text-md flex flex-row justify-between gap-3">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-1 flex-col md:flex-row justify-between gap-3">
-          <div className="flex flex-row gap-3 flex-1">
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-3">
+        <div className="flex gap-2">
+          <FormField
+            control={form.control}
+            name="musicalKey"
+            render={({ field }) => (
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <SelectTrigger className="flex-1">
+                  <SelectValue placeholder={DEFAULT_MUSICAL_KEY} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {MUSICAL_KEYS.map((key) => (
+                      <SelectItem key={key} value={key}>
+                        {key}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            )}
+          />
+          {form.getValues('musicalKey') != DEFAULT_MUSICAL_KEY && (
             <FormField
               control={form.control}
-              name="musicalKey"
+              name="musicalScale"
               render={({ field }) => (
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <SelectTrigger className="w-auto">
-                    <SelectValue placeholder={DEFAULT_MUSICAL_KEY} />
+                  <SelectTrigger className="flex-1">
+                    <SelectValue placeholder={MUSICAL_SCALES[0]} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      {MUSICAL_KEYS.map((key) => (
+                      {MUSICAL_SCALES.map((key) => (
                         <SelectItem key={key} value={key}>
                           {key}
                         </SelectItem>
@@ -82,55 +101,30 @@ const UserInput: FC<UserInputProps> = ({ onSubmit, isLoading, showIcon }) => {
                 </Select>
               )}
             />
-            {form.getValues('musicalKey') != DEFAULT_MUSICAL_KEY && (
-              <FormField
-                control={form.control}
-                name="musicalScale"
-                render={({ field }) => (
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <SelectTrigger className="w-auto">
-                      <SelectValue placeholder={MUSICAL_SCALES[0]} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {MUSICAL_SCALES.map((key) => (
-                          <SelectItem key={key} value={key}>
-                            {key}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-            )}
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormControl>
-                    <Input placeholder="Describe the vibe of the chord progression..." {...field} className="text-md" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className="flex-1 md:flex-none">
-            {showIcon ? (
-              <Button size="icon" type="submit" disabled={isLoading}>
-                {isLoading ? <Icons.mascotSleeping className="h-7 w-7" /> : <Icons.mascot className="h-7 w-7" />}
-              </Button>
-            ) : (
-              <Button type="submit" disabled={isLoading}>
-                Generate
-              </Button>
-            )}
-          </div>
-        </form>
-      </Form>
-    </div>
+          )}
+        </div>
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <textarea
+                  placeholder="Describe the vibe..."
+                  {...field}
+                  rows={4}
+                  className="w-full rounded-lg border bg-transparent px-3 py-2 text-sm resize-none focus:outline-none focus:ring-1 focus:ring-ring"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit" disabled={isLoading} className="w-full">
+          {isLoading ? 'Generating...' : 'Generate'}
+        </Button>
+      </form>
+    </Form>
   )
 }
 

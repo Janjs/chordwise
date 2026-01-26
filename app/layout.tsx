@@ -3,7 +3,6 @@ import Header from './header'
 import './globals.css'
 import { GeistSans } from 'geist/font/sans'
 import { ThemeProvider } from '@/components/theme-provider'
-import Footer from './footer'
 
 export const metadata = {
   title: 'Chordwise',
@@ -24,16 +23,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <div className="h-[100dvh] relative flex flex-col">
-            <div className="absolute top-0 left-3 right-0 z-10 bg-transparent">
-              <Suspense fallback={null}>
-                <Header />
-              </Suspense>
-            </div>
-            <div className="flex flex-1 justify-center overflow-auto py-4">{children}</div>
-            <div className="absolute bottom-0 left-0 right-0 z-10">
-              <Footer />
-            </div>
+          <div className="h-[100dvh] flex flex-col">
+            <Suspense fallback={null}>
+              <Header />
+            </Suspense>
+            <div className="flex flex-1 overflow-hidden">{children}</div>
           </div>
         </ThemeProvider>
       </body>

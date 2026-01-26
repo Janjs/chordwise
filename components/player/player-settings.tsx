@@ -1,23 +1,23 @@
 'use client'
 
 import { FC } from 'react'
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 // list of instruments: https://surikov.github.io/midi-sounds-react-examples/examples/midi-sounds-example3/build/
 export enum Instrument {
   piano = 12,
   guitar = 248,
-  flute = 771,
+  synth = 264,
+}
+
+export type InstrumentTab = 'midi' | 'guitar' | 'piano'
+
+export const tabToInstrument: Record<InstrumentTab, keyof typeof Instrument> = {
+  midi: 'synth',
+  guitar: 'guitar',
+  piano: 'piano',
 }
 
 export const MASTER_VOLUME = 0.05
@@ -25,38 +25,31 @@ export const DEFAULT_TEMPO = 120
 export const DEFAULT_PITCH = 0
 
 interface PlayerSettingsProps {
-  instrumentKey: keyof typeof Instrument
+  activeTab: InstrumentTab
   tempo: number
   pitch: number
-  setInstrumentKey: (instrumentKey: keyof typeof Instrument) => void
+  setActiveTab: (tab: InstrumentTab) => void
   setTempo: (tempo: number) => void
   setPitch: (pitch: number) => void
 }
 
 const PlayerSettings: FC<PlayerSettingsProps> = (props) => {
-  const { instrumentKey, tempo, pitch, setInstrumentKey, setTempo, setPitch } = props
+  const { activeTab, tempo, pitch, setActiveTab, setTempo, setPitch } = props
 
   return (
-    <div className="hidden md:flex flex-1 flex-row justify-between gap-4 p-4">
-      <div className="flex flex-1 flex-col justify-center gap-2">
-        <Select onValueChange={(d) => setInstrumentKey(d as keyof typeof Instrument)} defaultValue={instrumentKey}>
-          <SelectTrigger className="outline-none">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Instruments</SelectLabel>
-              <SelectItem value="piano">🎹 Piano</SelectItem>
-              <SelectItem value="guitar">🎸 Guitar</SelectItem>
-              <SelectItem value="flute">🪈 Flute</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      </div>
-      <div className="flex flex-1 flex-col gap-4">
+    <div className="hidden md:flex flex-row items-center gap-4 p-4">
+      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as InstrumentTab)}>
+        <TabsList>
+          <TabsTrigger value="midi">Synth</TabsTrigger>
+          <TabsTrigger value="guitar">Guitar</TabsTrigger>
+          <TabsTrigger value="piano">Piano</TabsTrigger>
+        </TabsList>
+      </Tabs>
+
+      <div className="flex flex-1 flex-col gap-2 min-w-[120px]">
         <div className="flex items-center justify-between">
-          <Label htmlFor="top-p">Tempo</Label>
-          <p className="text-right text-sm text-muted-foreground">{tempo} bpm</p>
+          <Label htmlFor="tempo">Tempo</Label>
+          <span className="text-sm text-muted-foreground">{tempo} bpm</span>
         </div>
         <Slider
           id="tempo"
@@ -65,14 +58,14 @@ const PlayerSettings: FC<PlayerSettingsProps> = (props) => {
           defaultValue={[tempo]}
           step={1}
           onValueChange={(tempos) => setTempo(tempos[0])}
-          className="[&_[role=slider]]:h-4 [&_[role=slider]]:w-4"
           aria-label="tempo"
         />
       </div>
-      <div className="flex flex-1 flex-col gap-4">
+
+      <div className="flex flex-1 flex-col gap-2 min-w-[120px]">
         <div className="flex items-center justify-between">
           <Label htmlFor="pitch">Pitch</Label>
-          <span className="text-right text-sm text-muted-foreground min-w-8">{pitch > 0 ? `+${pitch}` : pitch}</span>
+          <span className="text-sm text-muted-foreground">{pitch > 0 ? `+${pitch}` : pitch}</span>
         </div>
         <Slider
           id="pitch"
@@ -81,7 +74,6 @@ const PlayerSettings: FC<PlayerSettingsProps> = (props) => {
           defaultValue={[pitch]}
           step={1}
           onValueChange={(pitches) => setPitch(pitches[0])}
-          className="[&_[role=slider]]:h-4 [&_[role=slider]]:w-4"
           aria-label="pitch"
         />
       </div>

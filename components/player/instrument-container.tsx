@@ -1,16 +1,16 @@
-import { FC, useState } from 'react'
+import { FC } from 'react'
 
-import Piano from '../piano/piano'
 import GuitarProgViewer from '../guitar/guitar-prog'
 import MidiVisualizer from '../midi/midi-visualizer'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Badge } from '@/components/ui/badge'
 import { Progression } from '@/types/types'
 import PianoList from '@/components/piano/piano-list'
-
 import MidiExportButton from '../midi/midi-export-button'
+import { InstrumentTab } from './player-settings'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 export interface InstrumentContainerProps {
+  activeTab: InstrumentTab
+  setActiveTab: (tab: InstrumentTab) => void
   index: number
   chordProgression: Progression
   indexCurrentChord: number
@@ -21,36 +21,32 @@ export interface InstrumentContainerProps {
 }
 
 const InstrumentContainer: FC<InstrumentContainerProps> = (props) => {
-  const { chordProgression, indexCurrentChord, pitch, tempo } = props
+  const { activeTab, setActiveTab, chordProgression, pitch, tempo } = props
+
   return (
-    <Tabs defaultValue="midi" className="w-full h-full flex flex-col">
-      <div className="flex flex-row justify-between items-center h-14 px-3">
-        <TabsList>
-          <TabsTrigger value="midi">MIDI</TabsTrigger>
-          <TabsTrigger value="guitar">Guitar</TabsTrigger>
-          <TabsTrigger value="piano">Piano</TabsTrigger>
-        </TabsList>
-        <div className="flex items-center gap-2">
+    <div className="w-full h-full flex flex-col overflow-hidden">
+      <div className="flex-shrink-0 flex items-center justify-between gap-4 p-3">
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as InstrumentTab)}>
+          <TabsList>
+            <TabsTrigger value="midi">MIDI</TabsTrigger>
+            <TabsTrigger value="guitar">Guitar</TabsTrigger>
+            <TabsTrigger value="piano">Piano</TabsTrigger>
+          </TabsList>
+        </Tabs>
+        <div className={activeTab === 'midi' ? '' : 'invisible'}>
           <MidiExportButton
             chordProgression={chordProgression}
             pitch={pitch}
             tempo={tempo}
           />
-          {chordProgression.chords[indexCurrentChord] && (
-            <Badge className="text-md">{chordProgression.chords[indexCurrentChord].representation}</Badge>
-          )}
         </div>
       </div>
-      <TabsContent value="guitar">
-        <GuitarProgViewer {...props} />
-      </TabsContent>
-      <TabsContent value="piano" className="w-full">
-        <PianoList {...props} />
-      </TabsContent>
-      <TabsContent value="midi" className="w-full flex-1 overflow-hidden mt-0 data-[state=active]:flex data-[state=active]:flex-col">
-        <MidiVisualizer {...props} />
-      </TabsContent>
-    </Tabs>
+      <div className="relative flex-1 min-h-0 overflow-hidden">
+        {activeTab === 'midi' && <MidiVisualizer {...props} />}
+        {activeTab === 'guitar' && <GuitarProgViewer {...props} />}
+        {activeTab === 'piano' && <PianoList {...props} />}
+      </div>
+    </div>
   )
 }
 

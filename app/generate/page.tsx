@@ -1,19 +1,15 @@
 'use client'
 
 import { Suspense, useEffect, useState } from 'react'
-import UserInput, { existsMusicalKey, formSchema } from '@/components/user-input'
-import * as z from 'zod'
+import { existsMusicalKey } from '@/components/user-input'
 import { GenerateProgressionsRequest, GenerateProgressionsResponse, Progression } from '@/types/types'
 import { Alert, AlertTitle } from '@/components/ui/alert'
 import PlayerContainer from '@/components/player/player-container'
 import { Icons } from '@/components/icons'
-import { Separator } from '@/components/ui/separator'
-import { SubmitHandler } from 'react-hook-form'
 import { generateChordProgressions, reGenerate } from '@/app/_actions'
 import useGenerateSearchParams from '@/hooks/useGenerateSearchParams'
-import { Skeleton } from '@/components/ui/skeleton'
+import Chatbot from '@/components/generate-new/chatbot'
 
-export type Inputs = z.infer<typeof formSchema>
 
 export const dynamic = 'force-dynamic'
 
@@ -31,22 +27,28 @@ const GenerateContent = () => {
     }
   }, [params])
 
-  const handleSubmit: SubmitHandler<Inputs> = async (input) => {
+  const handleGenerate = async (prompt: string, key: string, scale: string) => {
     const generateProgressionsRequest: GenerateProgressionsRequest = {
-      description: input.description,
-      musicalKey: input.musicalKey,
-      musicalScale: input.musicalScale,
+      description: prompt,
+      musicalKey: key,
+      musicalScale: scale,
     }
     if (
-      input.description === params.description &&
-      input.musicalKey === params.musicalKey &&
-      input.musicalScale === params.musicalScale &&
+      prompt === params.description &&
+      key === params.musicalKey &&
+      scale === params.musicalScale &&
       params.suggestionIndex === undefined
     ) {
       reGenerate()
     } else {
       setParams(generateProgressionsRequest)
     }
+  }
+
+  const handleProgressionsGenerated = (progressions: Progression[]) => {
+    setProgressions(progressions)
+    setIsLoading(false)
+    setError(null)
   }
 
   const fetchData = async (generateProgressionsRequest: GenerateProgressionsRequest) => {
@@ -68,34 +70,27 @@ const GenerateContent = () => {
   }
 
   return (
-    <div className="flex h-full max-w-7xl flex-1 flex-col justify-between pb-0 md:pb-4 px-4 pt-10">
-      <div className="flex-1 overflow-auto">
+    <div className="flex w-full h-full gap-4 px-4 pb-4 overflow-hidden">
+      {/* Left sidebar */}
+      <div className="hidden md:flex w-80 min-w-80 flex-col gap-4 flex-shrink-0">
+        {error && (
+          <Alert variant="destructive">
+            <Icons.warning className="h-4 w-4" />
+            <AlertTitle>Something went wrong</AlertTitle>
+          </Alert>
+        )}
+        <Chatbot onGenerate={handleGenerate} onProgressionsGenerated={handleProgressionsGenerated} isLoading={isLoading} />
+      </div>
+
+      {/* Main content */}
+      <div className="flex-1 min-w-0 min-h-0 overflow-hidden">
         {progressions.length > 0 ? (
           <PlayerContainer progressions={progressions} />
         ) : (
-          <div className="w-full h-full overflow-auto grid md:grid-cols-2 gap-4">
-            <div className="flex flex-col h-full w-full gap-4">
-              <Skeleton className="h-32" />
-              <Skeleton className="h-32 bg-card" />
-              <Skeleton className="h-32 bg-card" />
-              <Skeleton className="h-32 bg-card" />
-              <Skeleton className="h-32 bg-card" />
-            </div>
-            <div className="flex flex-col gap-4 pb-4">
-              <Skeleton className="h-[8vh] flex-none md:flex-1" />
-            </div>
+          <div className="flex h-full items-center justify-center text-muted-foreground">
+            {isLoading ? 'Generating progressions...' : 'Enter a prompt to generate chord progressions'}
           </div>
         )}
-      </div>
-      {error && (
-        <Alert variant="destructive" className="mb-4">
-          <Icons.warning className="h-4 w-4" />
-          <AlertTitle>Something went wrong</AlertTitle>
-        </Alert>
-      )}
-      <Separator className="mb-4 bg-card hidden md:inline" />
-      <div className="border rounded-lg bg-card">
-        <UserInput onSubmit={handleSubmit} isLoading={isLoading} showIcon />
       </div>
     </div>
   )
@@ -103,22 +98,7 @@ const GenerateContent = () => {
 
 const Page = () => {
   return (
-    <Suspense fallback={
-      <div className="flex h-full max-w-7xl flex-1 flex-col justify-between pb-0 md:pb-4 px-4 pt-10">
-        <div className="w-full h-full overflow-auto grid md:grid-cols-2 gap-4">
-          <div className="grid overflow-y-auto gap-4">
-            <Skeleton className="h-32" />
-            <Skeleton className="h-32 bg-card" />
-            <Skeleton className="h-32 bg-card" />
-            <Skeleton className="h-32 bg-card" />
-            <Skeleton className="h-32 bg-card" />
-          </div>
-          <div className="flex flex-col gap-4 pb-4">
-            <Skeleton className="h-[8vh] flex-none md:flex-1" />
-          </div>
-        </div>
-      </div>
-    }>
+    <Suspense fallback={null}>
       <GenerateContent />
     </Suspense>
   )

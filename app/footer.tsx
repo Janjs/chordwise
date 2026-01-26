@@ -13,7 +13,7 @@ export default function Footer() {
     <div
       className={`
     ${pathname === '/' ? 'pt-6 bg-gradient-to-t from-background from-60%' : 'hidden'}
-    md:flex mx-auto gap-4 max-w-7xl items-center justify-between px-2
+    md:flex gap-4 items-center justify-end px-4 flex-shrink-0
     `}
     >
       <p className="max-w-7xl w-full px-4 pb-2 text-right text-xs text-muted-foreground">
