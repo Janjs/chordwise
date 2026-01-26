@@ -2,19 +2,16 @@
 
 import ModeToggle from '@/components/mode-toggle'
 import { Icons } from '@/components/icons'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import About from '@/components/about'
 import useGenerateSearchParams from '@/hooks/useGenerateSearchParams'
-import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { DEFAULT_MUSICAL_KEY } from '@/components/user-input'
 import { useInstrumentViewer } from '@/components/player/instrument-viewer-context'
 import { usePathname } from 'next/navigation'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { InstrumentTab } from '@/components/player/player-settings'
 
 export default function Header() {
-  const [{ description, musicalKey, musicalScale }] = useGenerateSearchParams()
+  const [prompt] = useGenerateSearchParams()
   const { props: instrumentViewer } = useInstrumentViewer()
   const pathname = usePathname()
   const isGeneratePage = pathname === '/generate'
@@ -25,9 +22,11 @@ export default function Header() {
           <Link href="/" className="flex items-center">
             <Icons.mascot className="h-6 w-6" />
           </Link>
-          {description && (
-          <h2 className="italic">{`“${description}”`}</h2>
-          )}
+          {prompt ? (
+            <h2 className="italic max-w-[22rem] whitespace-nowrap">
+              <span className="overflow-hidden text-ellipsis inline-block max-w-[calc(100%-0.5em)] align-bottom">{`"${prompt}`}</span>"
+            </h2>
+          ) : null}
         </div>
         {isGeneratePage && instrumentViewer && (
           <div className="hidden md:flex absolute" style={{ left: 'calc(1rem + 25rem + 1rem)' }}>

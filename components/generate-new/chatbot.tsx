@@ -24,13 +24,7 @@ import {
   usePromptInputController,
   type PromptInputMessage,
 } from '@/components/ai-elements/prompt-input'
-import {
-  Tool,
-  ToolHeader,
-  ToolContent,
-  ToolInput,
-  ToolOutput,
-} from '@/components/ai-elements/tool'
+import { Icons } from '@/components/icons'
 import {
   Suggestions,
   Suggestion,
@@ -48,16 +42,6 @@ const MOODS = ['Happy', 'Sad', 'Dreamy', 'Energetic', 'Chill', 'Melancholic', 'R
 const GENRES = ['Jazz', 'Pop', 'R&B', 'Classical', 'Lo-fi', 'Rock', 'Blues', 'Folk']
 const KEYS = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 
-const TOOL_DISPLAY_NAMES: Record<string, string> = {
-  generateChordProgressions: 'Generate Chord Progressions',
-}
-
-function getToolDisplayName(toolName: string): string {
-  return TOOL_DISPLAY_NAMES[toolName] || toolName
-    .replace(/([A-Z])/g, ' $1')
-    .replace(/^./, (str) => str.toUpperCase())
-    .trim()
-}
 
 function SuggestionsWithFade({ children, className }: { children: React.ReactNode; className?: string }) {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -180,16 +164,15 @@ function ConversationWithFade({ children, className, onViewportReady }: { childr
 
 
 interface ChatbotProps {
-  onGenerate: (prompt: string, key: string, scale: string) => void
+  prompt?: string
   onProgressionsGenerated?: (progressions: Progression[]) => void
-  isLoading: boolean
 }
 
-function ChatbotContent({ onGenerate, onProgressionsGenerated, isLoading }: ChatbotProps) {
+function ChatbotContent({ prompt: externalPrompt, onProgressionsGenerated }: ChatbotProps) {
   const [selectedMood, setSelectedMood] = useState<string | null>(null)
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null)
   const [selectedKey, setSelectedKey] = useState<string | null>(null)
-  const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(true)
+  const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const lastAutoPromptRef = useRef<string>('')
   const latestUserMessageRef = useRef<HTMLDivElement>(null)
@@ -270,6 +253,20 @@ function ChatbotContent({ onGenerate, onProgressionsGenerated, isLoading }: Chat
     }
     prevMessagesLengthRef.current = messages.length
   }, [messages])
+
+  // Auto-send external prompt when provided
+  const lastExternalPromptRef = useRef<string | undefined>(undefined)
+  useEffect(() => {
+    if (externalPrompt && externalPrompt !== lastExternalPromptRef.current && status === 'ready') {
+      lastExternalPromptRef.current = externalPrompt
+      setError(null)
+      setIsSuggestionsOpen(false)
+      sendMessage(
+        { text: externalPrompt },
+        { body: { model: 'gpt-4o' } }
+      )
+    }
+  }, [externalPrompt, status, sendMessage])
 
   const constructPrompt = () => {
     const parts: string[] = []
@@ -389,26 +386,16 @@ function ChatbotContent({ onGenerate, onProgressionsGenerated, isLoading }: Chat
                     'state' in part &&
                     'input' in part
                   ) {
-                    const toolName = 'toolName' in part ? part.toolName : (typeof part.type === 'string' ? part.type.replace('tool-', '') : 'tool')
-                    const toolDisplayName = getToolDisplayName(toolName)
+                    const isLoading = part.state === 'input-streaming' || part.state === 'input-available'
+                    const isCompleted = part.state === 'output-available'
+                    const MascotIcon = isLoading ? Icons.mascotSleeping : Icons.mascot
                     return (
-                      <Tool key={i} defaultOpen={part.state === 'output-available' || part.state === 'output-error'}>
-                        <ToolHeader
-                          type={part.type as any}
-                          state={part.state as any}
-                          toolName={toolName}
-                          title={toolDisplayName}
-                        />
-                        <ToolContent>
-                          <ToolInput input={part.input} />
-                          {'state' in part && (part.state === 'output-available' || part.state === 'output-error') && (
-                            <ToolOutput 
-                              output={'output' in part ? part.output : undefined}
-                              errorText={'errorText' in part ? part.errorText : undefined}
-                            />
-                          )}
-                        </ToolContent>
-                      </Tool>
+                      <div key={i} className={`flex items-center gap-2 p-3 rounded-md border bg-muted/30 transition-shadow ${isLoading ? 'shadow-[0_0_15px_hsl(var(--primary)/0.4)] animate-pulse' : ''}`}>
+                        <MascotIcon className={`size-5 ${isLoading ? 'opacity-50' : ''}`} />
+                        <span className="text-sm font-medium">
+                          {isLoading ? 'Generating Chord Progressions...' : isCompleted ? 'Generated Chord Progressions' : 'Chord Progression Tool'}
+                        </span>
+                      </div>
                     )
                   }
                   return null
@@ -494,13 +481,12 @@ function ChatbotContent({ onGenerate, onProgressionsGenerated, isLoading }: Chat
   )
 }
 
-export default function Chatbot({ onGenerate, onProgressionsGenerated, isLoading }: ChatbotProps) {
+export default function Chatbot({ prompt, onProgressionsGenerated }: ChatbotProps) {
   return (
     <PromptInputProvider>
-      <ChatbotContent 
-        onGenerate={onGenerate} 
-        onProgressionsGenerated={onProgressionsGenerated} 
-        isLoading={isLoading} 
+      <ChatbotContent
+        prompt={prompt}
+        onProgressionsGenerated={onProgressionsGenerated}
       />
     </PromptInputProvider>
   )

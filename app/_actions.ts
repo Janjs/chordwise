@@ -1,15 +1,13 @@
 'use server'
 
-import { GenerateProgressionsRequest, GenerateProgressionsResponse, Progression, Suggestion } from '@/types/types'
+import { GenerateProgressionsRequest, GenerateProgressionsResponse, Progression } from '@/types/types'
 import { Midi as TonalMidi, Chord as TonalChord } from 'tonal'
 import { generateObject } from 'ai'
 import { openai } from '@ai-sdk/openai'
 import { z } from 'zod'
-import { readFileSync } from 'fs'
 import { redirect } from 'next/navigation'
 import { GITHUB_LINK } from '@/lib/utils'
 import { revalidatePath } from 'next/cache'
-import path from 'path'
 
 const MOCK = false
 
@@ -20,15 +18,13 @@ const ChordProgressionsSchema = z.object({
 export const generateChordProgressions = async (
   userInput: GenerateProgressionsRequest,
 ): Promise<GenerateProgressionsResponse> => {
-  if (userInput.suggestionIndex !== undefined) return await getSuggestion(userInput.suggestionIndex)
-
   if (MOCK) return { progressions: parseProgressions(MOCK_DATA) }
 
   try {
     const { object } = await generateObject({
       model: openai('gpt-4o-mini'),
       schema: ChordProgressionsSchema,
-      prompt: `Generate 5 chord progressions based on the user's request. Each progression should be an array of chord names (e.g., "Am", "Dm7", "G7", "Cmaj7").\n\n${createUserPrompt(userInput)}`,
+      prompt: `Generate 5 chord progressions based on the user's request. Each progression should be an array of chord names (e.g., "Am", "Dm7", "G7", "Cmaj7").\n\nUser request: ${userInput.prompt}`,
     })
 
     if (!object || !object.chord_progressions) {
@@ -66,24 +62,6 @@ const getProgressionMidis = (representation: string) => {
     .filter((midi) => midi != null)
 
   return midis
-}
-
-const getSuggestion = async (suggestionIndex: number) => {
-  const suggestionsFile = readFileSync(path.join(process.cwd(), 'public', 'suggestions.json'), 'utf8')
-  const suggestions: Suggestion[] = JSON.parse(suggestionsFile)
-
-  const suggestion = suggestions[suggestionIndex]
-
-  return { progressions: suggestion.progressions as Progression[] }
-}
-
-const createUserPrompt = (userInput: GenerateProgressionsRequest): string => {
-  if (userInput.musicalKey === 'Key') {
-    return `Generate chord progressions that fit the following description: ${userInput.description}`
-  } else {
-    return `Generate chord progressions in the key of ${userInput.musicalKey + userInput.musicalScale
-      }, that fit the following description: ${userInput.description}`
-  }
 }
 
 const MOCK_DATA = {

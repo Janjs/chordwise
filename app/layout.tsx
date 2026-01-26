@@ -29,7 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Suspense fallback={null}>
                 <Header />
               </Suspense>
-              <div className="flex flex-1 overflow-hidden">{children}</div>
+              <div className="flex flex-1 overflow-hidden justify-center">{children}</div>
             </div>
           </InstrumentViewerProvider>
         </ThemeProvider>

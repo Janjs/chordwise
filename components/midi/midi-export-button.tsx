@@ -10,12 +10,14 @@ interface MidiExportButtonProps {
     chordProgression: Progression
     pitch?: number
     tempo?: number
+    disabled?: boolean
 }
 
 const MidiExportButton: FC<MidiExportButtonProps> = ({
     chordProgression,
     pitch = 0,
-    tempo = 120
+    tempo = 120,
+    disabled = false
 }) => {
     const [isExporting, setIsExporting] = useState(false)
 
@@ -77,7 +79,7 @@ const MidiExportButton: FC<MidiExportButtonProps> = ({
         <Button
             size="sm"
             onClick={handleExport}
-            disabled={isExporting}
+            disabled={isExporting || disabled || chordProgression.chords.length === 0}
             className="gap-2"
         >
             <Download className="h-4 w-4" />

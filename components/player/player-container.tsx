@@ -10,6 +10,7 @@ import ChordIndicator from '@/components/list/chord-indicator'
 import { Slider } from '@/components/ui/slider'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { Icons } from '@/components/icons'
 import InstrumentContainer from './instrument-container'
 import MidiExportButton from '@/components/midi/midi-export-button'
@@ -29,6 +30,7 @@ interface PlayerContainerProps {
   setIndexCurrentProgression: (index: number) => void
   indexCurrentChord: number
   setIndexCurrentChord: (index: number) => void
+  isLoading?: boolean
 }
 
 const PlayerContainer: FC<PlayerContainerProps> = (props) => {
@@ -46,6 +48,7 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
     setIndexCurrentProgression,
     indexCurrentChord,
     setIndexCurrentChord,
+    isLoading = false,
   } = props
 
   const instrumentKey = tabToInstrument[activeTab]
@@ -108,21 +111,40 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
     .map((value) => Number(value))
     .filter((v) => v!!)
 
+  const emptyProgression: Progression = { chords: [] }
+
   return (
     <div className="flex h-full flex-col gap-4 overflow-hidden border rounded-lg p-4">
-      <ChordIndicator
-        progressions={progressions}
-        handlePlay={handlePlay}
-        indexCurrentProgression={indexCurrentProgression}
-        indexCurrentChord={indexCurrentChord}
-      />
+      {isLoading ? (
+        <div className="hidden md:flex flex-none items-center">
+          <Button
+            variant="outline"
+            disabled
+            className="px-2 opacity-50 cursor-not-allowed"
+          >
+            <Badge
+              variant="outline"
+              className="rounded-md px-2 py-1 opacity-50 text-muted-foreground border-0"
+            >
+              No chord progressions generated yet
+            </Badge>
+          </Button>
+        </div>
+      ) : (
+        <ChordIndicator
+          progressions={progressions}
+          handlePlay={handlePlay}
+          indexCurrentProgression={indexCurrentProgression}
+          indexCurrentChord={indexCurrentChord}
+        />
+      )}
 
       <div className="hidden bg-card md:flex flex-1 overflow-hidden rounded-xl min-h-0">
         <InstrumentContainer
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           index={indexCurrentProgression}
-          chordProgression={progressions[indexCurrentProgression]}
+          chordProgression={isLoading ? emptyProgression : progressions[indexCurrentProgression]}
           indexCurrentChord={indexCurrentChord}
           isPlaying={isProgressionPlaying}
           pitch={pitch}
@@ -183,15 +205,16 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
             onClick={() =>
               setIndexCurrentProgression((curr) => curr - 1 < 0 ? progressions.length - 1 : curr - 1)
             }
+            disabled={isLoading || progressions.length === 0}
           >
             <Icons.skipBack size={18} />
           </Button>
           {isPlaying ? (
-            <Button variant="ghost" size="icon" onClick={() => stopProgression()}>
+            <Button variant="ghost" size="icon" onClick={() => stopProgression()} disabled={isLoading}>
               <Icons.pause size={18} />
             </Button>
           ) : (
-            <Button variant="ghost" size="icon" onClick={() => playProgression(indexCurrentProgression)}>
+            <Button variant="ghost" size="icon" onClick={() => playProgression(indexCurrentProgression)} disabled={isLoading || progressions.length === 0}>
               <Icons.play size={18} />
             </Button>
           )}
@@ -201,10 +224,11 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
             onClick={() =>
               setIndexCurrentProgression((curr) => curr + 1 === progressions.length ? 0 : curr + 1)
             }
+            disabled={isLoading || progressions.length === 0}
           >
             <Icons.skipForward size={18} />
           </Button>
-          <Button variant={loop ? 'default' : 'ghost'} size="icon" onClick={() => setLoop((l) => !l)}>
+          <Button variant={loop ? 'default' : 'ghost'} size="icon" onClick={() => setLoop((l) => !l)} disabled={isLoading || progressions.length === 0}>
             <Icons.repeat size={17} />
           </Button>
         </div>
@@ -212,9 +236,10 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
         {/* Export MIDI - Right */}
         <div className="ml-auto">
           <MidiExportButton
-            chordProgression={progressions[indexCurrentProgression]}
+            chordProgression={isLoading ? emptyProgression : progressions[indexCurrentProgression]}
             pitch={pitch}
             tempo={tempo}
+            disabled={isLoading || progressions.length === 0}
           />
         </div>
       </div>

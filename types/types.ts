@@ -8,21 +8,10 @@ export type Chord = {
 }
 
 export interface GenerateProgressionsRequest {
-  description: string
-  musicalKey: string
-  musicalScale: string
-  suggestionIndex?: number
+  prompt: string
 }
 
 export interface GenerateProgressionsResponse {
   error?: string
   progressions?: Progression[]
-}
-
-export interface Suggestion {
-  key: number
-  description: string
-  musicalKey: string
-  musicalScale: string
-  progressions: Progression[]
 }

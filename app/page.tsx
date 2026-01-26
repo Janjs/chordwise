@@ -1,29 +1,23 @@
+'use client'
+
 import { Suspense } from 'react'
-import UserInputWrapper from '@/components/user-input-wrapper'
-import { promises as fs } from 'fs'
-import { Suggestion } from '@/types/types'
-import CardList from '@/components/landing/card-list'
-import path from 'path'
+import LandingInput from '@/components/landing/landing-input'
+import { Icons } from '@/components/icons'
 
-export const dynamic = 'force-dynamic'
-
-const Page = async () => {
-  const suggestionsFile = await fs.readFile(path.join(process.cwd(), 'public', 'suggestions.json'), 'utf8')
-  const suggestions: Suggestion[] = JSON.parse(suggestionsFile)
-
+const Page = () => {
   return (
-    <div className="flex flex-col mx-4 items-center">
-      <div className="pt-[8dvh] md:pt-[10dvh] py-[5dvh] md:py-[8dvh] flex flex-col max-w-5xl gap-4 text-center">
+    <div className="flex flex-col px-4 items-center justify-center min-h-[calc(100dvh-60px)]">
+      <div className="flex flex-col max-w-5xl w-full gap-4 items-center text-center">
+        <Icons.logo className="h-10 md:h-14 w-auto" />
         <h1 className="text-3xl md:text-5xl font-bold">
           <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">AI</span> Chord
           Progression Generator
         </h1>
-        <h3 className="text-md md:text-xl text-muted-foreground">Enhance, not replace, your musical creativity🎵✨</h3>
+        <h3 className="text-md md:text-xl text-muted-foreground">Enhance, not replace, your musical creativity</h3>
         <Suspense fallback={null}>
-          <UserInputWrapper />
+          <LandingInput />
         </Suspense>
       </div>
-      <CardList suggestions={suggestions} />
     </div>
   )
 }
