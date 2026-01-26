@@ -46,16 +46,17 @@ export const Suggestion = ({
   return (
     <Button
       className={cn(
-        "cursor-pointer rounded-full px-2.5 py-1 h-7 text-xs",
+        "cursor-pointer rounded-full px-2.5 py-1 h-7 text-xs transition-colors",
         selected 
-          ? "text-foreground bg-accent border-accent-foreground/20" 
-          : "text-muted-foreground",
+          ? "text-foreground bg-accent border-accent-foreground/20 hover:bg-accent" 
+          : "text-muted-foreground hover:bg-accent/50",
         className
       )}
       onClick={handleClick}
       size={size}
       type="button"
       variant={variant}
+      data-selected={selected}
       {...props}
     >
       {children || suggestion}

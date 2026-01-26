@@ -40,6 +40,7 @@ import {
 } from '@/components/ui/collapsible'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { ChevronDownIcon, XIcon } from 'lucide-react'
 
 const MOODS = ['Happy', 'Sad', 'Dreamy', 'Energetic', 'Chill', 'Melancholic', 'Romantic', 'Mysterious']
@@ -337,7 +338,7 @@ function ChatbotContent({ prompt: externalPrompt, onProgressionsGenerated }: Cha
     }
 
     if (!credits.isAuthenticated && credits.credits === 0) {
-      setError('You have used all 3 free prompts. Please sign in to continue.')
+      setError('You have used all 3 free generations. Please sign in to continue.')
       return
     }
 
@@ -349,7 +350,7 @@ function ChatbotContent({ prompt: externalPrompt, onProgressionsGenerated }: Cha
       const result = await useCredit({ anonymousSessionId })
       if (!result.success) {
         if (result.reason === 'limit_reached') {
-          setError('You have used all 3 free prompts. Please sign in to continue.')
+          setError('You have used all 3 free generations. Please sign in to continue.')
         } else {
           setError('Failed to use credit. Please try again.')
         }
@@ -401,7 +402,7 @@ function ChatbotContent({ prompt: externalPrompt, onProgressionsGenerated }: Cha
         <Alert className="mb-4">
           <AlertTitle>Sign in required</AlertTitle>
           <AlertDescription className="flex items-center justify-between">
-            <span>You've used all 3 free prompts. Sign in to continue generating chord progressions.</span>
+            <span>You've used all 3 free generations. Sign in to continue generating chord progressions.</span>
             <Button size="sm" disabled>Sign In</Button>
           </AlertDescription>
         </Alert>
@@ -515,11 +516,18 @@ function ChatbotContent({ prompt: externalPrompt, onProgressionsGenerated }: Cha
         <PromptInputBody>
           <PromptInputTextarea placeholder={defaultPrompt} />
         </PromptInputBody>
-        <PromptInputFooter className="flex w-full justify-end">
-          <PromptInputSubmit 
-            disabled={!canSubmit || status !== 'ready'} 
-            status={status} 
-          />
+        <PromptInputFooter className="flex w-full items-end justify-between">
+          {credits && !credits.isAuthenticated && (
+            <Badge variant="secondary" className="text-xs border-0">
+              {credits.credits} / 3 free generations
+            </Badge>
+          )}
+          <div className="ml-auto">
+            <PromptInputSubmit 
+              disabled={!canSubmit || status !== 'ready'} 
+              status={status} 
+            />
+          </div>
         </PromptInputFooter>
         </PromptInput>
     </div>

@@ -27,6 +27,13 @@ import {
   Guitar,
   Piano,
   Music,
+  DollarSign,
+  BookOpen,
+  Users,
+  RefreshCw,
+  LogOut,
+  ExternalLink,
+  MessageSquare,
 } from 'lucide-react'
 
 type IconProps = React.HTMLAttributes<SVGElement>
@@ -55,6 +62,13 @@ export const Icons = {
   guitar: Guitar,
   piano: Piano,
   music: Music,
+  pricing: DollarSign,
+  documentation: BookOpen,
+  community: Users,
+  credits: RefreshCw,
+  signOut: LogOut,
+  externalLink: ExternalLink,
+  feedback: MessageSquare,
   mascot: ({ ...props }: LucideProps) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 566.93 566.93" {...props}>
       <style>{`
