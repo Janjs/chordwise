@@ -1,7 +1,7 @@
 'use client'
 
 import { Progression } from '@/types/types'
-import { FC } from 'react'
+import { FC, useRef, useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
@@ -15,9 +15,38 @@ interface ChordIndicatorProps {
 
 const ChordIndicator: FC<ChordIndicatorProps> = (props) => {
   const { progressions, handlePlay, indexCurrentProgression, indexCurrentChord } = props
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [showLeftFade, setShowLeftFade] = useState(false)
+  const [showRightFade, setShowRightFade] = useState(false)
+
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    const checkScroll = () => {
+      const { scrollLeft, scrollWidth, clientWidth } = container
+      setShowLeftFade(scrollLeft > 0)
+      setShowRightFade(scrollLeft < scrollWidth - clientWidth - 1)
+    }
+
+    checkScroll()
+    container.addEventListener('scroll', checkScroll)
+    window.addEventListener('resize', checkScroll)
+
+    return () => {
+      container.removeEventListener('scroll', checkScroll)
+      window.removeEventListener('resize', checkScroll)
+    }
+  }, [])
 
   return (
-    <div className="hidden md:flex flex-none overflow-x-auto custom-scrollbar gap-2 items-center">
+    <div ref={containerRef} className="hidden md:flex flex-none overflow-x-auto custom-scrollbar gap-2 items-center relative">
+      {showLeftFade && (
+        <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
+      )}
+      {showRightFade && (
+        <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+      )}
       {progressions.map((progression, progIndex) => (
         <div key={progIndex} className="flex items-center gap-2">
           <Button

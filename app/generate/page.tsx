@@ -9,6 +9,8 @@ import { Icons } from '@/components/icons'
 import { generateChordProgressions, reGenerate } from '@/app/_actions'
 import useGenerateSearchParams from '@/hooks/useGenerateSearchParams'
 import Chatbot from '@/components/generate-new/chatbot'
+import { useInstrumentViewer } from '@/components/player/instrument-viewer-context'
+import { DEFAULT_PITCH, DEFAULT_TEMPO, InstrumentTab } from '@/components/player/player-settings'
 
 
 export const dynamic = 'force-dynamic'
@@ -18,8 +20,16 @@ const GenerateContent = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [progressions, setProgressions] = useState<Progression[]>([])
   const [error, setError] = useState<string | null>(null)
+  const { setProps } = useInstrumentViewer()
 
   const [params, setParams] = useGenerateSearchParams()
+  
+  const [activeTab, setActiveTab] = useState<InstrumentTab>('midi')
+  const [tempo, setTempo] = useState<number>(DEFAULT_TEMPO)
+  const [pitch, setPitch] = useState<number>(DEFAULT_PITCH)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [indexCurrentProgression, setIndexCurrentProgression] = useState<number>(0)
+  const [indexCurrentChord, setIndexCurrentChord] = useState<number>(-1)
 
   useEffect(() => {
     if (params.description && params.musicalKey && params.musicalScale && existsMusicalKey(params.musicalKey)) {
@@ -50,6 +60,24 @@ const GenerateContent = () => {
     setIsLoading(false)
     setError(null)
   }
+
+  useEffect(() => {
+    if (progressions.length > 0) {
+      setProps({
+        activeTab,
+        setActiveTab,
+        index: indexCurrentProgression,
+        chordProgression: progressions[indexCurrentProgression],
+        indexCurrentChord,
+        isPlaying: (i: number) => i === indexCurrentProgression,
+        pitch,
+        tempo,
+        isCurrentlyPlaying: isPlaying,
+      })
+    } else {
+      setProps(null)
+    }
+  }, [progressions, activeTab, indexCurrentProgression, indexCurrentChord, pitch, tempo, isPlaying, setProps])
 
   const fetchData = async (generateProgressionsRequest: GenerateProgressionsRequest) => {
     setIsLoading(true)
@@ -85,7 +113,21 @@ const GenerateContent = () => {
       {/* Main content */}
       <div className="flex-1 min-w-0 min-h-0 overflow-hidden">
         {progressions.length > 0 ? (
-          <PlayerContainer progressions={progressions} />
+          <PlayerContainer
+            progressions={progressions}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            tempo={tempo}
+            setTempo={setTempo}
+            pitch={pitch}
+            setPitch={setPitch}
+            isPlaying={isPlaying}
+            setIsPlaying={setIsPlaying}
+            indexCurrentProgression={indexCurrentProgression}
+            setIndexCurrentProgression={setIndexCurrentProgression}
+            indexCurrentChord={indexCurrentChord}
+            setIndexCurrentChord={setIndexCurrentChord}
+          />
         ) : (
           <div className="flex h-full items-center justify-center text-muted-foreground">
             {isLoading ? 'Generating progressions...' : 'Enter a prompt to generate chord progressions'}

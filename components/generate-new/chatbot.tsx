@@ -104,16 +104,25 @@ export default function Chatbot({ onGenerate, onProgressionsGenerated, isLoading
     onError: (error) => {
       console.error('Chat error:', error)
     },
-  })
+  } as any)
 
   useEffect(() => {
     const lastMessage = messages[messages.length - 1]
-    if (lastMessage?.role === 'assistant' && lastMessage.toolInvocations) {
-      for (const toolInvocation of lastMessage.toolInvocations) {
-        if (toolInvocation.toolName === 'generateChordProgressions' && toolInvocation.state === 'result') {
-          const result = toolInvocation.result as { success: boolean; progressions?: Progression[]; error?: string }
-          if (result.success && result.progressions && onProgressionsGenerated) {
-            onProgressionsGenerated(result.progressions)
+    if (lastMessage?.role === 'assistant' && lastMessage.parts) {
+      for (const part of lastMessage.parts) {
+        if (
+          (part.type === 'tool-call' || (typeof part.type === 'string' && part.type.startsWith('tool-'))) &&
+          'state' in part &&
+          part.state === 'output-available' &&
+          'output' in part &&
+          part.output
+        ) {
+          const toolName = 'toolName' in part ? part.toolName : (typeof part.type === 'string' ? part.type.split('-').slice(1).join('-') : '')
+          if (toolName === 'generateChordProgressions') {
+            const result = part.output as { success: boolean; progressions?: Progression[]; error?: string }
+            if (result.success && result.progressions && onProgressionsGenerated) {
+              onProgressionsGenerated(result.progressions)
+            }
           }
         }
       }
@@ -146,14 +155,18 @@ export default function Chatbot({ onGenerate, onProgressionsGenerated, isLoading
   }
 
   const handleSubmit = (message: PromptInputMessage) => {
+    console.log('handleSubmit called', message)
     const hasText = Boolean(message.text)
-    if (!hasText) return
+    if (!hasText) {
+      console.log('No text in message, returning early')
+      return
+    }
 
-    const key = selectedKey || 'Key'
-    const scale = 'major'
+    const textToSend = message.text || constructPrompt()
+    console.log('Sending message:', textToSend)
 
     sendMessage(
-      { text: message.text || constructPrompt() },
+      { text: textToSend },
       {
         body: {
           model: 'gpt-4o-mini',
@@ -180,39 +193,43 @@ export default function Chatbot({ onGenerate, onProgressionsGenerated, isLoading
             <div key={message.id}>
               {message.parts ? (
                 message.parts.map((part, i) => {
-                  switch (part.type) {
-                    case 'text':
-                      return (
-                        <Message key={`${message.id}-${i}`} from={message.role}>
-                          <MessageContent>
-                            <MessageResponse>{part.text}</MessageResponse>
-                          </MessageContent>
-                        </Message>
-                      )
-                    case 'tool-call':
-                      return (
-                        <Tool key={`${message.id}-${i}`} defaultOpen={false}>
-                          <ToolHeader
-                            type="tool-call"
-                            state={part.state}
-                            toolName={part.toolName}
-                          />
-                          <ToolContent>
-                            <ToolInput input={part.args} />
-                            {part.state === 'result' && (
-                              <ToolOutput output={part.result} errorText={part.errorText} />
-                            )}
-                          </ToolContent>
-                        </Tool>
-                      )
-                    default:
-                      return null
+                  if (part.type === 'text' && 'text' in part) {
+                    return (
+                      <Message key={`${message.id}-${i}`} from={message.role}>
+                        <MessageContent>
+                          <MessageResponse>{part.text}</MessageResponse>
+                        </MessageContent>
+                      </Message>
+                    )
                   }
+                  if (
+                    (part.type === 'tool-call' || (typeof part.type === 'string' && part.type.startsWith('tool-'))) &&
+                    'state' in part &&
+                    'input' in part
+                  ) {
+                    const toolName = 'toolName' in part ? part.toolName : undefined
+                    return (
+                      <Tool key={`${message.id}-${i}`} defaultOpen={false}>
+                        <ToolHeader
+                          type={part.type as any}
+                          state={part.state as any}
+                          toolName={toolName}
+                        />
+                        <ToolContent>
+                          <ToolInput input={part.input} />
+                          {'state' in part && part.state === 'output-available' && 'output' in part && (
+                            <ToolOutput output={part.output} errorText={'errorText' in part ? part.errorText : undefined} />
+                          )}
+                        </ToolContent>
+                      </Tool>
+                    )
+                  }
+                  return null
                 })
               ) : (
                 <Message from={message.role}>
                   <MessageContent>
-                    <MessageResponse>{message.content || ''}</MessageResponse>
+                    <MessageResponse>{'content' in message ? String(message.content || '') : ''}</MessageResponse>
                   </MessageContent>
                 </Message>
               )}
@@ -275,7 +292,10 @@ export default function Chatbot({ onGenerate, onProgressionsGenerated, isLoading
           <PromptInputTextarea placeholder={defaultPrompt} />
         </PromptInputBody>
         <PromptInputFooter className="flex w-full justify-end">
-          <PromptInputSubmit disabled={!status && !hasSelections} status={status} />
+          <PromptInputSubmit 
+            disabled={status === 'error' || status === 'submitted' || status === 'streaming'} 
+            status={status} 
+          />
         </PromptInputFooter>
       </PromptInput>
     </div>

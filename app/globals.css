@@ -23,6 +23,8 @@
   --color-destructive: hsl(10 97% 44%);
   --color-destructive-foreground: hsl(0 85.7% 97.3%);
 
+  --color-ring-offset: hsl(0 0% 100%);
+
   --color-glacier-50: 206 47% 97%;
   --color-glacier-100: 201 44% 94%;
   --color-glacier-200: 197 44% 86%;
@@ -39,6 +41,7 @@
 
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-tab-text-in: tab-text-in 0.2s ease-out;
 
   @keyframes accordion-down {
     from {
@@ -57,6 +60,18 @@
 
     to {
       height: 0;
+    }
+  }
+
+  @keyframes tab-text-in {
+    from {
+      opacity: 0;
+      transform: translateX(-4px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
     }
   }
 }
@@ -91,12 +106,22 @@
   --color-border: hsl(var(--color-glacier-600));
   --color-input: hsl(var(--color-glacier-600));
   --color-ring: hsl(var(--color-glacier-200));
+  --color-ring-offset: hsl(0 0% 0%);
 }
 
 @layer components {
   .width-with-gap {
     width: calc(25% - 0.75rem);
     /* Adjusting for 3 gaps */
+  }
+
+  [data-state="inactive"] > span.instrument-tab-text {
+    display: none;
+  }
+
+  [data-state="active"] > span.instrument-tab-text {
+    display: inline;
+    animation: var(--animate-tab-text-in);
   }
 }
 

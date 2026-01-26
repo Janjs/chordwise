@@ -4,6 +4,7 @@ import { FC } from 'react'
 import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Icons } from '@/components/icons'
 
 // list of instruments: https://surikov.github.io/midi-sounds-react-examples/examples/midi-sounds-example3/build/
 export enum Instrument {
@@ -39,10 +40,28 @@ const PlayerSettings: FC<PlayerSettingsProps> = (props) => {
   return (
     <div className="hidden md:flex flex-row items-center gap-4 p-4">
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as InstrumentTab)}>
-        <TabsList>
-          <TabsTrigger value="midi">Synth</TabsTrigger>
-          <TabsTrigger value="guitar">Guitar</TabsTrigger>
-          <TabsTrigger value="piano">Piano</TabsTrigger>
+        <TabsList className="gap-1 bg-transparent p-0">
+          <TabsTrigger 
+            value="midi" 
+            className="rounded-lg border px-3 py-1.5 data-[state=active]:bg-card data-[state=active]:border-primary data-[state=inactive]:bg-muted data-[state=inactive]:border-border data-[state=inactive]:text-muted-foreground data-[state=active]:text-foreground flex items-center gap-1.5 justify-center data-[state=active]:justify-start"
+          >
+            <Icons.music className="size-4" />
+            <span className="instrument-tab-text">Synth</span>
+          </TabsTrigger>
+          <TabsTrigger 
+            value="guitar" 
+            className="rounded-lg border px-3 py-1.5 data-[state=active]:bg-card data-[state=active]:border-primary data-[state=inactive]:bg-muted data-[state=inactive]:border-border data-[state=inactive]:text-muted-foreground data-[state=active]:text-foreground flex items-center gap-1.5 justify-center data-[state=active]:justify-start"
+          >
+            <Icons.guitar className="size-4" />
+            <span className="instrument-tab-text">Guitar</span>
+          </TabsTrigger>
+          <TabsTrigger 
+            value="piano" 
+            className="rounded-lg border px-3 py-1.5 data-[state=active]:bg-card data-[state=active]:border-primary data-[state=inactive]:bg-muted data-[state=inactive]:border-border data-[state=inactive]:text-muted-foreground data-[state=active]:text-foreground flex items-center gap-1.5 justify-center data-[state=active]:justify-start"
+          >
+            <Icons.piano className="size-4" />
+            <span className="instrument-tab-text">Piano</span>
+          </TabsTrigger>
         </TabsList>
       </Tabs>
 

@@ -12,7 +12,7 @@ import {
   Moon,
   Play,
   Plus,
-  Settings,
+  Settings2,
   SkipBack,
   SkipForward,
   SunMedium,
@@ -24,6 +24,9 @@ import {
   Laptop,
   type XIcon as LucideIcon,
   Pause,
+  Guitar,
+  Piano,
+  Music,
 } from 'lucide-react'
 
 type IconProps = React.HTMLAttributes<SVGElement>
@@ -32,7 +35,7 @@ export const Icons = {
   close: X,
   laptop: Laptop,
   spinner: Loader2,
-  settings: Settings,
+  settings: Settings2,
   add: Plus,
   info: AlertCircle,
   warning: AlertTriangle,
@@ -49,6 +52,9 @@ export const Icons = {
   moon: Moon,
   cassette: CassetteTape,
   generate: ArrowUp,
+  guitar: Guitar,
+  piano: Piano,
+  music: Music,
   mascot: ({ ...props }: LucideProps) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 566.93 566.93" {...props}>
       <style>{`
