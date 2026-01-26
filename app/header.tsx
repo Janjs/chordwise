@@ -23,8 +23,7 @@ export default function Header() {
             <Icons.mascot className="h-6 w-6" />
           </Link>
           {prompt ? (
-            <h2 className="italic max-w-[22rem] whitespace-nowrap">
-              <span className="overflow-hidden text-ellipsis inline-block max-w-[calc(100%-0.5em)] align-bottom">{`"${prompt}`}</span>"
+            <h2 className="italic max-w-[22rem] overflow-hidden text-ellipsis whitespace-nowrap">{`"${prompt}`}
             </h2>
           ) : null}
         </div>

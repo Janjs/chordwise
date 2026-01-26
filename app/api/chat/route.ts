@@ -1,4 +1,4 @@
-import { streamText, tool, convertToModelMessages, UIMessage, generateObject } from 'ai'
+import { streamText, tool, convertToModelMessages, UIMessage, generateObject, smoothStream } from 'ai'
 import { openai as openaiProvider } from '@ai-sdk/openai'
 import { z } from 'zod'
 import { parseProgressions, ChordProgressionsSchema } from '@/lib/chord-generation'
@@ -64,6 +64,10 @@ Always include text before and after calling the tool to create a natural conver
         generateChordProgressions: generateChordProgressionsTool,
       },
       maxSteps: 5,
+      experimental_transform: smoothStream({
+        delayInMs: 20,
+        chunking: 'word',
+      }),
     })
 
     return result.toUIMessageStreamResponse({

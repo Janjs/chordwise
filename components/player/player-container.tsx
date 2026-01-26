@@ -124,7 +124,7 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
           >
             <Badge
               variant="outline"
-              className="rounded-md px-2 py-1 opacity-50 text-muted-foreground border-0"
+              className="rounded-md px-1 py-1 opacity-50 text-muted-foreground border-0"
             >
               No chord progressions generated yet
             </Badge>
