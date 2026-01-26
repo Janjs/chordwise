@@ -1,26 +1,34 @@
 'use client'
 
-import ModeToggle from '@/components/mode-toggle'
 import { Icons } from '@/components/icons'
-import About from '@/components/about'
 import useGenerateSearchParams from '@/hooks/useGenerateSearchParams'
 import Link from 'next/link'
 import { useInstrumentViewer } from '@/components/player/instrument-viewer-context'
 import { usePathname } from 'next/navigation'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { InstrumentTab } from '@/components/player/player-settings'
+import { AuthButton } from '@/components/auth/auth-button'
+import SettingsPopover from '@/components/settings-popover'
 
 export default function Header() {
   const [prompt] = useGenerateSearchParams()
   const { props: instrumentViewer } = useInstrumentViewer()
   const pathname = usePathname()
   const isGeneratePage = pathname === '/generate'
+  const isLandingPage = pathname === '/'
   return (
     <header className="flex-shrink-0 relative">
       <nav className="flex gap-4 items-center px-4 py-2" aria-label="Global">
         <div className="flex items-center gap-3 flex-shrink-0">
-          <Link href="/" className="flex items-center">
-            <Icons.mascot className="h-6 w-6" />
+          <Link href="/" className="flex items-center gap-2">
+            {isLandingPage ? (
+              <>
+                <Icons.mascot className="h-6 w-6" />
+                <Icons.logo className="h-6 w-auto" />
+              </>
+            ) : (
+              <Icons.mascot className="h-6 w-6" />
+            )}
           </Link>
           {prompt ? (
             <h2 className="italic max-w-[22rem] overflow-hidden text-ellipsis whitespace-nowrap">{`"${prompt}`}
@@ -56,9 +64,9 @@ export default function Header() {
             </Tabs>
           </div>
         )}
-        <div className="flex gap-3 ml-auto">
-          <About />
-          <ModeToggle />
+        <div className="flex gap-3 ml-auto items-center">
+          <AuthButton />
+          <SettingsPopover />
         </div>
       </nav>
     </header>

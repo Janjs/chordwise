@@ -3,6 +3,9 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useChat } from '@ai-sdk/react'
 import { Progression } from '@/types/types'
+import { useQuery, useMutation } from 'convex/react'
+import { api } from '@/convex/_generated/api'
+import { useAnonymousSession } from '@/hooks/useAnonymousSession'
 import {
   Conversation,
   ConversationContent,
@@ -36,6 +39,7 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
 import { ChevronDownIcon, XIcon } from 'lucide-react'
 
 const MOODS = ['Happy', 'Sad', 'Dreamy', 'Energetic', 'Chill', 'Melancholic', 'Romantic', 'Mysterious']
@@ -179,6 +183,10 @@ function ChatbotContent({ prompt: externalPrompt, onProgressionsGenerated }: Cha
   const prevMessagesLengthRef = useRef(0)
   const scrollViewportRef = useRef<HTMLElement | null>(null)
 
+  const anonymousSessionId = useAnonymousSession()
+  const credits = useQuery(api.credits.getCredits, { anonymousSessionId: anonymousSessionId ?? undefined })
+  const useCredit = useMutation(api.credits.useCredit)
+
   const handleViewportReady = useCallback((viewport: HTMLElement | null) => {
     scrollViewportRef.current = viewport
   }, [])
@@ -315,12 +323,38 @@ function ChatbotContent({ prompt: externalPrompt, onProgressionsGenerated }: Cha
     setSelectedKey(selectedKey === key ? null : key)
   }
 
-  const handleSubmit = (message: PromptInputMessage) => {
+  const handleSubmit = async (message: PromptInputMessage) => {
     console.log('handleSubmit called', message)
     const hasText = Boolean(message.text?.trim())
     if (!hasText) {
       console.log('No text in message, returning early')
       return
+    }
+
+    if (credits === undefined) {
+      setError('Loading credits...')
+      return
+    }
+
+    if (!credits.isAuthenticated && credits.credits === 0) {
+      setError('You have used all 3 free prompts. Please sign in to continue.')
+      return
+    }
+
+    if (!credits.isAuthenticated) {
+      if (!anonymousSessionId) {
+        setError('Session not initialized. Please refresh the page.')
+        return
+      }
+      const result = await useCredit({ anonymousSessionId })
+      if (!result.success) {
+        if (result.reason === 'limit_reached') {
+          setError('You have used all 3 free prompts. Please sign in to continue.')
+        } else {
+          setError('Failed to use credit. Please try again.')
+        }
+        return
+      }
     }
 
     setError(null)
@@ -345,19 +379,30 @@ function ChatbotContent({ prompt: externalPrompt, onProgressionsGenerated }: Cha
   const defaultPrompt = constructPrompt()
   const hasSelections = selectedMood || selectedGenre || selectedKey
   const hasText = Boolean(textInput.value?.trim()) || hasSelections
+  const canSubmit = hasText && status === 'ready' && credits !== undefined && anonymousSessionId !== null && (credits.isAuthenticated || (credits.credits ?? 0) > 0)
+  const showSignInPrompt = !credits?.isAuthenticated && credits !== undefined && credits.credits === 0
 
   return (
     <div className="flex flex-col h-full">
       {error && (
         <Alert variant="destructive" className="mb-4">
           <AlertTitle>Error</AlertTitle>
-          <AlertDescription>
+          <AlertDescription className="flex items-center justify-between">
             <span>{error}</span>
             <button
               onClick={() => setError(null)}
             >
               <XIcon className="size-4" />
             </button>
+          </AlertDescription>
+        </Alert>
+      )}
+      {showSignInPrompt && (
+        <Alert className="mb-4">
+          <AlertTitle>Sign in required</AlertTitle>
+          <AlertDescription className="flex items-center justify-between">
+            <span>You've used all 3 free prompts. Sign in to continue generating chord progressions.</span>
+            <Button size="sm" disabled>Sign In</Button>
           </AlertDescription>
         </Alert>
       )}
@@ -472,7 +517,7 @@ function ChatbotContent({ prompt: externalPrompt, onProgressionsGenerated }: Cha
         </PromptInputBody>
         <PromptInputFooter className="flex w-full justify-end">
           <PromptInputSubmit 
-            disabled={!hasText || status === 'error' || status === 'submitted' || status === 'streaming'} 
+            disabled={!canSubmit || status !== 'ready'} 
             status={status} 
           />
         </PromptInputFooter>
