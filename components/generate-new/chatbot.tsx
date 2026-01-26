@@ -100,6 +100,82 @@ function SuggestionsWithFade({ children, className }: { children: React.ReactNod
   )
 }
 
+function ConversationWithFade({ children, className }: { children: React.ReactNode; className?: string }) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [showTopFade, setShowTopFade] = useState(false)
+  const [showBottomFade, setShowBottomFade] = useState(false)
+  const viewportRef = useRef<HTMLElement | null>(null)
+  const observerRef = useRef<MutationObserver | null>(null)
+
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    const findScrollableElement = (): HTMLElement | null => {
+      const elements = Array.from(container.querySelectorAll('*'))
+      for (const el of elements) {
+        const htmlEl = el as HTMLElement
+        const style = getComputedStyle(htmlEl)
+        if (htmlEl.scrollHeight > htmlEl.clientHeight + 1 &&
+            (style.overflowY === 'auto' || style.overflowY === 'scroll')) {
+          return htmlEl
+        }
+      }
+      return null
+    }
+
+    const checkScroll = () => {
+      const viewport = viewportRef.current
+      if (!viewport) return
+      const { scrollTop, scrollHeight, clientHeight } = viewport
+      setShowTopFade(scrollTop > 0)
+      setShowBottomFade(scrollTop < scrollHeight - clientHeight - 1)
+    }
+
+    const attachListeners = () => {
+      const viewport = findScrollableElement()
+      if (!viewport) return false
+
+      viewportRef.current = viewport
+      checkScroll()
+      viewport.addEventListener('scroll', checkScroll)
+
+      observerRef.current = new MutationObserver(checkScroll)
+      observerRef.current.observe(viewport, { childList: true, subtree: true })
+
+      return true
+    }
+
+    // Try to attach immediately, or retry after render
+    if (!attachListeners()) {
+      const timeout = setTimeout(attachListeners, 50)
+      return () => clearTimeout(timeout)
+    }
+
+    window.addEventListener('resize', checkScroll)
+
+    return () => {
+      if (viewportRef.current) {
+        viewportRef.current.removeEventListener('scroll', checkScroll)
+      }
+      window.removeEventListener('resize', checkScroll)
+      observerRef.current?.disconnect()
+    }
+  }, [])
+
+  return (
+    <div ref={containerRef} className={`relative flex flex-col min-h-0 ${className || ''}`}>
+      {showTopFade && (
+        <div className="absolute left-0 right-0 top-0 h-8 bg-gradient-to-b from-background to-transparent z-10 pointer-events-none" />
+      )}
+      {showBottomFade && (
+        <div className="absolute left-0 right-0 bottom-0 h-8 bg-gradient-to-t from-background to-transparent z-10 pointer-events-none" />
+      )}
+      {children}
+    </div>
+  )
+}
+
 
 interface ChatbotProps {
   onGenerate: (prompt: string, key: string, scale: string) => void
@@ -256,7 +332,8 @@ function ChatbotContent({ onGenerate, onProgressionsGenerated, isLoading }: Chat
           </AlertDescription>
         </Alert>
       )}
-      <Conversation className="flex-1">
+      <ConversationWithFade className="flex-1 min-h-0">
+        <Conversation className="flex-1 min-h-0">
           <ConversationContent>
           {messages.map((message) => (
             <div key={message.id}>
@@ -314,6 +391,7 @@ function ChatbotContent({ onGenerate, onProgressionsGenerated, isLoading }: Chat
           </ConversationContent>
           <ConversationScrollButton />
         </Conversation>
+      </ConversationWithFade>
       <Collapsible open={isSuggestionsOpen} onOpenChange={setIsSuggestionsOpen} className="group">
         <CollapsibleTrigger className="flex items-center justify-between gap-2 mb-1.5 w-full">
           <Label className="text-sm font-semibold text-muted-foreground">Suggestions</Label>
