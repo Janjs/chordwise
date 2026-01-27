@@ -17,13 +17,13 @@ export default function Header() {
   const isLandingPage = pathname === '/'
   return (
     <header className="flex-shrink-0 relative">
-      <nav className="flex gap-4 items-center px-4 py-3" aria-label="Global">
+      <nav className="flex gap-4 items-center px-4 py-3 min-h-[3.5rem]" aria-label="Global">
         <div className="flex items-center gap-3 flex-shrink-0">
           <Link href="/" className="flex items-center gap-2">
             {isLandingPage ? (
               <>
                 <Icons.mascot className="h-6 w-6" />
-                <Icons.logo className="h-6 w-auto" />
+                <Icons.logo className="h-5 w-auto" />
               </>
             ) : (
               <Icons.mascot className="h-6 w-6" />

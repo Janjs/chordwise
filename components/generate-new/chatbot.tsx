@@ -7,6 +7,7 @@ import { useQuery, useMutation, useConvexAuth } from 'convex/react'
 import { api } from '@/convex/_generated/api'
 import { useAuthActions } from '@convex-dev/auth/react'
 import { useAnonymousSession } from '@/hooks/useAnonymousSession'
+import { usePathname, useSearchParams } from 'next/navigation'
 import {
   Conversation,
   ConversationContent,
@@ -187,9 +188,16 @@ function ChatbotContent({ prompt: externalPrompt, onProgressionsGenerated }: Cha
 
   const { isAuthenticated } = useConvexAuth()
   const { signIn } = useAuthActions()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
   const anonymousSessionId = useAnonymousSession()
   const credits = useQuery(api.credits.getCredits, { anonymousSessionId: anonymousSessionId ?? undefined })
   const useCredit = useMutation(api.credits.useCredit)
+
+  const handleSignIn = () => {
+    const currentUrl = pathname + (searchParams.toString() ? `?${searchParams.toString()}` : '')
+    void signIn('google', { redirectTo: currentUrl })
+  }
 
   const handleViewportReady = useCallback((viewport: HTMLElement | null) => {
     scrollViewportRef.current = viewport
@@ -406,7 +414,7 @@ function ChatbotContent({ prompt: externalPrompt, onProgressionsGenerated }: Cha
           <AlertTitle>Sign in required</AlertTitle>
           <AlertDescription className="flex items-center justify-between">
             <span>You've used all 3 free generations. Sign in to continue generating chord progressions.</span>
-            <Button size="sm" onClick={() => void signIn('google')}>Sign In</Button>
+            <Button size="sm" onClick={handleSignIn}>Sign In</Button>
           </AlertDescription>
         </Alert>
       )}

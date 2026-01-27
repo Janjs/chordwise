@@ -19,21 +19,25 @@ import { Icons } from '@/components/icons'
 import { useTheme } from 'next-themes'
 import { Badge } from '@/components/ui/badge'
 import About from '@/components/about'
+import { usePathname, useSearchParams } from 'next/navigation'
 
 export function AuthButton() {
   const { isAuthenticated, isLoading } = useConvexAuth()
   const { signIn, signOut } = useAuthActions()
   const { theme, setTheme } = useTheme()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
   const anonymousSessionId = useAnonymousSession()
   const credits = useQuery(api.credits.getCredits, { anonymousSessionId: anonymousSessionId ?? undefined })
   const user = useQuery(api.user.getCurrentUser)
 
+  const handleSignIn = () => {
+    const currentUrl = pathname + (searchParams.toString() ? `?${searchParams.toString()}` : '')
+    void signIn('google', { redirectTo: currentUrl })
+  }
+
   if (isLoading) {
-    return (
-      <Button size="sm" disabled>
-        Loading...
-      </Button>
-    )
+    return null
   }
 
   if (isAuthenticated) {
@@ -105,7 +109,7 @@ export function AuthButton() {
               {credits && (
                 <Badge variant="outline" className="ml-auto text-xs">
                   {credits.isAuthenticated 
-                    ? credits.credits?.toFixed(2) ?? '0.00'
+                    ? (credits.credits === null ? 'free' : credits.credits.toFixed(2))
                     : `${credits.credits} / 3`
                   }
                 </Badge>
@@ -124,7 +128,7 @@ export function AuthButton() {
   }
 
   return (
-    <Button size="sm" className="h-8" onClick={() => void signIn('google')}>
+    <Button size="sm" className="h-8" onClick={handleSignIn}>
       Sign In
     </Button>
   )
