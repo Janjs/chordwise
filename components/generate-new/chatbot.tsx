@@ -3,8 +3,9 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useChat } from '@ai-sdk/react'
 import { Progression } from '@/types/types'
-import { useQuery, useMutation } from 'convex/react'
+import { useQuery, useMutation, useConvexAuth } from 'convex/react'
 import { api } from '@/convex/_generated/api'
+import { useAuthActions } from '@convex-dev/auth/react'
 import { useAnonymousSession } from '@/hooks/useAnonymousSession'
 import {
   Conversation,
@@ -184,6 +185,8 @@ function ChatbotContent({ prompt: externalPrompt, onProgressionsGenerated }: Cha
   const prevMessagesLengthRef = useRef(0)
   const scrollViewportRef = useRef<HTMLElement | null>(null)
 
+  const { isAuthenticated } = useConvexAuth()
+  const { signIn } = useAuthActions()
   const anonymousSessionId = useAnonymousSession()
   const credits = useQuery(api.credits.getCredits, { anonymousSessionId: anonymousSessionId ?? undefined })
   const useCredit = useMutation(api.credits.useCredit)
@@ -337,12 +340,12 @@ function ChatbotContent({ prompt: externalPrompt, onProgressionsGenerated }: Cha
       return
     }
 
-    if (!credits.isAuthenticated && credits.credits === 0) {
+    if (!isAuthenticated && credits.credits === 0) {
       setError('You have used all 3 free generations. Please sign in to continue.')
       return
     }
 
-    if (!credits.isAuthenticated) {
+    if (!isAuthenticated) {
       if (!anonymousSessionId) {
         setError('Session not initialized. Please refresh the page.')
         return
@@ -380,8 +383,8 @@ function ChatbotContent({ prompt: externalPrompt, onProgressionsGenerated }: Cha
   const defaultPrompt = constructPrompt()
   const hasSelections = selectedMood || selectedGenre || selectedKey
   const hasText = Boolean(textInput.value?.trim()) || hasSelections
-  const canSubmit = hasText && status === 'ready' && credits !== undefined && anonymousSessionId !== null && (credits.isAuthenticated || (credits.credits ?? 0) > 0)
-  const showSignInPrompt = !credits?.isAuthenticated && credits !== undefined && credits.credits === 0
+  const canSubmit = hasText && status === 'ready' && credits !== undefined && anonymousSessionId !== null && (isAuthenticated || (credits.credits ?? 0) > 0)
+  const showSignInPrompt = !isAuthenticated && credits !== undefined && credits.credits === 0
 
   return (
     <div className="flex flex-col h-full">
@@ -403,7 +406,7 @@ function ChatbotContent({ prompt: externalPrompt, onProgressionsGenerated }: Cha
           <AlertTitle>Sign in required</AlertTitle>
           <AlertDescription className="flex items-center justify-between">
             <span>You've used all 3 free generations. Sign in to continue generating chord progressions.</span>
-            <Button size="sm" disabled>Sign In</Button>
+            <Button size="sm" onClick={() => void signIn('google')}>Sign In</Button>
           </AlertDescription>
         </Alert>
       )}
@@ -517,7 +520,7 @@ function ChatbotContent({ prompt: externalPrompt, onProgressionsGenerated }: Cha
           <PromptInputTextarea placeholder={defaultPrompt} />
         </PromptInputBody>
         <PromptInputFooter className="flex w-full items-end justify-between">
-          {credits && !credits.isAuthenticated && (
+          {credits && !isAuthenticated && (
             <Badge variant="secondary" className="text-xs border-0">
               {credits.credits} / 3 free generations
             </Badge>

@@ -5,6 +5,7 @@ import { GeistSans } from 'geist/font/sans'
 import { ThemeProvider } from '@/components/theme-provider'
 import { InstrumentViewerProvider } from '@/components/player/instrument-viewer-context'
 import ConvexClientProvider from '@/lib/convex-client'
+import { ConvexAuthNextjsServerProvider } from '@convex-dev/auth/nextjs/server'
 
 export const metadata = {
   title: 'Chordwise',
@@ -24,18 +25,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         /> */}
       </head>
       <body>
-        <ConvexClientProvider>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-            <InstrumentViewerProvider>
-              <div className="h-[100dvh] flex flex-col">
-                <Suspense fallback={null}>
-                  <Header />
-                </Suspense>
-                <div className="flex flex-1 overflow-hidden justify-center">{children}</div>
-              </div>
-            </InstrumentViewerProvider>
-          </ThemeProvider>
-        </ConvexClientProvider>
+        <ConvexAuthNextjsServerProvider apiRoute="/api/auth">
+          <ConvexClientProvider>
+            <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+              <InstrumentViewerProvider>
+                <div className="h-[100dvh] flex flex-col">
+                  <Suspense fallback={null}>
+                    <Header />
+                  </Suspense>
+                  <div className="flex flex-1 overflow-hidden justify-center">{children}</div>
+                </div>
+              </InstrumentViewerProvider>
+            </ThemeProvider>
+          </ConvexClientProvider>
+        </ConvexAuthNextjsServerProvider>
       </body>
     </html>
   )

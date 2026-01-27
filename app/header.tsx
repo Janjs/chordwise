@@ -8,7 +8,6 @@ import { usePathname } from 'next/navigation'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { InstrumentTab } from '@/components/player/player-settings'
 import { AuthButton } from '@/components/auth/auth-button'
-import SettingsPopover from '@/components/settings-popover'
 
 export default function Header() {
   const [prompt] = useGenerateSearchParams()
@@ -18,7 +17,7 @@ export default function Header() {
   const isLandingPage = pathname === '/'
   return (
     <header className="flex-shrink-0 relative">
-      <nav className="flex gap-4 items-center px-4 py-2" aria-label="Global">
+      <nav className="flex gap-4 items-center px-4 py-3" aria-label="Global">
         <div className="flex items-center gap-3 flex-shrink-0">
           <Link href="/" className="flex items-center gap-2">
             {isLandingPage ? (
@@ -66,7 +65,6 @@ export default function Header() {
         )}
         <div className="flex gap-3 ml-auto items-center">
           <AuthButton />
-          <SettingsPopover />
         </div>
       </nav>
     </header>

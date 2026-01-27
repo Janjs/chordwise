@@ -15,6 +15,7 @@
   "dependencies": {
     "@ai-sdk/openai": "^3.0.19",
     "@ai-sdk/react": "^3.0.52",
+    "@auth/core": "0.36.0",
     "@convex-dev/auth": "^0.0.90",
     "@hookform/resolvers": "^5.2.2",
     "@magenta/music": "^1.23.1",
@@ -93,6 +94,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.18",
+    "jose": "^5.10.0",
     "prettier": "^3.7.4"
   }
 }
