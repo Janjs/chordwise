@@ -12,4 +12,15 @@ export default defineSchema({
     sessionId: v.string(),
     creditsUsed: v.number(),
   }).index("by_sessionId", ["sessionId"]),
+  promptCache: defineTable({
+    cacheKey: v.string(),
+    response: v.string(),
+    headers: v.any(),
+    timestamp: v.number(),
+  }).index("by_cacheKey", ["cacheKey"]),
+  toolCache: defineTable({
+    cacheKey: v.string(),
+    result: v.any(),
+    timestamp: v.number(),
+  }).index("by_cacheKey", ["cacheKey"]),
 });

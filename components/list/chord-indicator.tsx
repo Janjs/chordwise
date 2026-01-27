@@ -1,7 +1,7 @@
 'use client'
 
 import { Progression } from '@/types/types'
-import { FC, useRef, useEffect, useState } from 'react'
+import { FC, useRef, useEffect, useLayoutEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
@@ -25,19 +25,30 @@ const ChordIndicator: FC<ChordIndicatorProps> = (props) => {
 
     const checkScroll = () => {
       const { scrollLeft, scrollWidth, clientWidth } = container
-      setShowLeftFade(scrollLeft > 0)
-      setShowRightFade(scrollLeft < scrollWidth - clientWidth - 1)
+      const canScroll = scrollWidth > clientWidth
+      const maxScroll = scrollWidth - clientWidth
+      
+      setShowLeftFade(canScroll && scrollLeft > 0.5)
+      setShowRightFade(canScroll && scrollLeft < maxScroll - 0.5)
     }
 
     checkScroll()
-    container.addEventListener('scroll', checkScroll)
+    
+    const scrollHandler = () => checkScroll()
+    container.addEventListener('scroll', scrollHandler, { passive: true })
     window.addEventListener('resize', checkScroll)
 
+    const observer = new MutationObserver(() => {
+      setTimeout(checkScroll, 0)
+    })
+    observer.observe(container, { childList: true, subtree: true, attributes: true })
+
     return () => {
-      container.removeEventListener('scroll', checkScroll)
+      container.removeEventListener('scroll', scrollHandler)
       window.removeEventListener('resize', checkScroll)
+      observer.disconnect()
     }
-  }, [])
+  }, [progressions])
 
   return (
     <div ref={containerRef} className="hidden md:flex flex-none overflow-x-auto custom-scrollbar gap-2 items-center relative">
