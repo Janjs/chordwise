@@ -122,3 +122,23 @@ export const setToolCache = mutation({
     }
   },
 });
+
+export const clearPromptCache = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const allCaches = await ctx.db.query("promptCache").collect();
+    for (const item of allCaches) {
+      await ctx.db.delete(item._id);
+    }
+  },
+});
+
+export const clearToolCache = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const allCaches = await ctx.db.query("toolCache").collect();
+    for (const item of allCaches) {
+      await ctx.db.delete(item._id);
+    }
+  },
+});

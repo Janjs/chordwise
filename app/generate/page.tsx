@@ -29,8 +29,21 @@ const GenerateContent = () => {
   const [indexCurrentProgression, setIndexCurrentProgression] = useState<number>(0)
   const [indexCurrentChord, setIndexCurrentChord] = useState<number>(-1)
 
-  const handleProgressionsGenerated = (progressions: Progression[]) => {
-    setProgressions(progressions)
+  const handleProgressionsGenerated = (newProgressions: Progression[]) => {
+    setProgressions((prevProgressions) => {
+      const combined = [...prevProgressions, ...newProgressions]
+      const limited = combined.slice(-20)
+
+      const totalCombined = combined.length
+      const prevLen = prevProgressions.length
+      const firstNewIndexInCombined = prevLen
+      const firstIndexInLimited = Math.max(0, firstNewIndexInCombined - (totalCombined - limited.length))
+
+      setIndexCurrentProgression(firstIndexInLimited)
+      setIndexCurrentChord(-1)
+
+      return limited
+    })
     setError(null)
   }
 

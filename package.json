@@ -10,7 +10,8 @@
     "pretty": "prettier --write \"./**/*.{js,jsx,ts,tsx,json}\"",
     "convex": "convex dev",
     "convex:codegen": "convex codegen",
-    "clear-sessions": "convex run admin:clearAllAnonymousUsers"
+    "clear-sessions": "convex run admin:clearAllAnonymousUsers",
+    "clear-cache": "convex run cache:clearPromptCache && convex run cache:clearToolCache"
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.19",

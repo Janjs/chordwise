@@ -1,12 +1,8 @@
 'use client'
 
-import { FC, useEffect, useState } from 'react'
+import { FC } from 'react'
 import GuitarChord from './guitar-chord'
-import { Progression } from '@/types/types'
-
-import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/components/ui/carousel'
-import { WheelGesturesPlugin } from 'embla-carousel-wheel-gestures'
-import { Separator } from '@/components/ui/separator'
+import { Card, CardContent } from '@/components/ui/card'
 import { InstrumentContainerProps } from '../player/instrument-container'
 
 const GuitarProgViewer: FC<InstrumentContainerProps> = (props) => {
@@ -14,34 +10,29 @@ const GuitarProgViewer: FC<InstrumentContainerProps> = (props) => {
 
   const isChordPlaying = (chord: number) => isPlaying(index) && indexCurrentChord === chord
 
-  const [api, setApi] = useState<CarouselApi>()
-
-  useEffect(() => {
-    if (!api) {
-      return
-    }
-
-    api.scrollTo(indexCurrentChord)
-  }, [api, indexCurrentChord])
+  if (!chordProgression.chords.length) {
+    return (
+      <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+        No guitar chords to display
+      </div>
+    )
+  }
 
   return (
-    <>
-      <Carousel plugins={[WheelGesturesPlugin()]} setApi={setApi}>
-        <CarouselContent>
+    <Card className="h-full flex flex-col border-0 bg-transparent shadow-none">
+      <CardContent className="flex-1 overflow-auto pt-4 px-4">
+        <ul className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {chordProgression.chords.map((chord, i) => (
-            <CarouselItem key={i}>
-              <GuitarChord chord={chord} current={true} carousel={true} />
-            </CarouselItem>
+            <li
+              key={i}
+              className="flex items-center justify-center rounded-lg border bg-card/40 px-4 py-6"
+            >
+              <GuitarChord chord={chord} current={isChordPlaying(i)} carousel={false} />
+            </li>
           ))}
-        </CarouselContent>
-      </Carousel>
-      <Separator className="bg-background" />
-      <ul className="grid grid-cols-4 p-3">
-        {chordProgression.chords.map((chord, i) => (
-          <GuitarChord key={i} chord={chord} current={isChordPlaying(i)} carousel={false} />
-        ))}
-      </ul>
-    </>
+        </ul>
+      </CardContent>
+    </Card>
   )
 }
 

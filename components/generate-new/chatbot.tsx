@@ -182,6 +182,7 @@ function ChatbotContent({ prompt: externalPrompt, onProgressionsGenerated }: Cha
   const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const lastAutoPromptRef = useRef<string>('')
+  const lastHandledToolMessageIdRef = useRef<string | null>(null)
 
   const { isAuthenticated } = useConvexAuth()
   const { signIn } = useAuthActions()
@@ -208,21 +209,30 @@ function ChatbotContent({ prompt: externalPrompt, onProgressionsGenerated }: Cha
 
   useEffect(() => {
     const lastMessage = messages[messages.length - 1]
-    if (lastMessage?.role === 'assistant' && lastMessage.parts) {
-      for (const part of lastMessage.parts) {
-        if (
-          (part.type === 'tool-call' || (typeof part.type === 'string' && part.type.startsWith('tool-'))) &&
-          'state' in part &&
-          part.state === 'output-available' &&
-          'output' in part &&
-          part.output
-        ) {
-          const toolName = 'toolName' in part ? part.toolName : (typeof part.type === 'string' ? part.type.split('-').slice(1).join('-') : '')
-          if (toolName === 'generateChordProgressions') {
-            const result = part.output as { success: boolean; progressions?: Progression[]; error?: string }
-            if (result.success && result.progressions && onProgressionsGenerated) {
-              onProgressionsGenerated(result.progressions)
-            }
+    if (!lastMessage || lastMessage.role !== 'assistant' || !lastMessage.parts) {
+      return
+    }
+
+    if (lastMessage.id === lastHandledToolMessageIdRef.current) {
+      return
+    }
+
+    for (const part of lastMessage.parts) {
+      if (
+        (part.type === 'tool-call' || (typeof part.type === 'string' && part.type.startsWith('tool-'))) &&
+        'state' in part &&
+        part.state === 'output-available' &&
+        'output' in part &&
+        part.output
+      ) {
+        const toolName =
+          'toolName' in part ? part.toolName : typeof part.type === 'string' ? part.type.split('-').slice(1).join('-') : ''
+        if (toolName === 'generateChordProgressions') {
+          const result = part.output as { success: boolean; progressions?: Progression[]; error?: string }
+          if (result.success && result.progressions && onProgressionsGenerated) {
+            onProgressionsGenerated(result.progressions)
+            lastHandledToolMessageIdRef.current = lastMessage.id as string
+            break
           }
         }
       }

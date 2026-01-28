@@ -84,8 +84,17 @@ const GuitarChord: FC<GuitarChordProps> = (props) => {
 
   return (
     <div className="flex flex-col my-auto items-center">
+      <div ref={svgRef} className="max-w-[270px] mb-3">
+        {svgChordData ? (
+          <ChordSvg chord={svgChordData.positions[0]} instrument={INSTRUMENT} />
+        ) : (
+          <ChordSvg chord={DEFAULT_SVG_CHORD} instrument={INSTRUMENT} />
+        )}
+      </div>
       <h1
-        className={`inline-flex gap-1 items-center pb-2 ${props.current ? 'text-foreground' : 'text-muted-foreground'}`}
+        className={`inline-flex gap-1 items-center pt-1 text-base md:text-lg ${
+          props.current ? 'text-foreground' : 'text-muted-foreground'
+        }`}
       >
         {!props.carousel && props.chord.representation}
         {!svgChordData && !props.carousel && (
@@ -101,13 +110,6 @@ const GuitarChord: FC<GuitarChordProps> = (props) => {
           </TooltipProvider>
         )}
       </h1>
-      <div ref={svgRef} className="max-w-[270px] mb-2">
-        {svgChordData ? (
-          <ChordSvg chord={svgChordData.positions[0]} instrument={INSTRUMENT} />
-        ) : (
-          <ChordSvg chord={DEFAULT_SVG_CHORD} instrument={INSTRUMENT} />
-        )}
-      </div>
     </div>
   )
 }

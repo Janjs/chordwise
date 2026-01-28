@@ -88,7 +88,7 @@ const generateChordProgressionsTool = tool({
     
     try {
       const cached = await convex.query(api.cache.getToolCache, { cacheKey: toolCacheKey })
-      
+
       if (cached) {
         console.log('Tool cache HIT for description:', description)
         const progressions = parseProgressions(cached)
@@ -183,7 +183,6 @@ Always include text before and after calling the tool to create a natural conver
       tools: {
         generateChordProgressions: generateChordProgressionsTool,
       },
-      maxSteps: 5,
       experimental_transform: smoothStream({
         delayInMs: 20,
         chunking: 'word',

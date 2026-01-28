@@ -3,7 +3,6 @@ import { FC } from 'react'
 import GuitarProgViewer from '../guitar/guitar-prog'
 import MidiVisualizer from '../midi/midi-visualizer'
 import { Progression } from '@/types/types'
-import PianoList from '@/components/piano/piano-list'
 import { InstrumentTab } from './player-settings'
 
 export interface InstrumentContainerProps {
@@ -26,7 +25,6 @@ const InstrumentContainer: FC<InstrumentContainerProps> = (props) => {
       <div className="relative flex-1 min-h-0 overflow-hidden">
         {activeTab === 'midi' && <MidiVisualizer {...props} />}
         {activeTab === 'guitar' && <GuitarProgViewer {...props} />}
-        {activeTab === 'piano' && <PianoList {...props} />}
       </div>
     </div>
   )

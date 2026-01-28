@@ -30,8 +30,7 @@ export default function Header() {
             )}
           </Link>
           {prompt ? (
-            <h2 className="italic max-w-[22rem] overflow-hidden text-ellipsis whitespace-nowrap">{`"${prompt}`}
-            </h2>
+            <h2 className="text-ellipsis overflow-hidden whitespace-nowrap max-w-[22rem]">{`${prompt}`}</h2>
           ) : null}
         </div>
         {isGeneratePage && instrumentViewer && (
@@ -42,7 +41,7 @@ export default function Header() {
                   value="midi" 
                   className="rounded-lg border px-3 py-1.5 data-[state=active]:bg-card data-[state=active]:border-primary data-[state=inactive]:bg-muted data-[state=inactive]:border-border data-[state=inactive]:text-muted-foreground data-[state=active]:text-foreground flex items-center gap-1.5 justify-center data-[state=active]:justify-start"
                 >
-                  <Icons.music className="size-4" />
+                  <Icons.piano className="size-4" />
                   <span className="instrument-tab-text">MIDI</span>
                 </TabsTrigger>
                 <TabsTrigger 
@@ -51,13 +50,6 @@ export default function Header() {
                 >
                   <Icons.guitar className="size-4" />
                   <span className="instrument-tab-text">Guitar</span>
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="piano" 
-                  className="rounded-lg border px-3 py-1.5 data-[state=active]:bg-card data-[state=active]:border-primary data-[state=inactive]:bg-muted data-[state=inactive]:border-border data-[state=inactive]:text-muted-foreground data-[state=active]:text-foreground flex items-center gap-1.5 justify-center data-[state=active]:justify-start"
-                >
-                  <Icons.piano className="size-4" />
-                  <span className="instrument-tab-text">Piano</span>
                 </TabsTrigger>
               </TabsList>
             </Tabs>
