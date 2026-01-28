@@ -15,6 +15,7 @@ export default function Header() {
   const pathname = usePathname()
   const isGeneratePage = pathname === '/generate'
   const isLandingPage = pathname === '/'
+
   return (
     <header className="flex-shrink-0 relative">
       <nav className="flex gap-4 items-center px-4 py-3 min-h-[3.5rem]" aria-label="Global">
@@ -37,15 +38,15 @@ export default function Header() {
           <div className="hidden md:flex absolute" style={{ left: 'calc(1rem + 25rem + 1rem)' }}>
             <Tabs value={instrumentViewer.activeTab} onValueChange={(v) => instrumentViewer.setActiveTab(v as InstrumentTab)}>
               <TabsList className="gap-1 bg-transparent p-0">
-                <TabsTrigger 
-                  value="midi" 
+                <TabsTrigger
+                  value="midi"
                   className="rounded-lg border px-3 py-1.5 data-[state=active]:bg-card data-[state=active]:border-primary data-[state=inactive]:bg-muted data-[state=inactive]:border-border data-[state=inactive]:text-muted-foreground data-[state=active]:text-foreground flex items-center gap-1.5 justify-center data-[state=active]:justify-start"
                 >
                   <Icons.piano className="size-4" />
                   <span className="instrument-tab-text">MIDI</span>
                 </TabsTrigger>
-                <TabsTrigger 
-                  value="guitar" 
+                <TabsTrigger
+                  value="guitar"
                   className="rounded-lg border px-3 py-1.5 data-[state=active]:bg-card data-[state=active]:border-primary data-[state=inactive]:bg-muted data-[state=inactive]:border-border data-[state=inactive]:text-muted-foreground data-[state=active]:text-foreground flex items-center gap-1.5 justify-center data-[state=active]:justify-start"
                 >
                   <Icons.guitar className="size-4" />
