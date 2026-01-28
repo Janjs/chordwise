@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useChat } from '@ai-sdk/react'
 import { Progression } from '@/types/types'
 import { useQuery, useMutation, useConvexAuth } from 'convex/react'
@@ -182,9 +182,6 @@ function ChatbotContent({ prompt: externalPrompt, onProgressionsGenerated }: Cha
   const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const lastAutoPromptRef = useRef<string>('')
-  const latestUserMessageRef = useRef<HTMLDivElement>(null)
-  const prevMessagesLengthRef = useRef(0)
-  const scrollViewportRef = useRef<HTMLElement | null>(null)
 
   const { isAuthenticated } = useConvexAuth()
   const { signIn } = useAuthActions()
@@ -198,10 +195,6 @@ function ChatbotContent({ prompt: externalPrompt, onProgressionsGenerated }: Cha
     const currentUrl = pathname + (searchParams.toString() ? `?${searchParams.toString()}` : '')
     void signIn('google', { redirectTo: currentUrl })
   }
-
-  const handleViewportReady = useCallback((viewport: HTMLElement | null) => {
-    scrollViewportRef.current = viewport
-  }, [])
 
   const { textInput } = usePromptInputController()
 
@@ -250,29 +243,6 @@ function ChatbotContent({ prompt: externalPrompt, onProgressionsGenerated }: Cha
       }
     }
   }, [status, messages])
-
-  // Scroll latest user message to top when a new message is added
-  useEffect(() => {
-    const lastMessage = messages[messages.length - 1]
-    if (
-      messages.length > prevMessagesLengthRef.current &&
-      lastMessage?.role === 'user'
-    ) {
-      // Wait for DOM to update and layout to complete
-      requestAnimationFrame(() => {
-        const viewport = scrollViewportRef.current
-        const messageEl = latestUserMessageRef.current
-        if (!viewport || !messageEl) return
-
-        // Calculate position relative to scroll container using bounding rects
-        const viewportRect = viewport.getBoundingClientRect()
-        const messageRect = messageEl.getBoundingClientRect()
-        const scrollTop = viewport.scrollTop + (messageRect.top - viewportRect.top)
-        viewport.scrollTo({ top: scrollTop, behavior: 'smooth' })
-      })
-    }
-    prevMessagesLengthRef.current = messages.length
-  }, [messages])
 
   // Auto-send external prompt when provided
   const lastExternalPromptRef = useRef<string | undefined>(undefined)
@@ -418,58 +388,55 @@ function ChatbotContent({ prompt: externalPrompt, onProgressionsGenerated }: Cha
           </AlertDescription>
         </Alert>
       )}
-      <ConversationWithFade className="flex-1 min-h-0" onViewportReady={handleViewportReady}>
+      <ConversationWithFade className="flex-1 min-h-0">
         <Conversation className="flex-1 min-h-0">
           <ConversationContent className="pt-8 gap-4">
-          {messages.map((message, index) => (
-            <div
-              key={message.id}
-              className="flex flex-col gap-2"
-              ref={message.role === 'user' && index === messages.length - 1 ? latestUserMessageRef : undefined}
-            >
-              {message.parts ? (
-                message.parts.map((part, i) => {
-                  if (part.type === 'text' && 'text' in part) {
-                    return (
-                      <Message key={`${message.id}-${i}`} from={message.role}>
-                        <MessageContent>
-                          <MessageResponse>{part.text}</MessageResponse>
-                        </MessageContent>
-                      </Message>
-                    )
-                  }
-                  if (
-                    (part.type === 'tool-call' || (typeof part.type === 'string' && part.type.startsWith('tool-'))) &&
-                    'state' in part &&
-                    'input' in part
-                  ) {
-                    const isLoading = part.state === 'input-streaming' || part.state === 'input-available'
-                    const isCompleted = part.state === 'output-available'
-                    const MascotIcon = isLoading ? Icons.mascotSleeping : Icons.mascot
-                    return (
-                      <div key={i} className={`flex items-center gap-2 p-3 rounded-md border bg-muted/30 transition-shadow ${isLoading ? 'shadow-[0_0_15px_hsl(var(--primary)/0.4)] animate-pulse' : ''}`}>
-                        <MascotIcon className={`size-5 ${isLoading ? 'opacity-50' : ''}`} />
-                        <span className="text-sm font-medium">
-                          {isLoading ? 'Generating Chord Progressions...' : isCompleted ? 'Generated Chord Progressions' : 'Chord Progression Tool'}
-                        </span>
-                      </div>
-                    )
-                  }
-                  return null
-                })
-              ) : (
-                <Message from={message.role}>
-                  <MessageContent>
-                    <MessageResponse>
-                      {'content' in message ? String(message.content || '') : ''}
-                    </MessageResponse>
-                  </MessageContent>
-                </Message>
-              )}
-            </div>
-          ))}
-          {/* Spacer to allow scrolling last user message to top */}
-          {messages.length > 0 && <div className="min-h-[50vh]" />}
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className="flex flex-col gap-2"
+              >
+                {message.parts ? (
+                  message.parts.map((part, i) => {
+                    if (part.type === 'text' && 'text' in part) {
+                      return (
+                        <Message key={`${message.id}-${i}`} from={message.role}>
+                          <MessageContent>
+                            <MessageResponse>{part.text}</MessageResponse>
+                          </MessageContent>
+                        </Message>
+                      )
+                    }
+                    if (
+                      (part.type === 'tool-call' || (typeof part.type === 'string' && part.type.startsWith('tool-'))) &&
+                      'state' in part &&
+                      'input' in part
+                    ) {
+                      const isLoading = part.state === 'input-streaming' || part.state === 'input-available'
+                      const isCompleted = part.state === 'output-available'
+                      const MascotIcon = isLoading ? Icons.mascotSleeping : Icons.mascot
+                      return (
+                        <div key={i} className={`flex items-center gap-2 p-3 rounded-md border bg-muted/30 transition-shadow ${isLoading ? 'shadow-[0_0_15px_hsl(var(--primary)/0.4)] animate-pulse' : ''}`}>
+                          <MascotIcon className={`size-5 ${isLoading ? 'opacity-50' : ''}`} />
+                          <span className="text-sm font-medium">
+                            {isLoading ? 'Generating Chord Progressions...' : isCompleted ? 'Generated Chord Progressions' : 'Chord Progression Tool'}
+                          </span>
+                        </div>
+                      )
+                    }
+                    return null
+                  })
+                ) : (
+                  <Message from={message.role}>
+                    <MessageContent>
+                      <MessageResponse>
+                        {'content' in message ? String(message.content || '') : ''}
+                      </MessageResponse>
+                    </MessageContent>
+                  </Message>
+                )}
+              </div>
+            ))}
           </ConversationContent>
           <ConversationScrollButton />
         </Conversation>
