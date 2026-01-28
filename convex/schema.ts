@@ -24,7 +24,8 @@ export default defineSchema({
     timestamp: v.number(),
   }).index("by_cacheKey", ["cacheKey"]),
   chats: defineTable({
-    userId: v.string(),
+    sessionId: v.optional(v.string()),
+    userId: v.optional(v.string()),
     title: v.string(),
     messages: v.array(
       v.object({
@@ -40,5 +41,7 @@ export default defineSchema({
     updatedAt: v.number(),
   })
     .index("by_userId", ["userId"])
-    .index("by_userId_updatedAt", ["userId", "updatedAt"]),
+    .index("by_userId_updatedAt", ["userId", "updatedAt"])
+    .index("by_sessionId", ["sessionId"])
+    .index("by_sessionId_updatedAt", ["sessionId", "updatedAt"]),
 });

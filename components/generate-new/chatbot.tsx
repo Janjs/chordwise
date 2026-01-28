@@ -113,7 +113,7 @@ function ConversationWithFade({ children, className, onViewportReady }: { childr
         const htmlEl = el as HTMLElement
         const style = getComputedStyle(htmlEl)
         if (htmlEl.scrollHeight > htmlEl.clientHeight + 1 &&
-            (style.overflowY === 'auto' || style.overflowY === 'scroll')) {
+          (style.overflowY === 'auto' || style.overflowY === 'scroll')) {
           return htmlEl
         }
       }
@@ -280,9 +280,9 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
     }
   }, [externalPrompt, status, sendMessage])
 
-  // Save chat to Convex when messages change (only for authenticated users)
+  // Save chat to Convex when messages change (allowing both authenticated and anonymous users with session)
   useEffect(() => {
-    if (!isAuthenticated || messages.length === 0 || status !== 'ready') {
+    if ((!isAuthenticated && !anonymousSessionId) || messages.length === 0 || status !== 'ready') {
       return
     }
 
@@ -299,8 +299,8 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
         'content' in firstUserMessage
           ? String(firstUserMessage.content).slice(0, 100)
           : firstUserMessage.parts?.find((p) => p.type === 'text' && 'text' in p)
-              ? (firstUserMessage.parts.find((p) => p.type === 'text' && 'text' in p) as { text: string }).text.slice(0, 100)
-              : 'New Chat'
+            ? (firstUserMessage.parts.find((p) => p.type === 'text' && 'text' in p) as { text: string }).text.slice(0, 100)
+            : 'New Chat'
 
       const messagesToSave = messages.map((m) => ({
         id: String(m.id),
@@ -315,11 +315,13 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
           await updateChat({
             id: currentChatIdRef.current as Id<'chats'>,
             messages: messagesToSave,
+            sessionId: anonymousSessionId ?? undefined,
           })
         } else {
           const newChatId = await createChat({
             title,
             messages: messagesToSave,
+            sessionId: anonymousSessionId ?? undefined,
           })
           currentChatIdRef.current = newChatId
           onChatCreated?.(newChatId)
@@ -334,7 +336,7 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
     }
 
     saveChat()
-  }, [messages, status, isAuthenticated, createChat, updateChat, onChatCreated, router])
+  }, [messages, status, isAuthenticated, anonymousSessionId, createChat, updateChat, onChatCreated, router])
 
   const constructPrompt = () => {
     const parts: string[] = []
@@ -528,47 +530,47 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
           <Label className="mb-3 text-xs text-muted-foreground">Mood</Label>
           <SuggestionsWithFade className="my-1">
             <Suggestions>
-                {MOODS.map((mood) => (
-                  <Suggestion
-                    size="sm"
-                    key={mood}
-                    suggestion={mood}
-                    selected={selectedMood === mood}
-                    onClick={handleMoodClick}
-                  />
-                ))}
-                </Suggestions>
+              {MOODS.map((mood) => (
+                <Suggestion
+                  size="sm"
+                  key={mood}
+                  suggestion={mood}
+                  selected={selectedMood === mood}
+                  onClick={handleMoodClick}
+                />
+              ))}
+            </Suggestions>
           </SuggestionsWithFade>
           <Label className="mb-2 text-xs text-muted-foreground">Genre</Label>
           <SuggestionsWithFade className="my-1">
             <Suggestions>
-                {GENRES.map((genre) => (
-                  <Suggestion
-                    key={genre}
-                    suggestion={genre}
-                    selected={selectedGenre === genre}
-                    onClick={handleGenreClick}
-                  />
-                ))}
-                </Suggestions>
+              {GENRES.map((genre) => (
+                <Suggestion
+                  key={genre}
+                  suggestion={genre}
+                  selected={selectedGenre === genre}
+                  onClick={handleGenreClick}
+                />
+              ))}
+            </Suggestions>
           </SuggestionsWithFade>
           <Label className="mb-2 text-xs text-muted-foreground">Key</Label>
           <SuggestionsWithFade className="my-1">
             <Suggestions className="mb-2">
-                {KEYS.map((key) => (
-                  <Suggestion
-                    key={key}
-                    suggestion={key}
-                    selected={selectedKey === key}
-                    onClick={handleKeyClick}
-                  />
-                ))}
-              </Suggestions>
+              {KEYS.map((key) => (
+                <Suggestion
+                  key={key}
+                  suggestion={key}
+                  selected={selectedKey === key}
+                  onClick={handleKeyClick}
+                />
+              ))}
+            </Suggestions>
           </SuggestionsWithFade>
         </CollapsibleContent>
       </Collapsible>
 
-        <PromptInput onSubmit={handleSubmit}>
+      <PromptInput onSubmit={handleSubmit}>
         <PromptInputBody>
           <PromptInputTextarea placeholder={defaultPrompt} />
         </PromptInputBody>
@@ -579,13 +581,13 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
             </Badge>
           )}
           <div className="ml-auto">
-            <PromptInputSubmit 
-              disabled={!canSubmit || status !== 'ready'} 
-              status={status} 
+            <PromptInputSubmit
+              disabled={!canSubmit || status !== 'ready'}
+              status={status}
             />
           </div>
         </PromptInputFooter>
-        </PromptInput>
+      </PromptInput>
     </div>
   )
 }

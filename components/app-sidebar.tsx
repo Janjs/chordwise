@@ -8,6 +8,7 @@ import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
 import { Icons } from '@/components/icons'
 import { cn } from '@/lib/utils'
+import { useAnonymousSession } from '@/hooks/useAnonymousSession'
 import {
   Sidebar,
   SidebarContent,
@@ -68,8 +69,9 @@ export function AppSidebar() {
   const searchParams = useSearchParams()
   const { state, toggleSidebar, isMobile } = useSidebar()
   const isCollapsed = state === 'collapsed'
+  const anonymousSessionId = useAnonymousSession()
 
-  const chats = useQuery(api.chats.list)
+  const chats = useQuery(api.chats.list, { sessionId: anonymousSessionId ?? undefined })
   const removeChat = useMutation(api.chats.remove)
 
   const currentChatId = searchParams.get('chatId')
