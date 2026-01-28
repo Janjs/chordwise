@@ -41,9 +41,11 @@ export default function Header() {
               <div className="flex aspect-square items-center justify-center">
                 <Icons.mascot className="size-6.5" />
               </div>
-              <div className="flex-1 text-left text-sm leading-tight">
-                <Icons.logo className="h-5 w-auto" />
-              </div>
+              {(!isGeneratePage) && (
+                <div className="flex-1 text-left text-sm leading-tight">
+                  <Icons.logo className="h-5 w-auto" />
+                </div>
+              )}
             </Link>
           )}
           {displayPrompt ? (
