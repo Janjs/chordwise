@@ -211,7 +211,7 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
 
   const { textInput } = usePromptInputController()
 
-  const { messages, sendMessage, status } = useChat({
+  const { messages, sendMessage, status, setMessages } = useChat({
     api: '/api/chat',
     onError: (error: Error) => {
       console.error('Chat error:', error)
@@ -250,6 +250,16 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
       }
     }
   }, [messages, onProgressionsGenerated])
+
+  // Load existing chat
+  useEffect(() => {
+    if (existingChat && existingChat.messages && existingChat.messages.length > 0 && messages.length === 0) {
+      setMessages(existingChat.messages as any)
+      if (existingChat.progressions && onProgressionsGenerated) {
+        onProgressionsGenerated(existingChat.progressions)
+      }
+    }
+  }, [existingChat, setMessages, onProgressionsGenerated, messages.length])
 
   useEffect(() => {
     if (status === 'submitted' || (messages.length > 0 && messages[messages.length - 1]?.role === 'user')) {

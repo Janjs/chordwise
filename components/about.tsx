@@ -7,6 +7,8 @@ import {
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { GITHUB_LINK, TWITTER_LINK } from '@/lib/utils'
@@ -31,7 +33,9 @@ export default function About({ variant = 'default' }: AboutProps) {
         )}
       </AlertDialogTrigger>
       <AlertDialogContent>
-        <h1 className="text-xl font-medium">Welcome to Chordwise🎵✨</h1>
+        <AlertDialogHeader>
+          <AlertDialogTitle className="text-xl font-medium">Welcome to Chordwise🎵✨</AlertDialogTitle>
+        </AlertDialogHeader>
         <div className="text-md space-y-2">
           <p>
             Chordwise is <b className="font-bold">chord progression generator</b> powered by{' '}

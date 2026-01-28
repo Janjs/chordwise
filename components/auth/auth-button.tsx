@@ -19,7 +19,7 @@ import { Icons } from '@/components/icons'
 import { useTheme } from 'next-themes'
 import { Badge } from '@/components/ui/badge'
 import About from '@/components/about'
-import { usePathname, useSearchParams } from 'next/navigation'
+import { usePathname, useSearchParams, useRouter } from 'next/navigation'
 
 export function AuthButton() {
   const { isAuthenticated, isLoading } = useConvexAuth()
@@ -31,9 +31,19 @@ export function AuthButton() {
   const credits = useQuery(api.credits.getCredits, { anonymousSessionId: anonymousSessionId ?? undefined })
   const user = useQuery(api.user.getCurrentUser)
 
+  const router = useRouter()
+
   const handleSignIn = () => {
+    const isGeneratePage = pathname.startsWith('/generate')
     const currentUrl = pathname + (searchParams.toString() ? `?${searchParams.toString()}` : '')
-    void signIn('google', { redirectTo: currentUrl })
+    void signIn('google', { redirectTo: isGeneratePage ? '/' : currentUrl })
+  }
+
+  const handleSignOut = async () => {
+    await signOut()
+    if (pathname.startsWith('/generate')) {
+      router.push('/')
+    }
   }
 
   if (isLoading) {
@@ -108,7 +118,7 @@ export function AuthButton() {
               <span>Credits</span>
               {credits && (
                 <Badge variant="outline" className="ml-auto text-xs">
-                  {credits.isAuthenticated 
+                  {credits.isAuthenticated
                     ? (credits.credits === null ? 'free' : credits.credits.toFixed(2))
                     : `${credits.credits} / 3`
                   }
@@ -118,7 +128,7 @@ export function AuthButton() {
             <About />
           </div>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => void signOut()} className="cursor-pointer">
+          <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
             <Icons.signOut className="mr-2 h-4 w-4" />
             <span>Sign Out</span>
           </DropdownMenuItem>

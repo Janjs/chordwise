@@ -1,9 +1,10 @@
 'use client'
 
+import { useRef } from 'react'
 import Link from 'next/link'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { PlusIcon, PanelLeftIcon, Trash2Icon } from 'lucide-react'
-import { useQuery, useMutation } from 'convex/react'
+import { useQuery, useMutation, useConvexAuth } from 'convex/react'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
 import { Icons } from '@/components/icons'
@@ -69,12 +70,17 @@ export function AppSidebar() {
   const searchParams = useSearchParams()
   const { state, toggleSidebar, isMobile } = useSidebar()
   const isCollapsed = state === 'collapsed'
+  const { isAuthenticated } = useConvexAuth()
   const anonymousSessionId = useAnonymousSession()
 
   const chats = useQuery(api.chats.list, { sessionId: anonymousSessionId ?? undefined })
   const removeChat = useMutation(api.chats.remove)
 
   const currentChatId = searchParams.get('chatId')
+
+  if (!isAuthenticated) {
+    return null
+  }
 
   const handleNewChat = () => {
     router.push('/')
@@ -86,7 +92,7 @@ export function AppSidebar() {
   ) => {
     e.preventDefault()
     e.stopPropagation()
-    await removeChat({ id: chatId })
+    await removeChat({ id: chatId, sessionId: anonymousSessionId ?? undefined })
     if (currentChatId === chatId) {
       router.push('/')
     }

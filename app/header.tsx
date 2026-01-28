@@ -8,18 +8,31 @@ import { InstrumentTab } from '@/components/player/player-settings'
 import { AuthButton } from '@/components/auth/auth-button'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { Icons } from '@/components/icons'
+import Link from 'next/link'
+import { useConvexAuth } from 'convex/react'
 
 export default function Header() {
   const [prompt] = useGenerateSearchParams()
   const { props: instrumentViewer } = useInstrumentViewer()
   const pathname = usePathname()
   const isGeneratePage = pathname === '/generate'
+  const { isAuthenticated } = useConvexAuth()
 
   return (
     <header className="flex-shrink-0 relative">
       <nav className="flex gap-4 items-center px-4 py-3 min-h-[3.5rem]" aria-label="Global">
         <div className="flex items-center gap-3 flex-shrink-0">
-          <SidebarTrigger className="md:hidden" />
+          {isAuthenticated && <SidebarTrigger className="md:hidden" />}
+          {!isAuthenticated && (
+            <Link href="/" className="flex items-center gap-2 mr-4">
+              <div className="flex aspect-square items-center justify-center">
+                <Icons.mascot className="size-6.5" />
+              </div>
+              <div className="flex-1 text-left text-sm leading-tight">
+                <Icons.logo className="h-5 w-auto" />
+              </div>
+            </Link>
+          )}
           {prompt ? (
             <h2 className="text-ellipsis overflow-hidden whitespace-nowrap max-w-[22rem]">{`${prompt}`}</h2>
           ) : null}
