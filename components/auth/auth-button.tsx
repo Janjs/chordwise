@@ -128,8 +128,11 @@ export function AuthButton() {
   }
 
   return (
-    <Button size="sm" className="h-8" onClick={handleSignIn}>
-      Sign In
-    </Button>
+    <div className="flex gap-2 items-center">
+      <About variant="icon" />
+      <Button size="sm" className="h-8" onClick={handleSignIn}>
+        Sign In
+      </Button>
+    </div>
   )
 }

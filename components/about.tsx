@@ -11,14 +11,24 @@ import {
 } from '@/components/ui/alert-dialog'
 import { GITHUB_LINK, TWITTER_LINK } from '@/lib/utils'
 
-export default function About() {
+interface AboutProps {
+  variant?: 'default' | 'icon'
+}
+
+export default function About({ variant = 'default' }: AboutProps) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <button className="relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus-visible:bg-accent focus-visible:text-accent-foreground hover:bg-accent hover:text-accent-foreground w-full">
-          <Icons.info className="h-4 w-4" />
-          <span>About</span>
-        </button>
+        {variant === 'icon' ? (
+          <Button variant="ghost" size="icon">
+            <Icons.info className="h-4 w-4" />
+          </Button>
+        ) : (
+          <button className="relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus-visible:bg-accent focus-visible:text-accent-foreground hover:bg-accent hover:text-accent-foreground w-full">
+            <Icons.info className="h-4 w-4" />
+            <span>About</span>
+          </button>
+        )}
       </AlertDialogTrigger>
       <AlertDialogContent>
         <h1 className="text-xl font-medium">Welcome to Chordwise🎵✨</h1>
