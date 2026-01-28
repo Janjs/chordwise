@@ -108,7 +108,7 @@ export function AppSidebar() {
             <SidebarMenuButton
               asChild
               size="lg"
-              className="data-[state=open]:bg-muted data-[state=open]:text-foreground"
+              className="data-[state=open]:bg-muted data-[state=open]:text-foreground hover:bg-background "
             >
               <Link href="/" className="flex items-center min-h-15">
                 <div className="flex aspect-square items-center justify-center">
@@ -168,7 +168,7 @@ export function AppSidebar() {
                               isActive={currentChatId === chat._id}
                               tooltip={chat.title}
                             >
-                              <Link href={`/generate?chatId=${chat._id}`}>
+                              <Link href={`/generate?chatId=${chat._id}&title=${encodeURIComponent(chat.title)}`}>
                                 <Icons.music className="size-4" />
                                 <span>{chat.title}</span>
                               </Link>

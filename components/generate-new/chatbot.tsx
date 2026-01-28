@@ -253,13 +253,31 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
 
   // Load existing chat
   useEffect(() => {
-    if (existingChat && existingChat.messages && existingChat.messages.length > 0 && messages.length === 0) {
-      setMessages(existingChat.messages as any)
-      if (existingChat.progressions && onProgressionsGenerated) {
-        onProgressionsGenerated(existingChat.progressions)
+    if (chatId && chatId !== currentChatIdRef.current) {
+      setMessages([])
+      currentChatIdRef.current = chatId
+    }
+
+    if (existingChat && existingChat.messages && existingChat.messages.length > 0) {
+      if (currentChatIdRef.current === existingChat._id) {
+        // Only update if we are not already showing these messages or if we just switched chats
+        const lastMessage = messages[messages.length - 1]
+        const existingLastMessage = existingChat.messages[existingChat.messages.length - 1]
+
+        if (messages.length === 0 || (lastMessage && existingLastMessage && lastMessage.id !== existingLastMessage.id) || chatId !== currentChatIdRef.current) {
+          // Use a simple heuristic: if we have more messages locally, we are probably ahead of the server
+          // (e.g. optimistic updates or streaming response), so don't sync back yet.
+          if (messages.length > existingChat.messages.length) {
+            return
+          }
+          setMessages(existingChat.messages as any)
+          if (existingChat.progressions && onProgressionsGenerated) {
+            onProgressionsGenerated(existingChat.progressions)
+          }
+        }
       }
     }
-  }, [existingChat, setMessages, onProgressionsGenerated, messages.length])
+  }, [existingChat, setMessages, onProgressionsGenerated, messages.length, chatId])
 
   useEffect(() => {
     if (status === 'submitted' || (messages.length > 0 && messages[messages.length - 1]?.role === 'user')) {
@@ -336,7 +354,9 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
           currentChatIdRef.current = newChatId
           onChatCreated?.(newChatId)
           // Update URL without full page reload
-          const newUrl = `/generate?chatId=${newChatId}`
+          const params = new URLSearchParams(searchParams.toString())
+          params.set('chatId', newChatId)
+          const newUrl = `/generate?${params.toString()}`
           router.replace(newUrl, { scroll: false })
         }
         lastSavedMessagesLengthRef.current = messages.length
@@ -346,7 +366,7 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
     }
 
     saveChat()
-  }, [messages, status, isAuthenticated, anonymousSessionId, createChat, updateChat, onChatCreated, router])
+  }, [messages, status, isAuthenticated, anonymousSessionId, createChat, updateChat, onChatCreated, router, searchParams])
 
   const constructPrompt = () => {
     const parts: string[] = []

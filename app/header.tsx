@@ -11,8 +11,21 @@ import { Icons } from '@/components/icons'
 import Link from 'next/link'
 import { useConvexAuth } from 'convex/react'
 
+import { api } from '@/convex/_generated/api'
+import { Id } from '@/convex/_generated/dataModel'
+import { useQuery } from 'convex/react'
+import { useSearchParams } from 'next/navigation'
+
 export default function Header() {
   const [prompt] = useGenerateSearchParams()
+  const searchParams = useSearchParams()
+  const chatId = searchParams.get('chatId')
+  const title = searchParams.get('title')
+
+  const chat = useQuery(api.chats.get, chatId ? { id: chatId as Id<'chats'> } : 'skip')
+
+  const displayPrompt = chat?.title || title || prompt
+
   const { props: instrumentViewer } = useInstrumentViewer()
   const pathname = usePathname()
   const isGeneratePage = pathname === '/generate'
@@ -33,8 +46,8 @@ export default function Header() {
               </div>
             </Link>
           )}
-          {prompt ? (
-            <h2 className="text-ellipsis overflow-hidden whitespace-nowrap max-w-[22rem]">{`${prompt}`}</h2>
+          {displayPrompt ? (
+            <h2 className="text-ellipsis overflow-hidden whitespace-nowrap max-w-[22rem]">{`${displayPrompt}`}</h2>
           ) : null}
         </div>
         {isGeneratePage && instrumentViewer && (

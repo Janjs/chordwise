@@ -30,6 +30,12 @@ const GenerateContent = () => {
   const [indexCurrentProgression, setIndexCurrentProgression] = useState<number>(0)
   const [indexCurrentChord, setIndexCurrentChord] = useState<number>(-1)
 
+  useEffect(() => {
+    setProgressions([])
+    setIndexCurrentProgression(0)
+    setIndexCurrentChord(-1)
+  }, [chatId])
+
   const handleProgressionsGenerated = (newProgressions: Progression[]) => {
     setProgressions((prevProgressions) => {
       const combined = [...prevProgressions, ...newProgressions]
