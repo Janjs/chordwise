@@ -23,4 +23,22 @@ export default defineSchema({
     result: v.any(),
     timestamp: v.number(),
   }).index("by_cacheKey", ["cacheKey"]),
+  chats: defineTable({
+    userId: v.string(),
+    title: v.string(),
+    messages: v.array(
+      v.object({
+        id: v.string(),
+        role: v.union(v.literal("user"), v.literal("assistant")),
+        content: v.string(),
+        parts: v.optional(v.any()),
+        createdAt: v.number(),
+      })
+    ),
+    progressions: v.optional(v.any()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_userId", ["userId"])
+    .index("by_userId_updatedAt", ["userId", "updatedAt"]),
 });

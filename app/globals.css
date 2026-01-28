@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
 @plugin "tailwindcss-animate";
 
 @theme {
@@ -107,6 +109,14 @@
   --color-input: hsl(var(--color-glacier-600));
   --color-ring: hsl(var(--color-glacier-200));
   --color-ring-offset: hsl(0 0% 0%);
+  --sidebar: hsl(0 0% 0%);
+  --sidebar-foreground: hsl(0 0% 95%);
+  --sidebar-primary: hsl(var(--color-glacier-300));
+  --sidebar-primary-foreground: hsl(195 80.4% 10%);
+  --sidebar-accent: hsl(var(--color-glacier-900));
+  --sidebar-accent-foreground: hsl(0 0% 95%);
+  --sidebar-border: hsl(var(--color-glacier-600));
+  --sidebar-ring: hsl(var(--color-glacier-200));
 }
 
 @layer components {
@@ -144,4 +154,35 @@
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+:root {
+  --sidebar: hsl(0 0% 100%);
+  --sidebar-foreground: hsl(240 10% 3.9%);
+  --sidebar-primary: hsl(var(--color-glacier-300));
+  --sidebar-primary-foreground: hsl(195 80.4% 10%);
+  --sidebar-accent: hsl(var(--color-glacier-100));
+  --sidebar-accent-foreground: hsl(240 10% 3.9%);
+  --sidebar-border: hsl(var(--color-glacier-200));
+  --sidebar-ring: hsl(var(--color-glacier-500));
+}
+
+@theme inline {
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }

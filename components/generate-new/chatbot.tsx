@@ -7,7 +7,8 @@ import { useQuery, useMutation, useConvexAuth } from 'convex/react'
 import { api } from '@/convex/_generated/api'
 import { useAuthActions } from '@convex-dev/auth/react'
 import { useAnonymousSession } from '@/hooks/useAnonymousSession'
-import { usePathname, useSearchParams } from 'next/navigation'
+import { usePathname, useSearchParams, useRouter } from 'next/navigation'
+import { Id } from '@/convex/_generated/dataModel'
 import {
   Conversation,
   ConversationContent,
@@ -172,10 +173,12 @@ function ConversationWithFade({ children, className, onViewportReady }: { childr
 
 interface ChatbotProps {
   prompt?: string
+  chatId?: string
   onProgressionsGenerated?: (progressions: Progression[]) => void
+  onChatCreated?: (chatId: string) => void
 }
 
-function ChatbotContent({ prompt: externalPrompt, onProgressionsGenerated }: ChatbotProps) {
+function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerated, onChatCreated }: ChatbotProps) {
   const [selectedMood, setSelectedMood] = useState<string | null>(null)
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null)
   const [selectedKey, setSelectedKey] = useState<string | null>(null)
@@ -183,14 +186,23 @@ function ChatbotContent({ prompt: externalPrompt, onProgressionsGenerated }: Cha
   const [error, setError] = useState<string | null>(null)
   const lastAutoPromptRef = useRef<string>('')
   const lastHandledToolMessageIdRef = useRef<string | null>(null)
+  const currentChatIdRef = useRef<string | null>(chatId || null)
+  const lastSavedMessagesLengthRef = useRef<number>(0)
 
   const { isAuthenticated } = useConvexAuth()
   const { signIn } = useAuthActions()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const router = useRouter()
   const anonymousSessionId = useAnonymousSession()
   const credits = useQuery(api.credits.getCredits, { anonymousSessionId: anonymousSessionId ?? undefined })
   const useCredit = useMutation(api.credits.useCredit)
+  const createChat = useMutation(api.chats.create)
+  const updateChat = useMutation(api.chats.update)
+  const existingChat = useQuery(
+    api.chats.get,
+    chatId ? { id: chatId as Id<'chats'> } : 'skip'
+  )
 
   const handleSignIn = () => {
     const currentUrl = pathname + (searchParams.toString() ? `?${searchParams.toString()}` : '')
@@ -267,6 +279,62 @@ function ChatbotContent({ prompt: externalPrompt, onProgressionsGenerated }: Cha
       )
     }
   }, [externalPrompt, status, sendMessage])
+
+  // Save chat to Convex when messages change (only for authenticated users)
+  useEffect(() => {
+    if (!isAuthenticated || messages.length === 0 || status !== 'ready') {
+      return
+    }
+
+    // Don't save if we haven't received any new messages
+    if (messages.length <= lastSavedMessagesLengthRef.current) {
+      return
+    }
+
+    const saveChat = async () => {
+      const firstUserMessage = messages.find((m) => m.role === 'user')
+      if (!firstUserMessage) return
+
+      const title =
+        'content' in firstUserMessage
+          ? String(firstUserMessage.content).slice(0, 100)
+          : firstUserMessage.parts?.find((p) => p.type === 'text' && 'text' in p)
+              ? (firstUserMessage.parts.find((p) => p.type === 'text' && 'text' in p) as { text: string }).text.slice(0, 100)
+              : 'New Chat'
+
+      const messagesToSave = messages.map((m) => ({
+        id: String(m.id),
+        role: m.role as 'user' | 'assistant',
+        content: 'content' in m ? String(m.content || '') : '',
+        parts: m.parts,
+        createdAt: Date.now(),
+      }))
+
+      try {
+        if (currentChatIdRef.current) {
+          await updateChat({
+            id: currentChatIdRef.current as Id<'chats'>,
+            messages: messagesToSave,
+          })
+        } else {
+          const newChatId = await createChat({
+            title,
+            messages: messagesToSave,
+          })
+          currentChatIdRef.current = newChatId
+          onChatCreated?.(newChatId)
+          // Update URL without full page reload
+          const newUrl = `/generate?chatId=${newChatId}`
+          router.replace(newUrl, { scroll: false })
+        }
+        lastSavedMessagesLengthRef.current = messages.length
+      } catch (err) {
+        console.error('Failed to save chat:', err)
+      }
+    }
+
+    saveChat()
+  }, [messages, status, isAuthenticated, createChat, updateChat, onChatCreated, router])
 
   const constructPrompt = () => {
     const parts: string[] = []
@@ -522,12 +590,14 @@ function ChatbotContent({ prompt: externalPrompt, onProgressionsGenerated }: Cha
   )
 }
 
-export default function Chatbot({ prompt, onProgressionsGenerated }: ChatbotProps) {
+export default function Chatbot({ prompt, chatId, onProgressionsGenerated, onChatCreated }: ChatbotProps) {
   return (
     <PromptInputProvider>
       <ChatbotContent
         prompt={prompt}
+        chatId={chatId}
         onProgressionsGenerated={onProgressionsGenerated}
+        onChatCreated={onChatCreated}
       />
     </PromptInputProvider>
   )

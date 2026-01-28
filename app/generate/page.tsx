@@ -21,6 +21,7 @@ const GenerateContent = () => {
   const searchParams = useSearchParams()
 
   const prompt = searchParams.get('prompt') || undefined
+  const chatId = searchParams.get('chatId') || undefined
 
   const [activeTab, setActiveTab] = useState<InstrumentTab>('midi')
   const [tempo, setTempo] = useState<number>(DEFAULT_TEMPO)
@@ -77,7 +78,7 @@ const GenerateContent = () => {
             <AlertTitle>Something went wrong</AlertTitle>
           </Alert>
         )}
-        <Chatbot prompt={prompt} onProgressionsGenerated={handleProgressionsGenerated} />
+        <Chatbot prompt={prompt} chatId={chatId} onProgressionsGenerated={handleProgressionsGenerated} />
       </div>
 
       {/* Main content */}

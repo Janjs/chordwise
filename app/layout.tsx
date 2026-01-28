@@ -6,6 +6,8 @@ import { ThemeProvider } from '@/components/theme-provider'
 import { InstrumentViewerProvider } from '@/components/player/instrument-viewer-context'
 import ConvexClientProvider from '@/lib/convex-client'
 import { ConvexAuthNextjsServerProvider } from '@convex-dev/auth/nextjs/server'
+import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
+import { AppSidebar } from '@/components/app-sidebar'
 
 export const metadata = {
   title: 'Chordwise',
@@ -29,12 +31,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ConvexClientProvider>
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
               <InstrumentViewerProvider>
-                <div className="h-[100dvh] flex flex-col">
-                  <Suspense fallback={null}>
-                    <Header />
-                  </Suspense>
-                  <div className="flex flex-1 overflow-hidden justify-center">{children}</div>
-                </div>
+                <SidebarProvider>
+                  <AppSidebar />
+                  <SidebarInset>
+                    <div className="h-[100dvh] flex flex-col">
+                      <Suspense fallback={null}>
+                        <Header />
+                      </Suspense>
+                      <div className="flex flex-1 overflow-hidden justify-center">{children}</div>
+                    </div>
+                  </SidebarInset>
+                </SidebarProvider>
               </InstrumentViewerProvider>
             </ThemeProvider>
           </ConvexClientProvider>

@@ -11,6 +11,7 @@
 import type * as admin from "../admin.js";
 import type * as auth from "../auth.js";
 import type * as cache from "../cache.js";
+import type * as chats from "../chats.js";
 import type * as credits from "../credits.js";
 import type * as http from "../http.js";
 import type * as user from "../user.js";
@@ -25,6 +26,7 @@ declare const fullApi: ApiFromModules<{
   admin: typeof admin;
   auth: typeof auth;
   cache: typeof cache;
+  chats: typeof chats;
   credits: typeof credits;
   http: typeof http;
   user: typeof user;
