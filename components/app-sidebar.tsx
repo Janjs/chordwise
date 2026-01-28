@@ -110,7 +110,7 @@ export function AppSidebar() {
               size="lg"
               className="data-[state=open]:bg-muted data-[state=open]:text-foreground hover:bg-background "
             >
-              <Link href="/" className="flex items-center min-h-15">
+              <Link href="/" className="flex items-center min-h-15 ml-1">
                 <div className="flex aspect-square items-center justify-center">
                   <Icons.mascot className="size-6.5" />
                 </div>

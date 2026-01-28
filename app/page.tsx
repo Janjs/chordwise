@@ -35,7 +35,7 @@ const Page = () => {
           </Badge>
         )}
         <h1 className="text-3xl md:text-5xl font-bold flex flex-row items-center justify-center gap-2">
-          <span>Generate musical chord progressions</span>
+          <span>Create musical chord progressions</span>
         </h1>
         <h3 className="text-md md:text-xl text-muted-foreground">Enhance, not replace, your musical creativity</h3>
         <Suspense fallback={null}>

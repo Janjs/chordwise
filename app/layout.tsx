@@ -31,7 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ConvexClientProvider>
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
               <InstrumentViewerProvider>
-                <SidebarProvider style={{ '--sidebar-width': '13rem' } as React.CSSProperties}>
+                <SidebarProvider defaultOpen={false} style={{ '--sidebar-width': '13rem' } as React.CSSProperties}>
                   <AppSidebar />
                   <SidebarInset>
                     <div className="h-[100dvh] flex flex-col min-w-0">
