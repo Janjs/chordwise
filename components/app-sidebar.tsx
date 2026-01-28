@@ -75,7 +75,7 @@ export function AppSidebar() {
   const currentChatId = searchParams.get('chatId')
 
   const handleNewChat = () => {
-    router.push('/generate')
+    router.push('/')
   }
 
   const handleDeleteChat = async (
@@ -86,14 +86,14 @@ export function AppSidebar() {
     e.stopPropagation()
     await removeChat({ id: chatId })
     if (currentChatId === chatId) {
-      router.push('/generate')
+      router.push('/')
     }
   }
 
   const groupedChats = chats ? groupChatsByDate(chats) : null
 
   return (
-    <Sidebar collapsible="icon" className={cn(!isCollapsed && "w-[13rem]")}>
+    <Sidebar collapsible="icon">
       <SidebarHeader className="gap-2">
         <SidebarMenu>
           <SidebarMenuItem>

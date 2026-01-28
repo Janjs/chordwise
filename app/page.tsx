@@ -20,8 +20,8 @@ const Page = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100dvh-60px)]">
-      <div className="flex flex-col w-full gap-4 items-center text-center px-4">
+    <div className="flex flex-col items-center justify-center min-h-[calc(100dvh-60px)] w-full max-w-full">
+      <div className="flex flex-col w-full max-w-full gap-4 items-center text-center px-4">
         {!isLoading && !isAuthenticated && (
           <Badge
             className="flex h-7 border border-foreground/20 items-center gap-2 bg-card/80 text-foreground shadow-sm backdrop-blur cursor-pointer hover:bg-card/90 transition-colors"

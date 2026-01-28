@@ -69,7 +69,7 @@ const GenerateContent = () => {
   }, [progressions, activeTab, indexCurrentProgression, indexCurrentChord, pitch, tempo, isPlaying, setProps, prompt])
 
   return (
-    <div className="flex w-full h-full gap-4 px-4 pb-4 overflow-hidden">
+    <div className="flex w-full max-w-full h-full gap-4 px-4 pb-4 overflow-hidden">
       {/* Left sidebar */}
       <div className="hidden md:flex w-[25rem] flex-col gap-4 flex-shrink-0">
         {error && (

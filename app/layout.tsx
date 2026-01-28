@@ -31,14 +31,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ConvexClientProvider>
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
               <InstrumentViewerProvider>
-                <SidebarProvider>
+                <SidebarProvider style={{ '--sidebar-width': '13rem' } as React.CSSProperties}>
                   <AppSidebar />
                   <SidebarInset>
-                    <div className="h-[100dvh] flex flex-col">
+                    <div className="h-[100dvh] flex flex-col min-w-0">
                       <Suspense fallback={null}>
                         <Header />
                       </Suspense>
-                      <div className="flex flex-1 overflow-hidden justify-center">{children}</div>
+                      <div className="flex flex-1 overflow-hidden justify-center min-w-0">{children}</div>
                     </div>
                   </SidebarInset>
                 </SidebarProvider>
