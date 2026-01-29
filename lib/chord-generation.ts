@@ -21,11 +21,25 @@ const getProgressionMidis = (representation: string) => {
     return []
   }
 
-  const notesWithOctave = chordInfo.notes.map((note) => note + '3')
+  const midis: number[] = []
+  let currentOctave = 3
+  let lastMidi = -1
 
-  const midis: number[] = notesWithOctave
-    .map((note) => TonalMidi.toMidi(note) as number)
-    .filter((midi) => midi != null)
+  for (const note of chordInfo.notes) {
+    let midi = TonalMidi.toMidi(note + currentOctave)
+
+    if (midi !== null) {
+      if (midi <= lastMidi) {
+        currentOctave++
+        midi = TonalMidi.toMidi(note + currentOctave)
+      }
+
+      if (midi !== null) {
+        midis.push(midi)
+        lastMidi = midi
+      }
+    }
+  }
 
   return midis
 }

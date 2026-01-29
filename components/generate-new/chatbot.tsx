@@ -202,7 +202,7 @@ function ConversationWithFade({ children, className, onViewportReady }: { childr
 interface ChatbotProps {
   prompt?: string
   chatId?: string
-  onProgressionsGenerated?: (progressions: Progression[]) => void
+  onProgressionsGenerated?: (progressions: Progression[], shouldReplace?: boolean) => void
   onChatCreated?: (chatId: string) => void
   resetKey?: string | null
   onToolClick?: (toolName: string, output: any) => void
@@ -387,7 +387,7 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
           }
           setMessages(existingChat.messages as any)
           if (existingChat.progressions && onProgressionsGenerated) {
-            onProgressionsGenerated(existingChat.progressions)
+            onProgressionsGenerated(existingChat.progressions, true)
           }
         }
       }

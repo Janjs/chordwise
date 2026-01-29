@@ -63,6 +63,12 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
   const player = useRef<any>(null)
 
   useEffect(() => {
+    if (!isPlaying && player.current) {
+      player.current?.stopPlay()
+    }
+  }, [isPlaying])
+
+  useEffect(() => {
     const initPlayer = async () => {
       const PlayerModule = (await import('@/components/player/player')).default
       player.current = new PlayerModule(instrumentValues, MASTER_VOLUME)

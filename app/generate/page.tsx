@@ -49,19 +49,51 @@ const GenerateContent = () => {
       setProgressions([])
       setIndexCurrentProgression(0)
       setIndexCurrentChord(-1)
+      setIsPlaying(false)
     }
 
     prevChatIdRef.current = chatId
     prevNewParamRef.current = newParam
   }, [chatId, newParam])
 
-  const handleProgressionsGenerated = (newProgressions: Progression[]) => {
+  const handleProgressionsGenerated = (newProgressions: Progression[], shouldReplace: boolean = false) => {
     setProgressions((prevProgressions) => {
-      const combined = [...prevProgressions, ...newProgressions]
+      let combined: Progression[]
+
+      if (shouldReplace) {
+        combined = newProgressions
+      } else {
+        // Deduplicate: Check if new progressions are already at the end of prevProgressions
+        const prevSlice = prevProgressions.slice(-newProgressions.length)
+        const isDuplicate = prevSlice.length === newProgressions.length &&
+          JSON.stringify(prevSlice) === JSON.stringify(newProgressions)
+
+        if (isDuplicate) {
+          return prevProgressions
+        }
+
+        combined = [...prevProgressions, ...newProgressions]
+      }
+
       const limited = combined.slice(-20)
 
       const totalCombined = combined.length
       const prevLen = prevProgressions.length
+      // If replacing, we treat it as if we are starting fresh or jumping to the end, 
+      // but typically replacement happens on load. 
+      // If we replace, we probably want to select the first one if we were empty, 
+      // or maintain index if it's just a sync.
+
+      // Simplified logic for replacement:
+      // If replacing, just reset to 0 if it's a new set, or keep valid.
+      // The original logic was complex to handle appending. 
+
+      if (shouldReplace) {
+        setIndexCurrentProgression(0)
+        setIndexCurrentChord(-1)
+        return limited
+      }
+
       const firstNewIndexInCombined = prevLen
       const firstIndexInLimited = Math.max(0, firstNewIndexInCombined - (totalCombined - limited.length))
 

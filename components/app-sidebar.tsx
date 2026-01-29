@@ -211,9 +211,8 @@ export function AppSidebar() {
                                       </Link>
                                     </SidebarMenuButton>
                                     <SidebarMenuAction
-                                      showOnHover
                                       onClick={(e) => handleDeleteChat(e, chat._id)}
-                                      className="hover:bg-destructive hover:text-destructive-foreground"
+                                      className="group-hover/menu-item:opacity-100 md:opacity-0 hover:bg-destructive hover:text-destructive-foreground transition-opacity"
                                     >
                                       <Trash2Icon className="size-4" />
                                       <span className="sr-only">Delete</span>
