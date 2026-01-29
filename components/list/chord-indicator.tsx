@@ -55,7 +55,7 @@ const ChordIndicator: FC<ChordIndicatorProps> = (props) => {
   }, [indexCurrentProgression, progressions.length])
 
   return (
-    <div ref={wrapperRef} className="hidden md:flex flex-none items-center relative">
+    <div ref={wrapperRef} className="flex flex-none items-center relative">
       {showLeftFade && (
         <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
       )}

@@ -14,11 +14,16 @@ import { useSearchParams } from 'next/navigation'
 export const dynamic = 'force-dynamic'
 
 
+import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer'
+import { useIsMobile } from '@/hooks/use-mobile'
+
 const GenerateContent = () => {
   const [progressions, setProgressions] = useState<Progression[]>([])
   const [error, setError] = useState<string | null>(null)
   const { setProps } = useInstrumentViewer()
   const searchParams = useSearchParams()
+  const isMobile = useIsMobile()
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
 
   const prompt = searchParams.get('prompt') || undefined
   const chatId = searchParams.get('chatId') || undefined
@@ -84,10 +89,35 @@ const GenerateContent = () => {
     })
   }, [progressions, activeTab, indexCurrentProgression, indexCurrentChord, pitch, tempo, isPlaying, setProps, prompt])
 
+  const handleToolClick = (toolName: string, output: any) => {
+    if (isMobile) {
+      setIsDrawerOpen(true)
+    }
+  }
+
+  const playerContainer = (
+    <PlayerContainer
+      progressions={progressions}
+      activeTab={activeTab}
+      setActiveTab={setActiveTab}
+      tempo={tempo}
+      setTempo={setTempo}
+      pitch={pitch}
+      setPitch={setPitch}
+      isPlaying={isPlaying}
+      setIsPlaying={setIsPlaying}
+      indexCurrentProgression={indexCurrentProgression}
+      setIndexCurrentProgression={setIndexCurrentProgression}
+      indexCurrentChord={indexCurrentChord}
+      setIndexCurrentChord={setIndexCurrentChord}
+      isLoading={progressions.length === 0 && !!prompt}
+    />
+  )
+
   return (
     <div className="flex w-full max-w-full h-full gap-4 px-4 pb-4 overflow-hidden">
       {/* Left sidebar */}
-      <div className="hidden md:flex w-[25rem] flex-col gap-4 flex-shrink-0">
+      <div className="flex w-full md:w-72 lg:w-[25rem] flex-col gap-4 flex-shrink-0">
         {error && (
           <Alert variant="destructive">
             <Icons.warning className="h-4 w-4" />
@@ -99,28 +129,25 @@ const GenerateContent = () => {
           chatId={chatId}
           onProgressionsGenerated={handleProgressionsGenerated}
           resetKey={searchParams.get('new')}
+          onToolClick={handleToolClick}
         />
       </div>
 
-      {/* Main content */}
-      <div className="flex-1 min-w-0 min-h-0 overflow-hidden">
-        <PlayerContainer
-          progressions={progressions}
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          tempo={tempo}
-          setTempo={setTempo}
-          pitch={pitch}
-          setPitch={setPitch}
-          isPlaying={isPlaying}
-          setIsPlaying={setIsPlaying}
-          indexCurrentProgression={indexCurrentProgression}
-          setIndexCurrentProgression={setIndexCurrentProgression}
-          indexCurrentChord={indexCurrentChord}
-          setIndexCurrentChord={setIndexCurrentChord}
-          isLoading={progressions.length === 0 && !!prompt}
-        />
+      {/* Main content - Desktop */}
+      <div className="hidden md:block flex-1 min-w-0 min-h-0 overflow-hidden">
+        {playerContainer}
       </div>
+
+      {/* Mobile Drawer */}
+      {isMobile && (
+        <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+          <DrawerContent className="h-[85vh] p-4">
+            <div className="h-full overflow-hidden">
+              {playerContainer}
+            </div>
+          </DrawerContent>
+        </Drawer>
+      )}
     </div>
   )
 }

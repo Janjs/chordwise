@@ -175,7 +175,7 @@ export function AppSidebar() {
         </SidebarMenu>
       </SidebarHeader>
 
-      {!isCollapsed && (
+      {(isMobile || !isCollapsed) && (
         <SidebarContent>
           {isAuthenticated ? (
             <>
@@ -200,7 +200,10 @@ export function AppSidebar() {
                                       asChild
                                       isActive={currentChatId === chat._id}
                                       tooltip={chat.title}
-                                      className="group-has-[[data-sidebar=menu-action]]/menu-item:pr-2 group-has-[[data-sidebar=menu-action]]/menu-item:group-hover/menu-item:pr-8 duration-200"
+                                      className={cn(
+                                        "group-has-[[data-sidebar=menu-action]]/menu-item:pr-2 group-has-[[data-sidebar=menu-action]]/menu-item:group-hover/menu-item:pr-8 duration-200",
+                                        isMobile && "group-has-[[data-sidebar=menu-action]]/menu-item:pr-8"
+                                      )}
                                     >
                                       <Link href={`/generate?chatId=${chat._id}&title=${encodeURIComponent(chat.title)}`}>
                                         <Icons.music className="size-4" />

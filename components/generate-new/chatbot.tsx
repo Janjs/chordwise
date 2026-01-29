@@ -205,9 +205,10 @@ interface ChatbotProps {
   onProgressionsGenerated?: (progressions: Progression[]) => void
   onChatCreated?: (chatId: string) => void
   resetKey?: string | null
+  onToolClick?: (toolName: string, output: any) => void
 }
 
-function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerated, onChatCreated, resetKey }: ChatbotProps) {
+function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerated, onChatCreated, resetKey, onToolClick }: ChatbotProps) {
   const [selectedMood, setSelectedMood] = useState<string | null>(null)
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null)
   const [selectedKey, setSelectedKey] = useState<string | null>(null)
@@ -695,7 +696,15 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
                           const isCompleted = part.state === 'output-available'
                           const MascotIcon = isLoading ? Icons.mascotSleeping : Icons.mascot
                           return (
-                            <div key={i} className={`flex items-center gap-2 p-3 rounded-md border bg-muted/30 transition-shadow ${isLoading ? 'shadow-[0_0_15px_hsl(var(--primary)/0.4)] animate-pulse' : ''}`}>
+                            <div
+                              key={i}
+                              className={`flex items-center gap-2 p-3 rounded-md border bg-muted/30 transition-shadow ${isLoading ? 'shadow-[0_0_15px_hsl(var(--primary)/0.4)] animate-pulse' : ''} ${isCompleted ? 'cursor-pointer hover:bg-muted/50' : ''}`}
+                              onClick={() => {
+                                if (isCompleted && onToolClick && 'output' in part) {
+                                  onToolClick('generateChordProgressions', part.output)
+                                }
+                              }}
+                            >
                               <MascotIcon className={`size-5 ${isLoading ? 'opacity-50' : ''}`} />
                               <span className="text-sm font-medium">
                                 {isLoading ? 'Generating Chord Progressions...' : isCompleted ? 'Generated Chord Progressions' : 'Chord Progression Tool'}
@@ -798,7 +807,7 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
   )
 }
 
-export default function Chatbot({ prompt, chatId, onProgressionsGenerated, onChatCreated, resetKey }: ChatbotProps) {
+export default function Chatbot({ prompt, chatId, onProgressionsGenerated, onChatCreated, resetKey, onToolClick }: ChatbotProps) {
   return (
     <PromptInputProvider>
       <ChatbotContent
@@ -807,6 +816,7 @@ export default function Chatbot({ prompt, chatId, onProgressionsGenerated, onCha
         onProgressionsGenerated={onProgressionsGenerated}
         onChatCreated={onChatCreated}
         resetKey={resetKey}
+        onToolClick={onToolClick}
       />
     </PromptInputProvider>
   )

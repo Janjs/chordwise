@@ -16,6 +16,9 @@ import InstrumentContainer from './instrument-container'
 import MidiExportButton from '@/components/midi/midi-export-button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useIsMobile } from '@/hooks/use-mobile'
+
 interface PlayerContainerProps {
   progressions: Progression[]
   activeTab: InstrumentTab
@@ -52,6 +55,7 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
   } = props
 
   const instrumentKey = tabToInstrument[activeTab]
+  const isMobile = useIsMobile()
 
   const [loop, setLoop] = useState(false)
 
@@ -114,32 +118,55 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
   const emptyProgression: Progression = { chords: [] }
 
   return (
-    <div className="flex h-full flex-col gap-4 overflow-hidden border rounded-lg p-4">
-      {(isLoading || progressions.length === 0) ? (
-        <div className="hidden md:flex flex-none items-center">
-          <Button
-            variant="outline"
-            disabled
-            className="px-2 opacity-50 cursor-not-allowed"
-          >
-            <Badge
-              variant="outline"
-              className="rounded-md px-1 py-1 opacity-50 text-muted-foreground border-0"
-            >
-              No chord progressions generated yet
-            </Badge>
-          </Button>
-        </div>
-      ) : (
-        <ChordIndicator
-          progressions={progressions}
-          handlePlay={handlePlay}
-          indexCurrentProgression={indexCurrentProgression}
-          indexCurrentChord={indexCurrentChord}
-        />
-      )}
+    <div className={`flex h-full flex-col gap-4 overflow-hidden rounded-lg p-4 ${isMobile ? '' : 'border'}`}>
+      <div className="flex items-center justify-between gap-4">
+        {isMobile && (
+          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as InstrumentTab)}>
+            <TabsList className="gap-1 bg-muted/50 p-1 h-9">
+              <TabsTrigger
+                value="midi"
+                className="rounded-md px-2 py-1 text-xs data-[state=active]:bg-background data-[state=active]:shadow-sm"
+              >
+                <Icons.piano className="size-3.5" />
+              </TabsTrigger>
+              <TabsTrigger
+                value="guitar"
+                className="rounded-md px-2 py-1 text-xs data-[state=active]:bg-background data-[state=active]:shadow-sm"
+              >
+                <Icons.guitar className="size-3.5" />
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        )}
 
-      <div className="hidden bg-card md:flex flex-1 overflow-hidden rounded-xl min-h-0">
+        {(isLoading || progressions.length === 0) ? (
+          <div className="flex flex-none items-center">
+            <Button
+              variant="outline"
+              disabled
+              className="px-2 opacity-50 cursor-not-allowed"
+            >
+              <Badge
+                variant="outline"
+                className="rounded-md px-1 py-1 opacity-50 text-muted-foreground border-0"
+              >
+                No chord progressions generated yet
+              </Badge>
+            </Button>
+          </div>
+        ) : (
+          <div className="flex-1 min-w-0">
+            <ChordIndicator
+              progressions={progressions}
+              handlePlay={handlePlay}
+              indexCurrentProgression={indexCurrentProgression}
+              indexCurrentChord={indexCurrentChord}
+            />
+          </div>
+        )}
+      </div>
+
+      <div className="bg-card flex flex-1 overflow-hidden rounded-xl min-h-0">
         <InstrumentContainer
           activeTab={activeTab}
           setActiveTab={setActiveTab}
@@ -153,7 +180,7 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
         />
       </div>
 
-      <div className="hidden md:flex flex-shrink-0 items-center gap-4 relative">
+      <div className="flex flex-shrink-0 items-center gap-4 relative">
         {/* Settings Popover - Left */}
         <Popover>
           <PopoverTrigger asChild>
@@ -240,6 +267,7 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
             pitch={pitch}
             tempo={tempo}
             disabled={isLoading || progressions.length === 0}
+            iconOnly={isMobile}
           />
         </div>
       </div>

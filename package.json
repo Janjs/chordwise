@@ -92,6 +92,7 @@
     "tone": "^15.1.22",
     "typescript": "5.9.3",
     "use-stick-to-bottom": "^1.1.2",
+    "vaul": "^1.1.2",
     "webaudiofont": "^3.0.4",
     "zod": "^4.3.5"
   },

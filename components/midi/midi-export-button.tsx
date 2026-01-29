@@ -11,13 +11,15 @@ interface MidiExportButtonProps {
     pitch?: number
     tempo?: number
     disabled?: boolean
+    iconOnly?: boolean
 }
 
 const MidiExportButton: FC<MidiExportButtonProps> = ({
     chordProgression,
     pitch = 0,
     tempo = 120,
-    disabled = false
+    disabled = false,
+    iconOnly = false
 }) => {
     const [isExporting, setIsExporting] = useState(false)
 
@@ -77,13 +79,14 @@ const MidiExportButton: FC<MidiExportButtonProps> = ({
 
     return (
         <Button
-            size="sm"
+            size={iconOnly ? "icon" : "sm"}
             onClick={handleExport}
             disabled={isExporting || disabled || chordProgression.chords.length === 0}
-            className="gap-2"
+            className={iconOnly ? "" : "gap-2"}
+            title="Export MIDI"
         >
             <Download className="h-4 w-4" />
-            {isExporting ? 'Exporting...' : 'Export MIDI'}
+            {!iconOnly && (isExporting ? 'Exporting...' : 'Export MIDI')}
         </Button>
     )
 }
