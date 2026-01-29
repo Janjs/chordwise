@@ -51,6 +51,32 @@ const MOODS = ['Happy', 'Sad', 'Dreamy', 'Energetic', 'Chill', 'Melancholic', 'R
 const GENRES = ['Jazz', 'Pop', 'R&B', 'Classical', 'Lo-fi', 'Rock', 'Blues', 'Folk']
 const KEYS = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 
+const extractProgressionsFromMessages = (messages: any[]): Progression[] => {
+  const progressions: Progression[] = []
+  for (const m of messages) {
+    if (m.role === 'assistant' && m.parts) {
+      for (const part of m.parts) {
+        if (
+          (part.type === 'tool-call' || (typeof part.type === 'string' && part.type.startsWith('tool-'))) &&
+          'state' in part &&
+          part.state === 'output-available' &&
+          'output' in part &&
+          part.output
+        ) {
+          const toolName = 'toolName' in part ? part.toolName : typeof part.type === 'string' ? part.type.split('-').slice(1).join('-') : ''
+          if (toolName === 'generateChordProgressions') {
+            const result = part.output as { success: boolean; progressions?: Progression[]; error?: string }
+            if (result.success && result.progressions) {
+              progressions.push(...result.progressions)
+            }
+          }
+        }
+      }
+    }
+  }
+  return progressions
+}
+
 
 function SuggestionsWithFade({ children, className }: { children: React.ReactNode; className?: string }) {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -218,49 +244,74 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
   const { messages, sendMessage, status, setMessages } = useChat({
     api: '/api/chat',
     onFinish: async (message: any) => {
-      // If authenticated and no chatId, create a new chat now that we have the first message/response
-      if (isAuthenticated && !chatId && !currentChatIdRef.current) {
+      // Create a new chat if we don't have one, allowing both authenticated and anonymous users
+      if ((isAuthenticated || anonymousSessionId) && !chatId && !currentChatIdRef.current) {
         try {
           // Use the prompt from URL params if available (set by handleSubmit), or try to find it in messages
           const promptParam = searchParams.get('prompt')
-          const userMessage = messages.find(m => m.role === 'user')
 
-          let title = promptParam
-          if (!title && userMessage && typeof (userMessage as any).content === 'string') {
-            title = (userMessage as any).content.slice(0, 50)
+          // Note: messages in this closure might be stale (from start of request). 
+          // We should construct the messages array carefully.
+          // formatting the assistant message for storage
+          const assistantMessage = {
+            id: message.id || crypto.randomUUID(),
+            role: 'assistant' as const,
+            content: message.content || '',
+            parts: message.parts,
+            createdAt: Date.now()
           }
 
-          if (!title && lastSubmittedPromptRef.current) {
-            title = lastSubmittedPromptRef.current.slice(0, 50)
+          // Try to get user message
+          let userMessageContent = promptParam
+          if (!userMessageContent && lastSubmittedPromptRef.current) {
+            userMessageContent = lastSubmittedPromptRef.current
           }
+
+          // Construct messages array for saving
+          // If we have messages in state, use them (filtering out the partial assistant message if present)
+          let messagesToSave: any[] = []
+
+          if (messages.length > 0) {
+            messagesToSave = messages.map(m => ({
+              id: m.id,
+              role: m.role,
+              content: 'content' in m ? String(m.content || '') : '',
+              parts: 'parts' in m ? m.parts : undefined,
+              createdAt: (m as any).createdAt instanceof Date ? (m as any).createdAt.getTime() : Date.now()
+            }))
+            // Check if the last message in state is the same as the finished message
+            const lastStateMsg = messagesToSave[messagesToSave.length - 1]
+            if (lastStateMsg.id === assistantMessage.id) {
+              messagesToSave[messagesToSave.length - 1] = assistantMessage
+            } else {
+              messagesToSave.push(assistantMessage)
+            }
+          } else {
+            // Fallback if messages state is empty
+            messagesToSave = [
+              {
+                id: crypto.randomUUID(),
+                role: 'user',
+                content: userMessageContent || 'New Chat',
+                parts: [{ type: 'text', text: userMessageContent || 'New Chat' }],
+                createdAt: Date.now() - 1000
+              },
+              assistantMessage
+            ]
+          }
+
+          const title = userMessageContent ? userMessageContent.slice(0, 50) : 'New Chat'
+
+          const progressions = extractProgressionsFromMessages(messagesToSave)
 
           // Create chat mutation
           const newChatId = await createChat({
             title: title || 'New Chat',
-            messages: []
+            messages: messagesToSave,
+            progressions: progressions, // Save extracted progressions
+            sessionId: anonymousSessionId ?? undefined, // Ensure anonymous session is linked if applicable
           })
 
-          // We need to update the chat with the messages. 
-          // The `createChat` might strictly create an empty chat or we need to pass messages.
-          // Assuming `createChat` just creates the container. We might need to `updateChat` or similar.
-          // Wait, based on `convex/chats.ts` (implied), `create` usually takes title. 
-          // Then `updateChat` or internal logic handles messages.
-          // Actually, `useChat` in `ai-sdk` doesn't automatically sync to Convex. 
-          // We likely need to save the specific messages.
-
-          // Let's look at how existing chats save.
-          // There is a `useEffect` on line 309 (in original file) that saves messages when they change.
-          // "Save chat to Convex when messages change"
-
-          // If we redirect, that effect might run or might be cut off.
-          // Safer to just redirect to the new ID, and let the existing or new page instance handle sync?
-          // Or explicit save here?
-
-          // The existing effect at line 309 says:
-          // if (!isAuthenticated || messages.length === 0 || status !== 'ready') return
-          // if (!chatId && !currentChatIdRef.current) return // This prevents saving if no ID
-
-          // So:
           // 1. Create Chat -> get ID.
           currentChatIdRef.current = newChatId
           // 2. Redirect
@@ -390,11 +441,13 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
 
   // Save chat to Convex when messages change (allowing both authenticated and anonymous users with session)
   useEffect(() => {
-    if (!isAuthenticated || messages.length === 0 || status !== 'ready') {
+    if ((!isAuthenticated && !anonymousSessionId) || messages.length === 0 || status !== 'ready') {
       return
     }
 
     // Don't save if we haven't received any new messages
+    // Note: checking > ensures we only save when we add content. 
+    // If we just loaded from DB, messages.length == lastSaved.
     if (messages.length <= lastSavedMessagesLengthRef.current) {
       return
     }
@@ -415,14 +468,18 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
         role: m.role as 'user' | 'assistant',
         content: 'content' in m ? String(m.content || '') : '',
         parts: m.parts,
-        createdAt: Date.now(),
+        createdAt: ((m as any).createdAt instanceof Date) ? (m as any).createdAt.getTime() : Date.now(),
       }))
 
       try {
+        const progressions = extractProgressionsFromMessages(messagesToSave)
+
         if (currentChatIdRef.current) {
           await updateChat({
             id: currentChatIdRef.current as Id<'chats'>,
             messages: messagesToSave,
+            progressions: progressions,
+            sessionId: anonymousSessionId ?? undefined,
           })
         }
         // Creation is handled by onFinish to avoid race conditions and duplicates

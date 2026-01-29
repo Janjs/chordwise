@@ -3,7 +3,7 @@
 import { useRef } from 'react'
 import Link from 'next/link'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
-import { PlusIcon, PanelLeftIcon, Trash2Icon } from 'lucide-react'
+import { PlusIcon, PanelLeftIcon, Trash2Icon, ChevronUp } from 'lucide-react'
 import { useQuery, useMutation, useConvexAuth } from 'convex/react'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
@@ -29,6 +29,11 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
 
 function groupChatsByDate(
   chats: Array<{ _id: Id<'chats'>; title: string; updatedAt: number }>
@@ -125,7 +130,7 @@ export function AppSidebar() {
               size="lg"
               className="data-[state=open]:bg-muted data-[state=open]:text-foreground hover:bg-background "
             >
-              <Link href="/" className="flex items-center min-h-15 ml-1">
+              <Link href="/" className="flex items-center min-h-12 ml-1">
                 <div className="flex aspect-square items-center justify-center">
                   <Icons.mascot className="size-6.5" />
                 </div>
@@ -174,34 +179,43 @@ export function AppSidebar() {
                 Object.entries(groupedChats).map(
                   ([group, chatsInGroup]) =>
                     chatsInGroup.length > 0 && (
-                      <SidebarGroup key={group}>
-                        <SidebarGroupLabel>{group}</SidebarGroupLabel>
-                        <SidebarGroupContent>
-                          <SidebarMenu>
-                            {chatsInGroup.map((chat) => (
-                              <SidebarMenuItem key={chat._id}>
-                                <SidebarMenuButton
-                                  asChild
-                                  isActive={currentChatId === chat._id}
-                                  tooltip={chat.title}
-                                >
-                                  <Link href={`/generate?chatId=${chat._id}&title=${encodeURIComponent(chat.title)}`}>
-                                    <Icons.music className="size-4" />
-                                    <span>{chat.title}</span>
-                                  </Link>
-                                </SidebarMenuButton>
-                                <SidebarMenuAction
-                                  showOnHover
-                                  onClick={(e) => handleDeleteChat(e, chat._id)}
-                                >
-                                  <Trash2Icon className="size-4" />
-                                  <span className="sr-only">Delete</span>
-                                </SidebarMenuAction>
-                              </SidebarMenuItem>
-                            ))}
-                          </SidebarMenu>
-                        </SidebarGroupContent>
-                      </SidebarGroup>
+                      <Collapsible key={group} defaultOpen className="group/collapsible">
+                        <SidebarGroup>
+                          <SidebarGroupLabel asChild>
+                            <CollapsibleTrigger>
+                              {group}
+                              <ChevronUp className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                            </CollapsibleTrigger>
+                          </SidebarGroupLabel>
+                          <CollapsibleContent>
+                            <SidebarGroupContent>
+                              <SidebarMenu>
+                                {chatsInGroup.map((chat) => (
+                                  <SidebarMenuItem key={chat._id}>
+                                    <SidebarMenuButton
+                                      asChild
+                                      isActive={currentChatId === chat._id}
+                                      tooltip={chat.title}
+                                    >
+                                      <Link href={`/generate?chatId=${chat._id}&title=${encodeURIComponent(chat.title)}`}>
+                                        <Icons.music className="size-4" />
+                                        <span>{chat.title}</span>
+                                      </Link>
+                                    </SidebarMenuButton>
+                                    <SidebarMenuAction
+                                      showOnHover
+                                      onClick={(e) => handleDeleteChat(e, chat._id)}
+                                    >
+                                      <Trash2Icon className="size-4" />
+                                      <span className="sr-only">Delete</span>
+                                    </SidebarMenuAction>
+                                  </SidebarMenuItem>
+                                ))}
+                              </SidebarMenu>
+                            </SidebarGroupContent>
+                          </CollapsibleContent>
+                        </SidebarGroup>
+                      </Collapsible>
                     )
                 )}
               {chats && chats.length === 0 && (
