@@ -196,6 +196,7 @@ export function AppSidebar() {
                                       asChild
                                       isActive={currentChatId === chat._id}
                                       tooltip={chat.title}
+                                      className="group-has-[[data-sidebar=menu-action]]/menu-item:pr-2 group-has-[[data-sidebar=menu-action]]/menu-item:group-hover/menu-item:pr-8 duration-200"
                                     >
                                       <Link href={`/generate?chatId=${chat._id}&title=${encodeURIComponent(chat.title)}`}>
                                         <Icons.music className="size-4" />
@@ -205,6 +206,7 @@ export function AppSidebar() {
                                     <SidebarMenuAction
                                       showOnHover
                                       onClick={(e) => handleDeleteChat(e, chat._id)}
+                                      className="hover:bg-destructive hover:text-destructive-foreground"
                                     >
                                       <Trash2Icon className="size-4" />
                                       <span className="sr-only">Delete</span>
