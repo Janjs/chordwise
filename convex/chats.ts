@@ -15,14 +15,6 @@ export const list = query({
         .collect();
     }
 
-    if (args.sessionId) {
-      return await ctx.db
-        .query("chats")
-        .withIndex("by_sessionId_updatedAt", (q) => q.eq("sessionId", args.sessionId))
-        .order("desc")
-        .collect();
-    }
-
     return [];
   },
 });

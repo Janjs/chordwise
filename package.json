@@ -11,6 +11,7 @@
     "convex": "convex dev",
     "convex:codegen": "convex codegen",
     "clear-sessions": "convex run admin:clearAllAnonymousUsers",
+    "reset-anonymous-users": "convex run admin:clearAllAnonymousUsers",
     "clear-cache": "convex run cache:clearPromptCache && convex run cache:clearToolCache"
   },
   "dependencies": {

@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useEffect, useState } from 'react'
+import { Suspense, useEffect, useState, useRef } from 'react'
 import { Progression } from '@/types/types'
 import { Alert, AlertTitle } from '@/components/ui/alert'
 import PlayerContainer from '@/components/player/player-container'
@@ -30,11 +30,25 @@ const GenerateContent = () => {
   const [indexCurrentProgression, setIndexCurrentProgression] = useState<number>(0)
   const [indexCurrentChord, setIndexCurrentChord] = useState<number>(-1)
 
+  const prevChatIdRef = useRef<string | undefined>(undefined)
+  const prevNewParamRef = useRef<string | null>(null)
+  const newParam = searchParams.get('new')
+
   useEffect(() => {
-    setProgressions([])
-    setIndexCurrentProgression(0)
-    setIndexCurrentChord(-1)
-  }, [chatId])
+    // If we are navigating to a new chat or clearing the current one
+    const isChatSwitch = prevChatIdRef.current && chatId && prevChatIdRef.current !== chatId
+    const isNewChat = prevChatIdRef.current && !chatId
+    const isReset = newParam && newParam !== prevNewParamRef.current
+
+    if (isChatSwitch || isNewChat || isReset) {
+      setProgressions([])
+      setIndexCurrentProgression(0)
+      setIndexCurrentChord(-1)
+    }
+
+    prevChatIdRef.current = chatId
+    prevNewParamRef.current = newParam
+  }, [chatId, newParam])
 
   const handleProgressionsGenerated = (newProgressions: Progression[]) => {
     setProgressions((prevProgressions) => {
@@ -55,23 +69,19 @@ const GenerateContent = () => {
   }
 
   useEffect(() => {
-    const isLoading = progressions.length === 0 && !!prompt
-    if (progressions.length > 0 || isLoading) {
-      const emptyProgression: Progression = { chords: [] }
-      setProps({
-        activeTab,
-        setActiveTab,
-        index: indexCurrentProgression,
-        chordProgression: progressions.length > 0 ? progressions[indexCurrentProgression] : emptyProgression,
-        indexCurrentChord,
-        isPlaying: (i: number) => i === indexCurrentProgression,
-        pitch,
-        tempo,
-        isCurrentlyPlaying: isPlaying,
-      })
-    } else {
-      setProps(null)
-    }
+    // Always update props so header/visualizer stays in sync
+    const emptyProgression: Progression = { chords: [] }
+    setProps({
+      activeTab,
+      setActiveTab,
+      index: indexCurrentProgression,
+      chordProgression: progressions.length > 0 ? progressions[indexCurrentProgression] : emptyProgression,
+      indexCurrentChord,
+      isPlaying: (i: number) => i === indexCurrentProgression,
+      pitch,
+      tempo,
+      isCurrentlyPlaying: isPlaying,
+    })
   }, [progressions, activeTab, indexCurrentProgression, indexCurrentChord, pitch, tempo, isPlaying, setProps, prompt])
 
   return (
@@ -84,33 +94,32 @@ const GenerateContent = () => {
             <AlertTitle>Something went wrong</AlertTitle>
           </Alert>
         )}
-        <Chatbot prompt={prompt} chatId={chatId} onProgressionsGenerated={handleProgressionsGenerated} />
+        <Chatbot
+          prompt={prompt}
+          chatId={chatId}
+          onProgressionsGenerated={handleProgressionsGenerated}
+          resetKey={searchParams.get('new')}
+        />
       </div>
 
       {/* Main content */}
       <div className="flex-1 min-w-0 min-h-0 overflow-hidden">
-        {progressions.length > 0 || prompt ? (
-          <PlayerContainer
-            progressions={progressions}
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            tempo={tempo}
-            setTempo={setTempo}
-            pitch={pitch}
-            setPitch={setPitch}
-            isPlaying={isPlaying}
-            setIsPlaying={setIsPlaying}
-            indexCurrentProgression={indexCurrentProgression}
-            setIndexCurrentProgression={setIndexCurrentProgression}
-            indexCurrentChord={indexCurrentChord}
-            setIndexCurrentChord={setIndexCurrentChord}
-            isLoading={progressions.length === 0 && !!prompt}
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center text-muted-foreground">
-            Enter a prompt to generate chord progressions
-          </div>
-        )}
+        <PlayerContainer
+          progressions={progressions}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          tempo={tempo}
+          setTempo={setTempo}
+          pitch={pitch}
+          setPitch={setPitch}
+          isPlaying={isPlaying}
+          setIsPlaying={setIsPlaying}
+          indexCurrentProgression={indexCurrentProgression}
+          setIndexCurrentProgression={setIndexCurrentProgression}
+          indexCurrentChord={indexCurrentChord}
+          setIndexCurrentChord={setIndexCurrentChord}
+          isLoading={progressions.length === 0 && !!prompt}
+        />
       </div>
     </div>
   )

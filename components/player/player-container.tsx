@@ -115,7 +115,7 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
 
   return (
     <div className="flex h-full flex-col gap-4 overflow-hidden border rounded-lg p-4">
-      {isLoading ? (
+      {(isLoading || progressions.length === 0) ? (
         <div className="hidden md:flex flex-none items-center">
           <Button
             variant="outline"
@@ -144,7 +144,7 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           index={indexCurrentProgression}
-          chordProgression={isLoading ? emptyProgression : progressions[indexCurrentProgression]}
+          chordProgression={(isLoading || progressions.length === 0) ? emptyProgression : progressions[indexCurrentProgression]}
           indexCurrentChord={indexCurrentChord}
           isPlaying={isProgressionPlaying}
           pitch={pitch}
@@ -203,7 +203,7 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
             variant="ghost"
             size="icon"
             onClick={() =>
-              setIndexCurrentProgression((curr) => curr - 1 < 0 ? progressions.length - 1 : curr - 1)
+              setIndexCurrentProgression(indexCurrentProgression - 1 < 0 ? progressions.length - 1 : indexCurrentProgression - 1)
             }
             disabled={isLoading || progressions.length === 0}
           >
@@ -222,7 +222,7 @@ const PlayerContainer: FC<PlayerContainerProps> = (props) => {
             variant="ghost"
             size="icon"
             onClick={() =>
-              setIndexCurrentProgression((curr) => curr + 1 === progressions.length ? 0 : curr + 1)
+              setIndexCurrentProgression(indexCurrentProgression + 1 === progressions.length ? 0 : indexCurrentProgression + 1)
             }
             disabled={isLoading || progressions.length === 0}
           >

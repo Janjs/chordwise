@@ -10,6 +10,7 @@ import { Id } from '@/convex/_generated/dataModel'
 import { Icons } from '@/components/icons'
 import { cn } from '@/lib/utils'
 import { useAnonymousSession } from '@/hooks/useAnonymousSession'
+import { useAuthActions } from '@convex-dev/auth/react'
 import {
   Sidebar,
   SidebarContent,
@@ -71,6 +72,7 @@ export function AppSidebar() {
   const { state, toggleSidebar, isMobile } = useSidebar()
   const isCollapsed = state === 'collapsed'
   const { isAuthenticated } = useConvexAuth()
+  const { signIn } = useAuthActions()
   const anonymousSessionId = useAnonymousSession()
 
   const chats = useQuery(api.chats.list, { sessionId: anonymousSessionId ?? undefined })
@@ -78,12 +80,16 @@ export function AppSidebar() {
 
   const currentChatId = searchParams.get('chatId')
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated && pathname === '/') {
     return null
   }
 
   const handleNewChat = () => {
-    router.push('/')
+    if (pathname.startsWith('/generate')) {
+      router.push(`/generate?new=${Date.now()}`)
+    } else {
+      router.push('/')
+    }
   }
 
   const handleDeleteChat = async (
@@ -94,8 +100,17 @@ export function AppSidebar() {
     e.stopPropagation()
     await removeChat({ id: chatId, sessionId: anonymousSessionId ?? undefined })
     if (currentChatId === chatId) {
-      router.push('/')
+      if (pathname.startsWith('/generate')) {
+        router.push('/generate')
+      } else {
+        router.push('/')
+      }
     }
+  }
+
+  const handleSignIn = () => {
+    const currentUrl = pathname + (searchParams.toString() ? `?${searchParams.toString()}` : '')
+    void signIn('google', { redirectTo: currentUrl })
   }
 
   const groupedChats = chats ? groupChatsByDate(chats) : null
@@ -153,46 +168,65 @@ export function AppSidebar() {
 
       {!isCollapsed && (
         <SidebarContent>
-          {groupedChats &&
-            Object.entries(groupedChats).map(
-              ([group, chatsInGroup]) =>
-                chatsInGroup.length > 0 && (
-                  <SidebarGroup key={group}>
-                    <SidebarGroupLabel>{group}</SidebarGroupLabel>
-                    <SidebarGroupContent>
-                      <SidebarMenu>
-                        {chatsInGroup.map((chat) => (
-                          <SidebarMenuItem key={chat._id}>
-                            <SidebarMenuButton
-                              asChild
-                              isActive={currentChatId === chat._id}
-                              tooltip={chat.title}
-                            >
-                              <Link href={`/generate?chatId=${chat._id}&title=${encodeURIComponent(chat.title)}`}>
-                                <Icons.music className="size-4" />
-                                <span>{chat.title}</span>
-                              </Link>
-                            </SidebarMenuButton>
-                            <SidebarMenuAction
-                              showOnHover
-                              onClick={(e) => handleDeleteChat(e, chat._id)}
-                            >
-                              <Trash2Icon className="size-4" />
-                              <span className="sr-only">Delete</span>
-                            </SidebarMenuAction>
-                          </SidebarMenuItem>
-                        ))}
-                      </SidebarMenu>
-                    </SidebarGroupContent>
-                  </SidebarGroup>
-                )
-            )}
-          {chats && chats.length === 0 && (
+          {isAuthenticated ? (
+            <>
+              {groupedChats &&
+                Object.entries(groupedChats).map(
+                  ([group, chatsInGroup]) =>
+                    chatsInGroup.length > 0 && (
+                      <SidebarGroup key={group}>
+                        <SidebarGroupLabel>{group}</SidebarGroupLabel>
+                        <SidebarGroupContent>
+                          <SidebarMenu>
+                            {chatsInGroup.map((chat) => (
+                              <SidebarMenuItem key={chat._id}>
+                                <SidebarMenuButton
+                                  asChild
+                                  isActive={currentChatId === chat._id}
+                                  tooltip={chat.title}
+                                >
+                                  <Link href={`/generate?chatId=${chat._id}&title=${encodeURIComponent(chat.title)}`}>
+                                    <Icons.music className="size-4" />
+                                    <span>{chat.title}</span>
+                                  </Link>
+                                </SidebarMenuButton>
+                                <SidebarMenuAction
+                                  showOnHover
+                                  onClick={(e) => handleDeleteChat(e, chat._id)}
+                                >
+                                  <Trash2Icon className="size-4" />
+                                  <span className="sr-only">Delete</span>
+                                </SidebarMenuAction>
+                              </SidebarMenuItem>
+                            ))}
+                          </SidebarMenu>
+                        </SidebarGroupContent>
+                      </SidebarGroup>
+                    )
+                )}
+              {chats && chats.length === 0 && (
+                <SidebarGroup>
+                  <SidebarGroupContent>
+                    <div className="px-2 py-4 text-sm text-muted-foreground text-center">
+                      No chat history yet
+                    </div>
+                  </SidebarGroupContent>
+                </SidebarGroup>
+              )}
+            </>
+          ) : (
             <SidebarGroup>
               <SidebarGroupContent>
-                <div className="px-2 py-4 text-sm text-muted-foreground text-center">
-                  No chat history yet
+                <div className="px-2 py-4 text-sm text-muted-foreground text-center mb-2">
+                  Sign in to save your history
                 </div>
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton onClick={handleSignIn}>
+                      <span>Sign In</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
           )}

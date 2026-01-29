@@ -18,7 +18,7 @@ export interface InstrumentContainerProps {
 }
 
 const InstrumentContainer: FC<InstrumentContainerProps> = (props) => {
-  const { activeTab, chordProgression, pitch, tempo } = props
+  const { activeTab } = props
 
   return (
     <div className="w-full h-full flex flex-col overflow-hidden">

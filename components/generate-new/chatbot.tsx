@@ -9,6 +9,7 @@ import { useAuthActions } from '@convex-dev/auth/react'
 import { useAnonymousSession } from '@/hooks/useAnonymousSession'
 import { usePathname, useSearchParams, useRouter } from 'next/navigation'
 import { Id } from '@/convex/_generated/dataModel'
+import useGenerateSearchParams from '@/hooks/useGenerateSearchParams'
 import {
   Conversation,
   ConversationContent,
@@ -176,9 +177,10 @@ interface ChatbotProps {
   chatId?: string
   onProgressionsGenerated?: (progressions: Progression[]) => void
   onChatCreated?: (chatId: string) => void
+  resetKey?: string | null
 }
 
-function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerated, onChatCreated }: ChatbotProps) {
+function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerated, onChatCreated, resetKey }: ChatbotProps) {
   const [selectedMood, setSelectedMood] = useState<string | null>(null)
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null)
   const [selectedKey, setSelectedKey] = useState<string | null>(null)
@@ -188,6 +190,7 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
   const lastHandledToolMessageIdRef = useRef<string | null>(null)
   const currentChatIdRef = useRef<string | null>(chatId || null)
   const lastSavedMessagesLengthRef = useRef<number>(0)
+  const lastSubmittedPromptRef = useRef<string | null>(null)
 
   const { isAuthenticated } = useConvexAuth()
   const { signIn } = useAuthActions()
@@ -210,9 +213,63 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
   }
 
   const { textInput } = usePromptInputController()
+  const [, setPrompt] = useGenerateSearchParams()
 
   const { messages, sendMessage, status, setMessages } = useChat({
     api: '/api/chat',
+    onFinish: async (message: any) => {
+      // If authenticated and no chatId, create a new chat now that we have the first message/response
+      if (isAuthenticated && !chatId && !currentChatIdRef.current) {
+        try {
+          // Use the prompt from URL params if available (set by handleSubmit), or try to find it in messages
+          const promptParam = searchParams.get('prompt')
+          const userMessage = messages.find(m => m.role === 'user')
+
+          let title = promptParam
+          if (!title && userMessage && typeof (userMessage as any).content === 'string') {
+            title = (userMessage as any).content.slice(0, 50)
+          }
+
+          if (!title && lastSubmittedPromptRef.current) {
+            title = lastSubmittedPromptRef.current.slice(0, 50)
+          }
+
+          // Create chat mutation
+          const newChatId = await createChat({
+            title: title || 'New Chat',
+            messages: []
+          })
+
+          // We need to update the chat with the messages. 
+          // The `createChat` might strictly create an empty chat or we need to pass messages.
+          // Assuming `createChat` just creates the container. We might need to `updateChat` or similar.
+          // Wait, based on `convex/chats.ts` (implied), `create` usually takes title. 
+          // Then `updateChat` or internal logic handles messages.
+          // Actually, `useChat` in `ai-sdk` doesn't automatically sync to Convex. 
+          // We likely need to save the specific messages.
+
+          // Let's look at how existing chats save.
+          // There is a `useEffect` on line 309 (in original file) that saves messages when they change.
+          // "Save chat to Convex when messages change"
+
+          // If we redirect, that effect might run or might be cut off.
+          // Safer to just redirect to the new ID, and let the existing or new page instance handle sync?
+          // Or explicit save here?
+
+          // The existing effect at line 309 says:
+          // if (!isAuthenticated || messages.length === 0 || status !== 'ready') return
+          // if (!chatId && !currentChatIdRef.current) return // This prevents saving if no ID
+
+          // So:
+          // 1. Create Chat -> get ID.
+          currentChatIdRef.current = newChatId
+          // 2. Redirect
+          router.push(`/generate?chatId=${newChatId}`)
+        } catch (e) {
+          console.error("Failed to create chat", e)
+        }
+      }
+    },
     onError: (error: Error) => {
       console.error('Chat error:', error)
       setError(error.message || 'An error occurred. Please try again.')
@@ -253,10 +310,13 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
 
   // Load existing chat
   useEffect(() => {
-    if (chatId && chatId !== currentChatIdRef.current) {
+    const normalizedChatId = chatId || null
+    if (normalizedChatId !== currentChatIdRef.current) {
       setMessages([])
-      currentChatIdRef.current = chatId
+      currentChatIdRef.current = normalizedChatId
     }
+
+
 
     if (existingChat && existingChat.messages && existingChat.messages.length > 0) {
       if (currentChatIdRef.current === existingChat._id) {
@@ -308,9 +368,29 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
     }
   }, [externalPrompt, status, sendMessage])
 
+  // Reset chat when resetKey changes (New Chat for anonymous users)
+  const lastResetKeyRef = useRef<string | null>(null)
+  useEffect(() => {
+    if (resetKey && resetKey !== lastResetKeyRef.current) {
+      lastResetKeyRef.current = resetKey
+      setMessages([])
+      setError(null)
+      setIsSuggestionsOpen(true)
+      // Reset current chat ID too if we want to force full reset
+      currentChatIdRef.current = null
+
+      // Clear input and suggestions
+      textInput.setInput('')
+      setSelectedMood(null)
+      setSelectedGenre(null)
+      setSelectedKey(null)
+      lastSubmittedPromptRef.current = null
+    }
+  }, [resetKey, setMessages, textInput])
+
   // Save chat to Convex when messages change (allowing both authenticated and anonymous users with session)
   useEffect(() => {
-    if ((!isAuthenticated && !anonymousSessionId) || messages.length === 0 || status !== 'ready') {
+    if (!isAuthenticated || messages.length === 0 || status !== 'ready') {
       return
     }
 
@@ -343,22 +423,10 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
           await updateChat({
             id: currentChatIdRef.current as Id<'chats'>,
             messages: messagesToSave,
-            sessionId: anonymousSessionId ?? undefined,
           })
-        } else {
-          const newChatId = await createChat({
-            title,
-            messages: messagesToSave,
-            sessionId: anonymousSessionId ?? undefined,
-          })
-          currentChatIdRef.current = newChatId
-          onChatCreated?.(newChatId)
-          // Update URL without full page reload
-          const params = new URLSearchParams(searchParams.toString())
-          params.set('chatId', newChatId)
-          const newUrl = `/generate?${params.toString()}`
-          router.replace(newUrl, { scroll: false })
         }
+        // Creation is handled by onFinish to avoid race conditions and duplicates
+
         lastSavedMessagesLengthRef.current = messages.length
       } catch (err) {
         console.error('Failed to save chat:', err)
@@ -452,6 +520,15 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
     setError(null)
     const textToSend = message.text || constructPrompt()
     console.log('Sending message:', textToSend)
+
+    // Update title for both anonymous and authenticated users for immediate feedback
+    // setPrompt(textToSend) // This causes a double-send because it updates the URL, triggering a re-render/re-mount loop
+    if (!isAuthenticated) {
+      setPrompt(textToSend)
+      // Prevent the auto-send effect from firing when the prompt prop updates via URL
+      lastExternalPromptRef.current = textToSend
+    }
+    lastSubmittedPromptRef.current = textToSend
 
     sendMessage(
       { text: textToSend },
@@ -622,7 +699,7 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
   )
 }
 
-export default function Chatbot({ prompt, chatId, onProgressionsGenerated, onChatCreated }: ChatbotProps) {
+export default function Chatbot({ prompt, chatId, onProgressionsGenerated, onChatCreated, resetKey }: ChatbotProps) {
   return (
     <PromptInputProvider>
       <ChatbotContent
@@ -630,6 +707,7 @@ export default function Chatbot({ prompt, chatId, onProgressionsGenerated, onCha
         chatId={chatId}
         onProgressionsGenerated={onProgressionsGenerated}
         onChatCreated={onChatCreated}
+        resetKey={resetKey}
       />
     </PromptInputProvider>
   )
