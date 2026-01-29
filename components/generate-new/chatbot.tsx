@@ -46,6 +46,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ChevronDownIcon, XIcon } from 'lucide-react'
+import { MascotCursor } from '@/components/mascot-cursor'
 
 const MOODS = ['Happy', 'Sad', 'Dreamy', 'Energetic', 'Chill', 'Melancholic', 'Romantic', 'Mysterious']
 const GENRES = ['Jazz', 'Pop', 'R&B', 'Classical', 'Lo-fi', 'Rock', 'Blues', 'Folk']
@@ -217,6 +218,8 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
   const currentChatIdRef = useRef<string | null>(chatId || null)
   const lastSavedMessagesLengthRef = useRef<number>(0)
   const lastSubmittedPromptRef = useRef<string | null>(null)
+
+  const [isTyping, setIsTyping] = useState(false)
 
   const { isAuthenticated } = useConvexAuth()
   const { signIn } = useAuthActions()
@@ -418,6 +421,16 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
       )
     }
   }, [externalPrompt, status, sendMessage])
+
+  useEffect(() => {
+    if (status === 'streaming') {
+      setIsTyping(true)
+      const timer = setTimeout(() => setIsTyping(false), 200)
+      return () => clearTimeout(timer)
+    } else {
+      setIsTyping(false)
+    }
+  }, [messages, status])
 
   // Reset chat when resetKey changes (New Chat for anonymous users)
   const lastResetKeyRef = useRef<string | null>(null)
@@ -635,52 +648,81 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
       <ConversationWithFade className="flex-1 min-h-0">
         <Conversation className="flex-1 min-h-0">
           <ConversationContent className="pt-8 gap-4">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className="flex flex-col gap-2"
-              >
-                {message.parts ? (
-                  message.parts.map((part, i) => {
-                    if (part.type === 'text' && 'text' in part) {
-                      return (
-                        <Message key={`${message.id}-${i}`} from={message.role}>
-                          <MessageContent>
-                            <MessageResponse>{part.text}</MessageResponse>
-                          </MessageContent>
-                        </Message>
-                      )
-                    }
-                    if (
-                      (part.type === 'tool-call' || (typeof part.type === 'string' && part.type.startsWith('tool-'))) &&
-                      'state' in part &&
-                      'input' in part
-                    ) {
-                      const isLoading = part.state === 'input-streaming' || part.state === 'input-available'
-                      const isCompleted = part.state === 'output-available'
-                      const MascotIcon = isLoading ? Icons.mascotSleeping : Icons.mascot
-                      return (
-                        <div key={i} className={`flex items-center gap-2 p-3 rounded-md border bg-muted/30 transition-shadow ${isLoading ? 'shadow-[0_0_15px_hsl(var(--primary)/0.4)] animate-pulse' : ''}`}>
-                          <MascotIcon className={`size-5 ${isLoading ? 'opacity-50' : ''}`} />
-                          <span className="text-sm font-medium">
-                            {isLoading ? 'Generating Chord Progressions...' : isCompleted ? 'Generated Chord Progressions' : 'Chord Progression Tool'}
-                          </span>
-                        </div>
-                      )
-                    }
-                    return null
-                  })
-                ) : (
-                  <Message from={message.role}>
-                    <MessageContent>
-                      <MessageResponse>
-                        {'content' in message ? String(message.content || '') : ''}
-                      </MessageResponse>
-                    </MessageContent>
-                  </Message>
-                )}
-              </div>
-            ))}
+            {(() => {
+              const messagesToRender = [...messages]
+              if (status === 'submitted' && messagesToRender.length > 0 && messagesToRender[messagesToRender.length - 1].role !== 'assistant') {
+                messagesToRender.push({
+                  id: 'generating-placeholder',
+                  role: 'assistant',
+                  content: '',
+                  parts: [{ type: 'text', text: '' }]
+                } as any)
+              }
+
+              return messagesToRender.map((message, messageIndex) => {
+                const isLastMessage = messageIndex === messagesToRender.length - 1
+                const showMascot = isLastMessage && message.role === 'assistant' && (status === 'streaming' || status === 'submitted')
+
+                return (
+                  <div
+                    key={message.id}
+                    className="flex flex-col gap-2"
+                  >
+                    {message.parts ? (
+                      message.parts.map((part, i) => {
+                        if (part.type === 'text' && 'text' in part) {
+                          return (
+                            <Message key={`${message.id}-${i}`} from={message.role}>
+                              <MessageContent>
+                                <MessageResponse>
+                                  {part.text}
+                                </MessageResponse>
+                                {showMascot && i === (message.parts?.length ?? 0) - 1 && (
+                                  <div className="text-left">
+                                    <MascotCursor isTyping={isTyping} className="size-5 inline-block" />
+                                  </div>
+                                )}
+                              </MessageContent>
+                            </Message>
+                          )
+                        }
+                        if (
+                          (part.type === 'tool-call' || (typeof part.type === 'string' && part.type.startsWith('tool-'))) &&
+                          'state' in part &&
+                          'input' in part
+                        ) {
+                          const isLoading = part.state === 'input-streaming' || part.state === 'input-available'
+                          const isCompleted = part.state === 'output-available'
+                          const MascotIcon = isLoading ? Icons.mascotSleeping : Icons.mascot
+                          return (
+                            <div key={i} className={`flex items-center gap-2 p-3 rounded-md border bg-muted/30 transition-shadow ${isLoading ? 'shadow-[0_0_15px_hsl(var(--primary)/0.4)] animate-pulse' : ''}`}>
+                              <MascotIcon className={`size-5 ${isLoading ? 'opacity-50' : ''}`} />
+                              <span className="text-sm font-medium">
+                                {isLoading ? 'Generating Chord Progressions...' : isCompleted ? 'Generated Chord Progressions' : 'Chord Progression Tool'}
+                              </span>
+                            </div>
+                          )
+                        }
+                        return null
+                      })
+                    ) : (
+                      <Message from={message.role}>
+                        <MessageContent>
+                          <MessageResponse>
+                            {'content' in message ? String(message.content || '') : ''}
+                          </MessageResponse>
+                          {showMascot && (
+                            <div className="text-left">
+                              <MascotCursor isTyping={isTyping} className="size-5 inline-block" />
+                            </div>
+                          )}
+                        </MessageContent>
+                      </Message>
+                    )}
+                  </div>
+                )
+              })
+            })()}
           </ConversationContent>
           <ConversationScrollButton />
         </Conversation>

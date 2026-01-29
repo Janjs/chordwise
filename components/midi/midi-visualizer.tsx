@@ -26,7 +26,7 @@ const MidiVisualizer: FC<InstrumentContainerProps> = (props) => {
     const containerRef = useRef<HTMLDivElement>(null)
     const scrollRef = useRef<HTMLDivElement>(null)
     const hasScrolledRef = useRef(false)
-    const containerWidthRef = useRef<number>(0)
+
 
     // Animation state
     const animationRef = useRef<number | null>(null)
@@ -197,19 +197,28 @@ const MidiVisualizer: FC<InstrumentContainerProps> = (props) => {
         }
     }, [indexCurrentChord, chordProgression.chords.length])
 
-    // Set initial container width (only once)
-    useLayoutEffect(() => {
+    const [containerWidth, setContainerWidth] = useState(0)
+
+    // Handle resizing
+    useEffect(() => {
         const container = containerRef.current
-        if (container && containerWidthRef.current === 0) {
-            containerWidthRef.current = container.getBoundingClientRect().width
-        }
+        if (!container) return
+
+        const observer = new ResizeObserver((entries) => {
+            for (const entry of entries) {
+                setContainerWidth(entry.contentRect.width)
+            }
+        })
+
+        observer.observe(container)
+        return () => observer.disconnect()
     }, [])
 
     // Canvas drawing
     useEffect(() => {
         const canvas = canvasRef.current
         const container = containerRef.current
-        if (!canvas || !container) return
+        if (!canvas || !container || containerWidth === 0) return
 
         const ctx = canvas.getContext('2d')
         if (!ctx) return
@@ -225,12 +234,6 @@ const MidiVisualizer: FC<InstrumentContainerProps> = (props) => {
 
         const dpr = window.devicePixelRatio || 1
         const totalChords = chordProgression.chords.length
-
-        // Use stored container width or get it if not set
-        const containerWidth = containerWidthRef.current || container.getBoundingClientRect().width
-        if (containerWidthRef.current === 0) {
-            containerWidthRef.current = containerWidth
-        }
 
         const chordWidth = (containerWidth - LEFT_MARGIN) / CHORDS_PER_VIEW
         const width = LEFT_MARGIN + (chordWidth * Math.max(totalChords, CHORDS_PER_VIEW))
@@ -314,7 +317,7 @@ const MidiVisualizer: FC<InstrumentContainerProps> = (props) => {
         ctx.lineTo(playheadX, noteAreaHeight)
         ctx.stroke()
 
-    }, [noteEvents, indexCurrentChord, chordProgression.chords.length, isDark, playheadProgress])
+    }, [noteEvents, indexCurrentChord, chordProgression.chords.length, isDark, playheadProgress, containerWidth])
 
     const totalChords = chordProgression.chords.length
 

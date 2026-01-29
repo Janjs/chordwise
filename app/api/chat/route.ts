@@ -40,7 +40,7 @@ async function collectStreamForCache(stream: ReadableStream): Promise<string> {
   const reader = stream.getReader()
   const decoder = new TextDecoder()
   const chunks: Uint8Array[] = []
-  
+
   try {
     while (true) {
       const { done, value } = await reader.read()
@@ -60,18 +60,18 @@ async function collectStreamForCache(stream: ReadableStream): Promise<string> {
       // Ignore errors releasing lock
     }
   }
-  
+
   if (chunks.length === 0) {
     throw new Error('No data collected from stream')
   }
-  
+
   const combined = new Uint8Array(chunks.reduce((acc, chunk) => acc + chunk.length, 0))
   let offset = 0
   for (const chunk of chunks) {
     combined.set(chunk, offset)
     offset += chunk.length
   }
-  
+
   return decoder.decode(combined)
 }
 
@@ -83,9 +83,9 @@ const generateChordProgressionsTool = tool({
   execute: async ({ description }) => {
     const prompt = `Generate chord progressions that fit the following description: ${description}`
     const fullPrompt = `Generate 5 chord progressions based on the user's request. Each progression should be an array of chord names (e.g., "Am", "Dm7", "G7", "Cmaj7").\n\nUser request: ${prompt}`
-    
+
     const toolCacheKey = createHash('sha256').update(fullPrompt).digest('hex')
-    
+
     try {
       const cached = await convex.query(api.cache.getToolCache, { cacheKey: toolCacheKey })
 
@@ -151,7 +151,7 @@ export async function POST(req: Request) {
 
     const cacheKey = generateCacheKey(messages, model)
     const cached = await getCachedResponse(cacheKey)
-    
+
     if (cached) {
       console.log('Cache HIT for prompt request:', { cacheKey, model, messageCount: messages.length })
       const encoder = new TextEncoder()
@@ -161,7 +161,7 @@ export async function POST(req: Request) {
           controller.close()
         },
       })
-      
+
       return new Response(stream, {
         headers: {
           ...cached.headers,
@@ -184,7 +184,7 @@ Always include text before and after calling the tool to create a natural conver
         generateChordProgressions: generateChordProgressionsTool,
       },
       experimental_transform: smoothStream({
-        delayInMs: 20,
+        delayInMs: 15,
         chunking: 'word',
       }),
     })
