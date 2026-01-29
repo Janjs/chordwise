@@ -31,7 +31,7 @@ const PlayerControls: FC<PlayerControlsProps> = (props) => {
   return (
     <div className="flex flex-1 flex-row items-center justify-around p-2">
       <Button
-        variant="accent"
+        variant="secondary"
         size="icon"
         onClick={() => {
           setIndexCurrentProgression((curr) => {
@@ -47,7 +47,7 @@ const PlayerControls: FC<PlayerControlsProps> = (props) => {
         <Icons.random size={17} />
       </Button>
       <Button
-        variant="accent"
+        variant="secondary"
         size="icon"
         onClick={() =>
           setIndexCurrentProgression((curr) => {
@@ -62,16 +62,16 @@ const PlayerControls: FC<PlayerControlsProps> = (props) => {
         <Icons.skipBack size={20} />
       </Button>
       {isPlaying ? (
-        <Button variant="accent" size="icon" onClick={() => stopProgression()}>
+        <Button variant="secondary" size="icon" onClick={() => stopProgression()}>
           <Icons.pause size={20} />
         </Button>
       ) : (
-        <Button variant="accent" size="icon" onClick={() => playProgression(indexCurrentProgression)}>
+        <Button variant="secondary" size="icon" onClick={() => playProgression(indexCurrentProgression)}>
           <Icons.play size={20} />
         </Button>
       )}
       <Button
-        variant="accent"
+        variant="secondary"
         size="icon"
         onClick={() =>
           setIndexCurrentProgression((curr) => {
@@ -85,7 +85,7 @@ const PlayerControls: FC<PlayerControlsProps> = (props) => {
       >
         <Icons.skipForward size={ICON_SIZE} />
       </Button>
-      <Button variant={loop ? 'default' : 'accent'} size={'icon'} onClick={() => setLoop((loop) => !loop)}>
+      <Button variant={loop ? 'default' : 'secondary'} size={'icon'} onClick={() => setLoop((loop) => !loop)}>
         <Icons.repeat size={21} />
       </Button>
     </div>

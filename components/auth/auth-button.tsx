@@ -63,7 +63,7 @@ export function AuthButton() {
         <DropdownMenuTrigger asChild>
           <button className="flex items-center justify-center">
             <Avatar className="h-8 w-8">
-              <AvatarImage src={user?.image ?? undefined} alt={user?.name ?? user?.email ?? 'User'} />
+              <AvatarImage src={(user?.image as string) ?? undefined} alt={(user?.name as string) ?? (user?.email as string) ?? 'User'} />
               <AvatarFallback className="text-xs">{initials}</AvatarFallback>
             </Avatar>
           </button>

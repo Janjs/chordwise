@@ -17,7 +17,8 @@ export const getPromptCache = query({
 
     const now = Date.now();
     if (now - cached.timestamp > CACHE_TTL) {
-      await ctx.db.delete(cached._id);
+      // Cache expired
+      // await ctx.db.delete(cached._id); // Cannot delete in query
       return null;
     }
 
@@ -80,7 +81,8 @@ export const getToolCache = query({
 
     const now = Date.now();
     if (now - cached.timestamp > CACHE_TTL) {
-      await ctx.db.delete(cached._id);
+      // Cache expired
+      // await ctx.db.delete(cached._id); // Cannot delete in query
       return null;
     }
 
