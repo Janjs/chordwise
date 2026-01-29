@@ -4,7 +4,7 @@ import { useRef } from 'react'
 import Link from 'next/link'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { PlusIcon, PanelLeftIcon, Trash2Icon, ChevronUp } from 'lucide-react'
-import { useQuery, useMutation, useConvexAuth } from 'convex/react'
+import { useQuery, useMutation, useConvexAuth, usePaginatedQuery } from 'convex/react'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
 import { Icons } from '@/components/icons'
@@ -80,7 +80,11 @@ export function AppSidebar() {
   const { signIn } = useAuthActions()
   const anonymousSessionId = useAnonymousSession()
 
-  const chats = useQuery(api.chats.list, { sessionId: anonymousSessionId ?? undefined })
+  const { results: chats, status, loadMore } = usePaginatedQuery(
+    api.chats.list,
+    { sessionId: anonymousSessionId ?? undefined },
+    { initialNumItems: 20 }
+  )
   const removeChat = useMutation(api.chats.remove)
 
   const currentChatId = searchParams.get('chatId')
@@ -228,6 +232,13 @@ export function AppSidebar() {
                     </div>
                   </SidebarGroupContent>
                 </SidebarGroup>
+              )}
+              {status === 'CanLoadMore' && (
+                <div className="p-4 flex justify-center">
+                  <SidebarMenuButton onClick={() => loadMore(20)} className='justify-center text-muted-foreground'>
+                    Load More
+                  </SidebarMenuButton>
+                </div>
               )}
             </>
           ) : (

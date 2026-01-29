@@ -2,8 +2,13 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
+import { paginationOptsValidator } from "convex/server";
+
 export const list = query({
-  args: { sessionId: v.optional(v.string()) },
+  args: {
+    sessionId: v.optional(v.string()),
+    paginationOpts: paginationOptsValidator
+  },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
 
@@ -12,10 +17,16 @@ export const list = query({
         .query("chats")
         .withIndex("by_userId_updatedAt", (q) => q.eq("userId", userId))
         .order("desc")
-        .collect();
+        .paginate(args.paginationOpts);
     }
 
-    return [];
+    return await ctx.db
+      .query("chats")
+      .withIndex("by_sessionId_updatedAt", (q) =>
+        q.eq("sessionId", args.sessionId ?? "")
+      )
+      .order("desc")
+      .paginate(args.paginationOpts);
   },
 });
 
