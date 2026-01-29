@@ -125,11 +125,11 @@
     /* Adjusting for 3 gaps */
   }
 
-  [data-state="inactive"] > span.instrument-tab-text {
+  [data-state="inactive"]>span.instrument-tab-text {
     display: none;
   }
 
-  [data-state="active"] > span.instrument-tab-text {
+  [data-state="active"]>span.instrument-tab-text {
     display: inline;
     animation: var(--animate-tab-text-in);
   }
@@ -182,7 +182,12 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.font-outfit {
+  font-family: var(--font-outfit);
 }

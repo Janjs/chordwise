@@ -49,7 +49,7 @@ export default function Header() {
             </Link>
           )}
           {displayPrompt ? (
-            <h2 className="text-ellipsis overflow-hidden whitespace-nowrap max-w-[22rem]">{`${displayPrompt}`}</h2>
+            <h2 className="text-ellipsis overflow-hidden whitespace-nowrap max-w-[22rem] font-outfit">{`${displayPrompt}`}</h2>
           ) : null}
         </div>
         {isGeneratePage && instrumentViewer && (

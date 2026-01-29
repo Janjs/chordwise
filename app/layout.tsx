@@ -16,9 +16,16 @@ export const metadata = {
   name: 'viewport',
 }
 
+import { Outfit } from 'next/font/google'
+
+const outfit = Outfit({
+  subsets: ['latin'],
+  variable: '--font-outfit',
+})
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning className={GeistSans.className}>
+    <html lang="en" suppressHydrationWarning className={`${GeistSans.className} ${outfit.variable}`}>
       <head>
         {/* <script
           async
