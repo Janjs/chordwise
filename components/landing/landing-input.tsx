@@ -163,7 +163,7 @@ function LandingInputContent() {
 
       <div className="mt-6">
         <div className="mb-4 flex items-center justify-center gap-2 text-muted-foreground">
-          <Icons.mascot className="h-5 w-5" />
+          <Icons.lightbulb className="h-4 w-4" />
           <p className="text-sm">Need inspiration? Try one of these:</p>
         </div>
         <div className="flex flex-wrap justify-center gap-2">

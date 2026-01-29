@@ -34,10 +34,15 @@ const Page = () => {
             </span>
           </Badge>
         )}
-        <h1 className="text-3xl md:text-5xl font-bold flex flex-row items-center justify-center gap-2 font-outfit">
-          <span>Create musical chord progressions</span>
+        <h1 className="text-3xl md:text-5xl font-bold flex flex-wrap items-center justify-center gap-x-2 gap-y-1 font-outfit">
+          <span>Create musical</span>
+          <span className="flex items-center whitespace-nowrap">
+            <span>chor</span>
+            <Icons.mascot className="h-7.5 w-7.5 md:h-12 md:w-12 -ml-[0.3rem] -mt-2 md:-ml-2.5 md:-mt-2.5 translate-y-1 md:-mr-1.5" />
+            <span>progressions</span>
+          </span>
         </h1>
-        <h3 className="text-md md:text-xl text-muted-foreground">Enhance, not replace, your musical creativity</h3>
+        <h3 className="text-sm md:text-xl text-muted-foreground">Generate chord progression MIDIs and view them as guitar chords</h3>
         <Suspense fallback={null}>
           <LandingInput />
         </Suspense>
