@@ -10,6 +10,7 @@ env:
 jobs:
   convex:
     runs-on: ubuntu-latest
+    environment: Production
     steps:
       - uses: actions/checkout@v4
 
@@ -33,6 +34,7 @@ jobs:
   nextjs:
     needs: convex
     runs-on: ubuntu-latest
+    environment: Production
     permissions:
       contents: read
       packages: write
