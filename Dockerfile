@@ -11,6 +11,7 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+ENV NEXT_PUBLIC_CONVEX_URL=https://placeholder.convex.cloud
 RUN corepack enable pnpm && pnpm run build
 
 FROM base AS runner
