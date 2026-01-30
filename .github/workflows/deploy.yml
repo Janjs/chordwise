@@ -18,8 +18,17 @@ jobs:
           echo "ref=${{ github.ref }}"
           echo "actor=${{ github.actor }}"
           echo "REGISTRY=${{ env.REGISTRY }}"
-          echo "CONVEX_SELF_HOSTED_URL=${{ secrets.CONVEX_SELF_HOSTED_URL }}"
+          echo "CONVEX_SELF_HOSTED_URL=${{ vars.CONVEX_SELF_HOSTED_URL || secrets.CONVEX_SELF_HOSTED_URL }}"
           echo "CONVEX_SELF_HOSTED_ADMIN_KEY=[REDACTED]"
+          echo "## Convex job variables" >> $GITHUB_STEP_SUMMARY
+          echo "| Variable | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| repository | ${{ github.repository }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| ref | ${{ github.ref }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| actor | ${{ github.actor }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| REGISTRY | ${{ env.REGISTRY }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| CONVEX_SELF_HOSTED_URL | ${{ vars.CONVEX_SELF_HOSTED_URL || secrets.CONVEX_SELF_HOSTED_URL }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| CONVEX_SELF_HOSTED_ADMIN_KEY | (set) |" >> $GITHUB_STEP_SUMMARY
       - uses: actions/checkout@v4
 
       - uses: pnpm/action-setup@v4
@@ -37,7 +46,7 @@ jobs:
       - name: Deploy Convex
         run: pnpm exec convex deploy
         env:
-          CONVEX_SELF_HOSTED_URL: ${{ secrets.CONVEX_SELF_HOSTED_URL }}
+          CONVEX_SELF_HOSTED_URL: ${{ vars.CONVEX_SELF_HOSTED_URL || secrets.CONVEX_SELF_HOSTED_URL }}
           CONVEX_SELF_HOSTED_ADMIN_KEY: ${{ secrets.CONVEX_SELF_HOSTED_ADMIN_KEY }}
 
   nextjs:
@@ -50,13 +59,24 @@ jobs:
     steps:
       - name: Print variables
         run: |
+          IMAGE_TAG="${{ env.REGISTRY }}/$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')/$(echo ${{ github.event.repository.name }} | tr '[:upper:]' '[:lower:]'):latest"
           echo "repository=${{ github.repository }}"
           echo "ref=${{ github.ref }}"
           echo "actor=${{ github.actor }}"
           echo "REGISTRY=${{ env.REGISTRY }}"
-          echo "IMAGE_TAG=${{ env.REGISTRY }}/$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')/${{ github.event.repository.name }}:latest"
+          echo "IMAGE_TAG=$IMAGE_TAG"
           echo "COOLIFY_WEBHOOK=${{ secrets.COOLIFY_WEBHOOK }}"
           echo "COOLIFY_TOKEN=[REDACTED]"
+          echo "## Next.js job variables" >> $GITHUB_STEP_SUMMARY
+          echo "| Variable | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| repository | ${{ github.repository }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| ref | ${{ github.ref }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| actor | ${{ github.actor }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| REGISTRY | ${{ env.REGISTRY }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| IMAGE_TAG | $IMAGE_TAG |" >> $GITHUB_STEP_SUMMARY
+          echo "| COOLIFY_WEBHOOK | (set) |" >> $GITHUB_STEP_SUMMARY
+          echo "| COOLIFY_TOKEN | (set) |" >> $GITHUB_STEP_SUMMARY
       - uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
