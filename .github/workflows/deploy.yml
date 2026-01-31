@@ -52,10 +52,13 @@ jobs:
       - name: Set Convex environment variables
         run: |
           pnpm exec convex env set CUSTOM_AUTH_SITE_URL="${{ vars.CUSTOM_AUTH_SITE_URL || secrets.CUSTOM_AUTH_SITE_URL }}"
-          pnpm exec convex env set SITE_URL="${{ vars.CONVEX_SITE_URL || secrets.CONVEX_SITE_URL }}"
+          pnpm exec convex env set SITE_URL="${{ vars.CUSTOM_AUTH_SITE_URL || secrets.CUSTOM_AUTH_SITE_URL }}"
+          pnpm exec convex env set CONVEX_SITE_URL="${{ vars.CONVEX_SITE_URL || secrets.CONVEX_SITE_URL }}"
           pnpm exec convex env set CONVEX_SITE_ORIGIN="${{ vars.CONVEX_SITE_ORIGIN || secrets.CONVEX_SITE_ORIGIN || vars.CONVEX_SITE_URL || secrets.CONVEX_SITE_URL }}"
           pnpm exec convex env set GOOGLE_CLIENT_ID="${{ secrets.GOOGLE_CLIENT_ID }}"
           pnpm exec convex env set GOOGLE_CLIENT_SECRET="${{ secrets.GOOGLE_CLIENT_SECRET }}"
+          pnpm exec convex env set JWT_PRIVATE_KEY -- "${{ secrets.JWT_PRIVATE_KEY }}"
+          pnpm exec convex env set JWKS -- "${{ secrets.JWKS }}"
         env:
           CONVEX_SELF_HOSTED_URL: ${{ vars.CONVEX_SELF_HOSTED_URL || secrets.CONVEX_SELF_HOSTED_URL }}
           CONVEX_SELF_HOSTED_ADMIN_KEY: ${{ secrets.CONVEX_SELF_HOSTED_ADMIN_KEY }}
