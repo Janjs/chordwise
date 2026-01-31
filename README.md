@@ -14,6 +14,7 @@ An AI-powered chord progression generator that helps musicians discover fresh ha
 ## 🛠 Tech Stack
 
 - [Next.js 16](https://nextjs.org/) — React framework
+- [Convex](https://convex.dev/) — Backend and auth (self-hosted)
 - [OpenAI](https://openai.com/) — AI chord generation
 - [Tonal](https://github.com/tonaljs/tonal) — Music theory library
 - [Tone.js](https://tonejs.github.io/) — Web Audio framework
@@ -56,6 +57,13 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 pnpm build
 pnpm start
 ```
+
+### Convex (self-hosted)
+
+The app uses a self-hosted Convex backend. For auth redirects to work:
+
+- **CONVEX_SELF_HOSTED_URL** — Convex backend URL (e.g. `https://backend.chordwise.janjs.dev`). Used by the CLI and frontend to talk to Convex.
+- **CONVEX_SITE_URL** — Set on the **Convex backend** to the **Next.js app** URL (e.g. `https://chordwise.janjs.dev`). OAuth callbacks must go to the app, not the backend.
 
 ## 🔗 Demo
 
