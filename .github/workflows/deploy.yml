@@ -53,7 +53,6 @@ jobs:
         run: |
           pnpm exec convex env set CUSTOM_AUTH_SITE_URL="${{ vars.CUSTOM_AUTH_SITE_URL || secrets.CUSTOM_AUTH_SITE_URL }}"
           pnpm exec convex env set SITE_URL="${{ vars.CUSTOM_AUTH_SITE_URL || secrets.CUSTOM_AUTH_SITE_URL }}"
-          pnpm exec convex env set CONVEX_SITE_URL="${{ vars.CONVEX_SITE_URL || secrets.CONVEX_SITE_URL }}"
           pnpm exec convex env set CONVEX_SITE_ORIGIN="${{ vars.CONVEX_SITE_ORIGIN || secrets.CONVEX_SITE_ORIGIN || vars.CONVEX_SITE_URL || secrets.CONVEX_SITE_URL }}"
           pnpm exec convex env set GOOGLE_CLIENT_ID="${{ secrets.GOOGLE_CLIENT_ID }}"
           pnpm exec convex env set GOOGLE_CLIENT_SECRET="${{ secrets.GOOGLE_CLIENT_SECRET }}"
