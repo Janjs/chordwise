@@ -21,6 +21,7 @@ jobs:
           echo "CONVEX_SELF_HOSTED_URL=${{ vars.CONVEX_SELF_HOSTED_URL || secrets.CONVEX_SELF_HOSTED_URL }}"
           echo "CONVEX_SITE_ORIGIN=${{ vars.CONVEX_SITE_ORIGIN || secrets.CONVEX_SITE_ORIGIN }}"
           echo "CONVEX_SITE_URL=${{ vars.CONVEX_SITE_URL || secrets.CONVEX_SITE_URL }}"
+          echo "CUSTOM_AUTH_SITE_URL=${{ vars.CUSTOM_AUTH_SITE_URL || secrets.CUSTOM_AUTH_SITE_URL }}"
           echo "CONVEX_SELF_HOSTED_ADMIN_KEY=[REDACTED]"
           echo "## Convex job variables" >> $GITHUB_STEP_SUMMARY
           echo "| Variable | Value |" >> $GITHUB_STEP_SUMMARY
@@ -32,6 +33,7 @@ jobs:
           echo "| CONVEX_SELF_HOSTED_URL | ${{ vars.CONVEX_SELF_HOSTED_URL || secrets.CONVEX_SELF_HOSTED_URL }} |" >> $GITHUB_STEP_SUMMARY
           echo "| CONVEX_SITE_ORIGIN | ${{ vars.CONVEX_SITE_ORIGIN || secrets.CONVEX_SITE_ORIGIN }} |" >> $GITHUB_STEP_SUMMARY
           echo "| CONVEX_SITE_URL | ${{ vars.CONVEX_SITE_URL || secrets.CONVEX_SITE_URL }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| CUSTOM_AUTH_SITE_URL | ${{ vars.CUSTOM_AUTH_SITE_URL || secrets.CUSTOM_AUTH_SITE_URL }} |" >> $GITHUB_STEP_SUMMARY
           echo "| CONVEX_SELF_HOSTED_ADMIN_KEY | (set) |" >> $GITHUB_STEP_SUMMARY
       - uses: actions/checkout@v4
 
