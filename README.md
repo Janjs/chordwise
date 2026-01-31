@@ -64,11 +64,7 @@ The app uses a self-hosted Convex backend.
 
 **Next.js app (Coolify)** — set **NEXT_PUBLIC_CONVEX_URL** to the **Convex backend** URL (e.g. `https://backend.chordwise.janjs.dev`). The frontend talks to Convex at this URL. Do not set it to the Next.js app URL.
 
-**Convex backend** — OAuth redirects must go to the Next.js app, not the backend. Either:
-
-1. **Preferred:** On the **Convex backend server** (where convex-backend runs: Coolify, Fly, Docker), set **CONVEX_SITE_ORIGIN** = **`https://chordwise.janjs.dev`** (the Next.js app URL). Restart/redeploy the Convex backend after changing it. If it’s missing or set to the backend URL, Google will redirect to the backend and sign-in will fail.
-
-2. **Workaround:** If you can’t change backend env, add a redirect in front of the backend (e.g. Cloudflare, nginx): redirect `https://backend.chordwise.janjs.dev/api/auth/*` → `https://chordwise.janjs.dev/api/auth/*` (preserve query string). Then when Google sends users to the backend URL, they get sent to the Next.js app.
+**Convex backend** — set **CONVEX_SITE_ORIGIN** to the **Next.js app** URL (e.g. `https://chordwise.janjs.dev`). OAuth callbacks go here, not to the backend.
 
 ## 🔗 Demo
 
