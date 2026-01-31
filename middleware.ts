@@ -1,12 +1,18 @@
 import { convexAuthNextjsMiddleware } from '@convex-dev/auth/nextjs/server'
+import { NextRequest, NextResponse } from 'next/server'
 
-export default convexAuthNextjsMiddleware()
+const authMiddleware = convexAuthNextjsMiddleware()
+
+export default function middleware(request: NextRequest, event: any) {
+  const { pathname } = request.nextUrl
+
+  if (pathname.startsWith('/api/auth/signin/') || pathname.startsWith('/api/auth/callback/')) {
+    return NextResponse.next()
+  }
+
+  return authMiddleware(request, event)
+}
 
 export const config = {
-  // Exclude /api/auth/signin/* and /api/auth/callback/* from middleware - they have their own route handlers
-  matcher: [
-    '/((?!.*\\..*|_next|api/auth/signin|api/auth/callback).*)',
-    '/',
-    '/(api(?!/auth/signin|/auth/callback)|trpc)(.*)',
-  ],
+  matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*)'],
 }
