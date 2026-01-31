@@ -120,6 +120,8 @@ jobs:
           tags: ${{ env.IMAGE_TAG }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          build-args: |
+            NEXT_PUBLIC_CONVEX_URL=${{ vars.CONVEX_SELF_HOSTED_URL || secrets.CONVEX_SELF_HOSTED_URL }}
 
       - name: Deploy Next.js to Coolify
         run: |

@@ -12,7 +12,8 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN mkdir -p public
-ENV NEXT_PUBLIC_CONVEX_URL=https://placeholder.convex.cloud
+ARG NEXT_PUBLIC_CONVEX_URL=https://placeholder.convex.cloud
+ENV NEXT_PUBLIC_CONVEX_URL=$NEXT_PUBLIC_CONVEX_URL
 RUN corepack enable pnpm && pnpm run build
 
 FROM base AS runner
