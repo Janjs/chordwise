@@ -60,10 +60,11 @@ pnpm start
 
 ### Convex (self-hosted)
 
-The app uses a self-hosted Convex backend. For auth redirects to work:
+The app uses a self-hosted Convex backend.
 
-- **CONVEX_SELF_HOSTED_URL** — Convex backend URL (e.g. `https://backend.chordwise.janjs.dev`). Used by the CLI and frontend to talk to Convex.
-- **CONVEX_SITE_URL** — Set on the **Convex backend** to the **Next.js app** URL (e.g. `https://chordwise.janjs.dev`). OAuth callbacks must go to the app, not the backend.
+**Next.js app (Coolify)** — set **NEXT_PUBLIC_CONVEX_URL** to the **Convex backend** URL (e.g. `https://backend.chordwise.janjs.dev`). The frontend talks to Convex at this URL. Do not set it to the Next.js app URL.
+
+**Convex backend** — set **CONVEX_SITE_ORIGIN** to the **Next.js app** URL (e.g. `https://chordwise.janjs.dev`). OAuth callbacks go here, not to the backend.
 
 ## 🔗 Demo
 
