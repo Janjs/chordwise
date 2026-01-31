@@ -18,11 +18,15 @@ export async function GET(
     redirect: 'manual',
   })
 
-  // If the backend returns a redirect, pass it through
   if (response.status >= 300 && response.status < 400) {
     const location = response.headers.get('location')
     if (location) {
-      return NextResponse.redirect(location)
+      const redirectResponse = NextResponse.redirect(location)
+      const setCookies = response.headers.getSetCookie?.() ?? []
+      for (const cookie of setCookies) {
+        redirectResponse.headers.append('Set-Cookie', cookie)
+      }
+      return redirectResponse
     }
   }
 

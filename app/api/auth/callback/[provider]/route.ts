@@ -10,19 +10,25 @@ export async function GET(
 
   console.log('Proxying callback request to:', targetUrl)
 
+  const cookieHeader = request.headers.get('cookie')
   const response = await fetch(targetUrl, {
     method: 'GET',
     headers: {
       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+      ...(cookieHeader ? { Cookie: cookieHeader } : {}),
     },
     redirect: 'manual',
   })
 
-  // If the backend returns a redirect, pass it through
   if (response.status >= 300 && response.status < 400) {
     const location = response.headers.get('location')
     if (location) {
-      return NextResponse.redirect(location)
+      const redirectResponse = NextResponse.redirect(location)
+      const setCookies = response.headers.getSetCookie?.() ?? []
+      for (const cookie of setCookies) {
+        redirectResponse.headers.append('Set-Cookie', cookie)
+      }
+      return redirectResponse
     }
   }
 
