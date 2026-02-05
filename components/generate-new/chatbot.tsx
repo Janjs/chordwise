@@ -234,7 +234,7 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
   const updateChat = useMutation(api.chats.update)
   const existingChat = useQuery(
     api.chats.get,
-    chatId ? { id: chatId as Id<'chats'> } : 'skip'
+    chatId && isAuthenticated ? { id: chatId as Id<'chats'> } : 'skip'
   )
 
   const handleSignIn = () => {
@@ -248,8 +248,8 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
   const { messages, sendMessage, status, setMessages } = useChat({
     api: '/api/chat',
     onFinish: async (message: any) => {
-      // Create a new chat if we don't have one, allowing both authenticated and anonymous users
-      if ((isAuthenticated || anonymousSessionId) && !chatId && !currentChatIdRef.current) {
+      // Create a new chat if we don't have one, only for authenticated users
+      if (isAuthenticated && !chatId && !currentChatIdRef.current) {
         try {
           // Use the prompt from URL params if available (set by handleSubmit), or try to find it in messages
           const promptParam = searchParams.get('prompt')
@@ -312,14 +312,16 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
           const newChatId = await createChat({
             title: title || 'New Chat',
             messages: messagesToSave,
-            progressions: progressions, // Save extracted progressions
-            sessionId: anonymousSessionId ?? undefined, // Ensure anonymous session is linked if applicable
+            progressions: progressions,
           })
 
           // 1. Create Chat -> get ID.
           currentChatIdRef.current = newChatId
-          // 2. Redirect
-          router.push(`/generate?chatId=${newChatId}`)
+          // 2. Redirect - preserve prompt if it exists
+          const redirectUrl = promptParam
+            ? `/generate?chatId=${newChatId}&prompt=${encodeURIComponent(promptParam)}`
+            : `/generate?chatId=${newChatId}`
+          router.push(redirectUrl)
         } catch (e) {
           console.error("Failed to create chat", e)
         }
@@ -455,7 +457,7 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
 
   // Save chat to Convex when messages change (allowing both authenticated and anonymous users with session)
   useEffect(() => {
-    if ((!isAuthenticated && !anonymousSessionId) || messages.length === 0 || status !== 'ready') {
+    if (!isAuthenticated || messages.length === 0 || status !== 'ready') {
       return
     }
 
@@ -493,7 +495,6 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
             id: currentChatIdRef.current as Id<'chats'>,
             messages: messagesToSave,
             progressions: progressions,
-            sessionId: anonymousSessionId ?? undefined,
           })
         }
         // Creation is handled by onFinish to avoid race conditions and duplicates
@@ -505,7 +506,7 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
     }
 
     saveChat()
-  }, [messages, status, isAuthenticated, anonymousSessionId, createChat, updateChat, onChatCreated, router, searchParams])
+  }, [messages, status, isAuthenticated, createChat, updateChat, onChatCreated, router, searchParams])
 
   const constructPrompt = () => {
     const parts: string[] = []

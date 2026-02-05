@@ -21,15 +21,18 @@ export default function Header() {
   const searchParams = useSearchParams()
   const chatId = searchParams.get('chatId')
   const title = searchParams.get('title')
+  const { isAuthenticated } = useConvexAuth()
 
-  const chat = useQuery(api.chats.get, chatId ? { id: chatId as Id<'chats'> } : 'skip')
+  const chat = useQuery(
+    api.chats.get,
+    chatId && isAuthenticated ? { id: chatId as Id<'chats'> } : 'skip'
+  )
 
   const displayPrompt = chat?.title || title || prompt
 
   const { props: instrumentViewer } = useInstrumentViewer()
   const pathname = usePathname()
   const isGeneratePage = pathname === '/generate'
-  const { isAuthenticated } = useConvexAuth()
 
   return (
     <header className="flex-shrink-0 relative">

@@ -9,7 +9,6 @@ import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
 import { Icons } from '@/components/icons'
 import { cn } from '@/lib/utils'
-import { useAnonymousSession } from '@/hooks/useAnonymousSession'
 import { useAuthActions } from '@convex-dev/auth/react'
 import {
   Sidebar,
@@ -78,11 +77,10 @@ export function AppSidebar() {
   const isCollapsed = state === 'collapsed'
   const { isAuthenticated } = useConvexAuth()
   const { signIn } = useAuthActions()
-  const anonymousSessionId = useAnonymousSession()
 
   const { results: chats, status, loadMore } = usePaginatedQuery(
     api.chats.list,
-    { sessionId: anonymousSessionId ?? undefined },
+    isAuthenticated ? {} : 'skip',
     { initialNumItems: 20 }
   )
   const removeChat = useMutation(api.chats.remove)
@@ -107,7 +105,7 @@ export function AppSidebar() {
   ) => {
     e.preventDefault()
     e.stopPropagation()
-    await removeChat({ id: chatId, sessionId: anonymousSessionId ?? undefined })
+    await removeChat({ id: chatId })
     if (currentChatId === chatId) {
       if (pathname.startsWith('/generate')) {
         router.push('/generate')
