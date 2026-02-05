@@ -56,10 +56,11 @@ jobs:
           pnpm exec convex env set GOOGLE_CLIENT_ID="${{ secrets.GOOGLE_CLIENT_ID }}"
           pnpm exec convex env set GOOGLE_CLIENT_SECRET="${{ secrets.GOOGLE_CLIENT_SECRET }}"
           pnpm exec convex env set JWT_PRIVATE_KEY -- "${{ secrets.JWT_PRIVATE_KEY }}"
-          pnpm exec convex env set JWKS -- "${{ secrets.JWKS }}"
+          printf '%s\n' "$JWKS_SECRET" | pnpm exec convex env set JWKS
         env:
           CONVEX_SELF_HOSTED_URL: ${{ vars.CONVEX_SELF_HOSTED_URL || secrets.CONVEX_SELF_HOSTED_URL }}
           CONVEX_SELF_HOSTED_ADMIN_KEY: ${{ secrets.CONVEX_SELF_HOSTED_ADMIN_KEY }}
+          JWKS_SECRET: ${{ secrets.JWKS }}
 
       - name: Deploy Convex
         run: pnpm exec convex deploy
