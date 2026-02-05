@@ -34,21 +34,22 @@ const MidiVisualizer: FC<InstrumentContainerProps> = (props) => {
     const lastChordIndexRef = useRef<number>(-1)
     const [playheadProgress, setPlayheadProgress] = useState(0) // 0 to 1 within current chord
 
-    // Track theme changes to trigger redraw
-    const [isDark, setIsDark] = useState(false)
+    const [themeVersion, setThemeVersion] = useState(0)
 
     useEffect(() => {
-        setIsDark(document.documentElement.classList.contains('dark'))
-
         const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.attributeName === 'class') {
-                    setIsDark(document.documentElement.classList.contains('dark'))
-                }
-            })
+            const shouldRefresh = mutations.some(
+                (mutation) => mutation.attributeName === 'class' || mutation.attributeName === 'style',
+            )
+            if (shouldRefresh) {
+                setThemeVersion((version) => version + 1)
+            }
         })
 
-        observer.observe(document.documentElement, { attributes: true })
+        observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['class', 'style'],
+        })
         return () => observer.disconnect()
     }, [])
 
@@ -317,7 +318,7 @@ const MidiVisualizer: FC<InstrumentContainerProps> = (props) => {
         ctx.lineTo(playheadX, noteAreaHeight)
         ctx.stroke()
 
-    }, [noteEvents, indexCurrentChord, chordProgression.chords.length, isDark, playheadProgress, containerWidth])
+    }, [noteEvents, indexCurrentChord, chordProgression.chords.length, playheadProgress, containerWidth, themeVersion])
 
     const totalChords = chordProgression.chords.length
 
