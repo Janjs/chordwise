@@ -414,6 +414,9 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
   // Auto-send external prompt when provided
   const lastExternalPromptRef = useRef<string | undefined>(undefined)
   useEffect(() => {
+    if (messages.length > 0) {
+      return
+    }
     if (externalPrompt && externalPrompt !== lastExternalPromptRef.current && status === 'ready') {
       lastExternalPromptRef.current = externalPrompt
       setError(null)
@@ -423,7 +426,7 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
         { body: { model: 'gpt-4o' } }
       )
     }
-  }, [externalPrompt, status, sendMessage])
+  }, [externalPrompt, status, sendMessage, messages.length])
 
   useEffect(() => {
     if (status === 'streaming') {
