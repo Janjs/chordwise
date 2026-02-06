@@ -1,4 +1,5 @@
 import { Suspense } from 'react'
+import { cookies } from 'next/headers'
 import Header from './header'
 import './globals.css'
 import { GeistSans } from 'geist/font/sans'
@@ -23,7 +24,11 @@ const outfit = Outfit({
   variable: '--font-outfit',
 })
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const cookieStore = await cookies()
+  const sidebarState = cookieStore.get('sidebar_state')?.value
+  const defaultSidebarOpen = sidebarState ? sidebarState === 'true' : false
+
   return (
     <html lang="en" suppressHydrationWarning className={`${GeistSans.className} ${outfit.variable}`}>
       <head>
@@ -38,7 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ConvexClientProvider>
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
               <InstrumentViewerProvider>
-                <SidebarProvider defaultOpen={false} style={{ '--sidebar-width': '13rem' } as React.CSSProperties}>
+                <SidebarProvider defaultOpen={defaultSidebarOpen} style={{ '--sidebar-width': '13rem' } as React.CSSProperties}>
                   <AppSidebar />
                   <SidebarInset>
                     <div className="h-[100dvh] flex flex-col min-w-0">
