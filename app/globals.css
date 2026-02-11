@@ -140,6 +140,14 @@
   }
 }
 
+.dark [data-sidebar="inset"] {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 15%, oklch(0.9247 0.0524 66.1732 / 0.12), transparent),
+    radial-gradient(ellipse 60% 45% at 85% 70%, oklch(0.9247 0.0524 66.1732 / 0.06), transparent),
+    radial-gradient(ellipse 50% 40% at 50% 90%, oklch(0.9247 0.0524 66.1732 / 0.04), transparent),
+    var(--background);
+}
+
 .dark {
   --background: oklch(0.1776 0 0);
   --foreground: oklch(0.9491 0 0);

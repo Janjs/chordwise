@@ -24,7 +24,7 @@ const Page = () => {
     <div className="flex flex-col items-center justify-center min-h-[calc(100dvh-60px)] w-full max-w-full">
       <div className="flex flex-col w-full max-w-full gap-4 items-center text-center px-4">
         <Link
-          href="https://stroop.chat"
+          href="https://stroop.janjs.dev"
           target="_blank"
           rel="noopener noreferrer"
         >
