@@ -11,7 +11,7 @@ import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/app-sidebar'
 
 export const metadata = {
-  title: 'Chordwise',
+  title: 'chordwise',
   description: 'Chords Progressions AI Generator',
   content: 'width=device-width, initial-scale=1',
   name: 'viewport',
