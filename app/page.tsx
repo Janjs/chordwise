@@ -1,6 +1,7 @@
 'use client'
 
 import { Suspense } from 'react'
+import Link from 'next/link'
 import LandingInput from '@/components/landing/landing-input'
 import { Icons } from '@/components/icons'
 import { Badge } from '@/components/ui/badge'
@@ -22,6 +23,19 @@ const Page = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-[calc(100dvh-60px)] w-full max-w-full">
       <div className="flex flex-col w-full max-w-full gap-4 items-center text-center px-4">
+        <Link
+          href="https://stroop.chat"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Badge
+            variant="outline"
+            className="flex h-7 w-fit cursor-pointer items-center gap-2 border-foreground/20 bg-card/80 shadow-sm backdrop-blur transition-colors hover:bg-card/90"
+          >
+            <span className="leading-none">Try stroop too!</span>
+            <Icons.stroopMascot className="h-4 w-4 shrink-0" />
+          </Badge>
+        </Link>
         {!isLoading && !isAuthenticated && (
           <Badge
             className="flex h-7 border border-foreground/20 items-center gap-2 bg-card/80 text-foreground shadow-sm backdrop-blur cursor-pointer hover:bg-card/90 transition-colors"
