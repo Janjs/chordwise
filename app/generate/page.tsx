@@ -57,6 +57,8 @@ const GenerateContent = () => {
   }, [chatId, newParam])
 
   const handleProgressionsGenerated = (newProgressions: Progression[], shouldReplace: boolean = false) => {
+    let hasNewGeneratedProgressions = false
+
     setProgressions((prevProgressions) => {
       let combined: Progression[]
 
@@ -72,6 +74,7 @@ const GenerateContent = () => {
           return prevProgressions
         }
 
+        hasNewGeneratedProgressions = newProgressions.length > 0
         combined = [...prevProgressions, ...newProgressions]
       }
 
@@ -102,6 +105,11 @@ const GenerateContent = () => {
 
       return limited
     })
+
+    if (isMobile && hasNewGeneratedProgressions) {
+      setIsDrawerOpen(true)
+    }
+
     setError(null)
   }
 
