@@ -14,6 +14,7 @@ import type * as cache from "../cache.js";
 import type * as chats from "../chats.js";
 import type * as credits from "../credits.js";
 import type * as http from "../http.js";
+import type * as recordings from "../recordings.js";
 import type * as user from "../user.js";
 
 import type {
@@ -37,6 +38,7 @@ declare const fullApi: ApiFromModules<{
   chats: typeof chats;
   credits: typeof credits;
   http: typeof http;
+  recordings: typeof recordings;
   user: typeof user;
 }>;
 declare const fullApiWithMounts: typeof fullApi;

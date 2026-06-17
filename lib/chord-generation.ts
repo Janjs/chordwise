@@ -1,4 +1,4 @@
-import { Progression } from '@/types/types'
+import type { Progression } from '../types/types'
 import { Midi as TonalMidi, Chord as TonalChord } from 'tonal'
 import { z } from 'zod'
 
@@ -14,7 +14,7 @@ export const parseProgressions = (data: z.infer<typeof ChordProgressionsSchema>)
   return parsedProgressions as Progression[]
 }
 
-const getProgressionMidis = (representation: string) => {
+export const getProgressionMidis = (representation: string) => {
   const chordInfo = TonalChord.get(representation)
 
   if (!chordInfo.notes || chordInfo.notes.length === 0) {

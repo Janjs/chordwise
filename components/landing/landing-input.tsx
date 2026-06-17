@@ -1,7 +1,10 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useMutation } from 'convex/react'
+import { MicIcon, SparklesIcon } from 'lucide-react'
+import { toast } from 'sonner'
 import {
   PromptInput,
   PromptInputBody,
@@ -13,168 +16,138 @@ import {
   type PromptInputMessage,
 } from '@/components/ai-elements/prompt-input'
 import {
-  Suggestions,
-  Suggestion,
-} from '@/components/ai-elements/suggestion'
-import { Label } from '@/components/ui/label'
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible'
-import { ChevronDownIcon } from 'lucide-react'
+  AudioAttachmentPreview,
+  AudioRecorderButton,
+  AudioRecordingStatusProvider,
+  type AudioRecorderButtonHandle,
+} from '@/components/generate-new/audio-recorder-button'
+import { useAudioRecordingStatus } from '@/components/generate-new/audio-recording-status'
 import { Badge } from '@/components/ui/badge'
-import { Icons } from '@/components/icons'
-import Link from 'next/link'
+import { cn } from '@/lib/utils'
+import { uploadAudioSourceToConvex } from '@/lib/upload-recording'
+import { useAnonymousSession } from '@/hooks/useAnonymousSession'
+import { api } from '@/convex/_generated/api'
 
-const MOODS = ['Happy', 'Sad', 'Dreamy', 'Energetic', 'Chill', 'Melancholic', 'Romantic', 'Mysterious']
-const GENRES = ['Jazz', 'Pop', 'R&B', 'Classical', 'Lo-fi', 'Rock', 'Blues', 'Folk']
-const KEYS = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
-
-const PROMPT_SUGGESTIONS = [
-  'The Beatles songwriting style in A major',
-  'Jazz ballad in G major',
-  'Circle of fifths progression',
-  'Power chords like Nirvana in F minor',
-  'Backing track for Major 7th Pentatonic Scale in Bb major',
-  'Melancholic vibe',
-]
-
-function SuggestionsWithFade({ children, className }: { children: React.ReactNode; className?: string }) {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [showLeftFade, setShowLeftFade] = useState(false)
-  const [showRightFade, setShowRightFade] = useState(false)
-
-  useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
-
-    const viewport = container.querySelector('[data-radix-scroll-area-viewport]')
-    if (!viewport) return
-
-    const checkScroll = () => {
-      const { scrollLeft, scrollWidth, clientWidth } = viewport as HTMLElement
-      setShowLeftFade(scrollLeft > 0)
-      setShowRightFade(scrollLeft < scrollWidth - clientWidth - 1)
-    }
-
-    checkScroll()
-    viewport.addEventListener('scroll', checkScroll)
-    window.addEventListener('resize', checkScroll)
-
-    return () => {
-      viewport.removeEventListener('scroll', checkScroll)
-      window.removeEventListener('resize', checkScroll)
-    }
-  }, [])
-
-  return (
-    <div ref={containerRef} className={`relative ${className || ''}`}>
-      {showLeftFade && (
-        <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
-      )}
-      {showRightFade && (
-        <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
-      )}
-      {children}
-    </div>
-  )
-}
+const PROMPT_SUGGESTION = 'Happy jazz progressions in C major'
+const CHORD_IDENTIFICATION_PROMPT = 'What chords am I playing?'
+const PLACEHOLDER = 'e.g., happy jazz progressions in C major'
 
 function LandingInputContent() {
   const router = useRouter()
-  const [selectedMood, setSelectedMood] = useState<string | null>(null)
-  const [selectedGenre, setSelectedGenre] = useState<string | null>(null)
-  const [selectedKey, setSelectedKey] = useState<string | null>(null)
-  const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(true)
-  const lastAutoPromptRef = useRef<string>('')
+  const recorderRef = useRef<AudioRecorderButtonHandle>(null)
+  const anonymousSessionId = useAnonymousSession()
+  const generateUploadUrl = useMutation(api.recordings.generateUploadUrl)
+  const createPendingRecording = useMutation(api.recordings.createPendingRecording)
+  const [isUploading, setIsUploading] = useState(false)
 
-  const { textInput } = usePromptInputController()
+  const { textInput, attachments } = usePromptInputController()
+  const { setFileUploading } = useAudioRecordingStatus()
 
-  const constructPrompt = () => {
-    const parts: string[] = []
-    if (selectedMood) parts.push(selectedMood.toLowerCase())
-    if (selectedGenre) parts.push(selectedGenre.toLowerCase())
-    if (selectedKey) parts.push(`in ${selectedKey} major`)
-
-    if (parts.length === 0) {
-      return 'e.g., happy jazz progressions in C major'
-    }
-
-    let prompt = parts.join(' ') + ' chord progressions'
-
-    if (selectedKey) {
-      prompt += ` (Key: ${selectedKey} major)`
-    }
-
-    return prompt
-  }
-
-  useEffect(() => {
-    const prompt = constructPrompt()
-    if (prompt !== 'e.g., happy jazz progressions in C major') {
-      const currentText = textInput.value || ''
-      if (currentText === '' || currentText === lastAutoPromptRef.current) {
-        textInput.setInput(prompt)
-        lastAutoPromptRef.current = prompt
-      }
-    } else {
-      if (!textInput.value || textInput.value === lastAutoPromptRef.current) {
-        textInput.setInput('')
-      }
-      lastAutoPromptRef.current = ''
-    }
-  }, [selectedMood, selectedGenre, selectedKey])
-
-  const handleMoodClick = (mood: string) => {
-    setSelectedMood(selectedMood === mood ? null : mood)
-  }
-
-  const handleGenreClick = (genre: string) => {
-    setSelectedGenre(selectedGenre === genre ? null : genre)
-  }
-
-  const handleKeyClick = (key: string) => {
-    setSelectedKey(selectedKey === key ? null : key)
-  }
-
-  const handleSubmit = (message: PromptInputMessage) => {
+  const handleSubmit = async (message: PromptInputMessage) => {
     const hasText = Boolean(message.text?.trim())
-    if (!hasText) return
+    const audioFiles = message.files.filter((file) => file.mediaType?.startsWith('audio/') && file.url)
+    const hasAudio = audioFiles.length > 0
 
-    const textToSend = message.text || constructPrompt()
+    if (!hasText && !hasAudio) return
+
+    const textToSend = message.text?.trim() || (hasAudio ? CHORD_IDENTIFICATION_PROMPT : PLACEHOLDER)
+
+    if (hasAudio) {
+      if (!anonymousSessionId) {
+        toast.error('Session not initialized. Please refresh the page.')
+        return
+      }
+
+      setIsUploading(true)
+      for (const file of audioFiles) {
+        setFileUploading(file.id, true)
+      }
+      try {
+        const uploadedRecordings = await Promise.all(
+          audioFiles.map((file, index) =>
+            uploadAudioSourceToConvex({
+              audioUrl: file.url,
+              sessionId: anonymousSessionId,
+              prompt: textToSend,
+              filename: file.filename ?? `recording-${index + 1}.wav`,
+              generateUploadUrl: () => generateUploadUrl(),
+              createPendingRecording: (args) => createPendingRecording(args),
+            }),
+          ),
+        )
+
+        const recordingIds = uploadedRecordings.map((recording) => recording.id).join(',')
+        router.push(
+          `/generate?prompt=${encodeURIComponent(textToSend)}&recordings=${encodeURIComponent(recordingIds)}`,
+        )
+      } catch {
+        toast.error('Recording could not be uploaded.')
+      } finally {
+        for (const file of audioFiles) {
+          setFileUploading(file.id, false)
+        }
+        setIsUploading(false)
+      }
+      return
+    }
+
     router.push(`/generate?prompt=${encodeURIComponent(textToSend)}`)
   }
 
-  const defaultPrompt = constructPrompt()
-  const hasSelections = selectedMood || selectedGenre || selectedKey
-  const hasText = Boolean(textInput.value?.trim()) || hasSelections
+  const handlePromptSuggestion = () => {
+    textInput.setInput(PROMPT_SUGGESTION)
+  }
+
+  const handleChordIdentificationSuggestion = () => {
+    textInput.setInput(CHORD_IDENTIFICATION_PROMPT)
+    recorderRef.current?.startRecording()
+  }
+
+  const hasText = Boolean(textInput.value?.trim())
+  const hasAudio = attachments.files.some((file) => file.mediaType?.startsWith('audio/'))
+  const isBusy = isUploading
 
   return (
     <div className="flex flex-col w-full max-w-xl items-center">
-      <PromptInput onSubmit={handleSubmit} className="w-full">
+      <PromptInput
+        accept="audio/*"
+        maxFiles={5}
+        maxFileSize={10 * 1024 * 1024}
+        onSubmit={handleSubmit}
+        className="w-full"
+      >
+        <AudioAttachmentPreview variant="header" />
         <PromptInputBody>
-          <PromptInputTextarea placeholder={defaultPrompt} />
+          <PromptInputTextarea
+            className={cn(hasAudio && 'pt-1.5')}
+            placeholder={PLACEHOLDER}
+          />
         </PromptInputBody>
-        <PromptInputFooter className="flex w-full justify-end">
-          <PromptInputSubmit disabled={!hasText} />
+        <PromptInputFooter className="flex w-full items-end justify-between">
+          <div className="flex min-w-0 flex-1 items-center gap-2 pr-3">
+            <AudioRecorderButton ref={recorderRef} />
+          </div>
+          <PromptInputSubmit disabled={isBusy || (!hasText && !hasAudio)} />
         </PromptInputFooter>
       </PromptInput>
 
-      <div className="mt-6">
-        <div className="mb-4 flex items-center justify-center gap-2 text-muted-foreground">
-          <Icons.lightbulb className="h-4 w-4" />
-          <p className="text-sm">Need inspiration? Try one of these:</p>
-        </div>
-        <div className="flex flex-wrap justify-center gap-2">
-          {PROMPT_SUGGESTIONS.map((suggestion, i) => (
-            <Link key={i} href={`/generate?prompt=${encodeURIComponent(suggestion)}`}>
-              <Badge variant="outline" className="cursor-pointer hover:bg-primary/10 transition-colors px-3 py-1.5">
-                {suggestion}
-              </Badge>
-            </Link>
-          ))}
-        </div>
+      <div className="mt-4 flex flex-wrap justify-center gap-2">
+        <Badge
+          variant="outline"
+          className="inline-flex cursor-pointer items-center gap-1.5 px-3 py-1.5 transition-colors hover:bg-primary/10"
+          onClick={handlePromptSuggestion}
+        >
+          <SparklesIcon className="size-3.5" />
+          {PROMPT_SUGGESTION}
+        </Badge>
+        <Badge
+          variant="outline"
+          className="inline-flex cursor-pointer items-center gap-1.5 px-3 py-1.5 transition-colors hover:bg-primary/10"
+          onClick={handleChordIdentificationSuggestion}
+        >
+          <MicIcon className="size-3.5" />
+          {CHORD_IDENTIFICATION_PROMPT}
+        </Badge>
       </div>
     </div>
   )
@@ -183,7 +156,9 @@ function LandingInputContent() {
 export default function LandingInput() {
   return (
     <PromptInputProvider>
-      <LandingInputContent />
+      <AudioRecordingStatusProvider>
+        <LandingInputContent />
+      </AudioRecordingStatusProvider>
     </PromptInputProvider>
   )
 }

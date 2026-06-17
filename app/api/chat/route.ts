@@ -10,8 +10,8 @@ export const maxDuration = 30
 
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!)
 
-function generateCacheKey(messages: UIMessage[], model: string): string {
-  const keyData = JSON.stringify({ messages, model })
+function generateCacheKey(messages: UIMessage[], model: string, extraContext?: unknown): string {
+  const keyData = JSON.stringify({ messages, model, extraContext })
   return createHash('sha256').update(keyData).digest('hex')
 }
 
@@ -139,17 +139,38 @@ const generateChordProgressionsTool = tool({
   },
 })
 
+function sanitizeMessagesForModel(messages: UIMessage[]): UIMessage[] {
+  return messages.map((message) => {
+    if (!message.parts?.length) return message
+
+    const filteredParts = message.parts.filter(
+      (part) => part.type !== 'file' && part.type !== 'data-audio-recording',
+    )
+
+    return {
+      ...message,
+      parts: filteredParts.length > 0 ? filteredParts : [{ type: 'text' as const, text: '' }],
+    }
+  })
+}
+
 export async function POST(req: Request) {
   try {
     const {
       messages,
       model = 'gpt-4o',
+      audioChordAnalysis,
     }: {
       messages: UIMessage[]
       model?: string
+      audioChordAnalysis?: {
+        summary?: string
+        notes?: string
+        chords?: string[]
+      }
     } = await req.json()
 
-    const cacheKey = generateCacheKey(messages, model)
+    const cacheKey = generateCacheKey(messages, model, audioChordAnalysis)
     const cached = await getCachedResponse(cacheKey)
 
     if (cached) {
@@ -170,16 +191,22 @@ export async function POST(req: Request) {
       })
     }
 
+    const audioAnalysisContext = audioChordAnalysis?.chords?.length
+      ? `\n\nThe user attached one or more guitar recordings. A separate audio analysis found these likely chords, in order: ${audioChordAnalysis.chords.join(' - ')}.${audioChordAnalysis.summary ? ` Summary: ${audioChordAnalysis.summary}` : ''}${audioChordAnalysis.notes ? ` Notes: ${audioChordAnalysis.notes}` : ''} When answering, treat this as a best-effort chord identification and mention uncertainty where appropriate.`
+      : ''
+
     const result = streamText({
       model: openaiProvider(model),
-      messages: await convertToModelMessages(messages),
+      messages: await convertToModelMessages(sanitizeMessagesForModel(messages)),
       system: `You are a helpful assistant that generates chord progressions based on user requests. 
 When users ask for chord progressions, you should:
 1. First, provide a brief response acknowledging their request and explaining what you're about to do.
 2. Then use the generateChordProgressions tool to create the progressions. The description should include any relevant details like mood, genre, key, or style mentioned by the user.
 3. After the tool completes, provide a detailed explanation of what was created, highlight interesting aspects of the progressions, and offer any musical insights about the chord progressions.
 
-Always include text before and after calling the tool to create a natural conversation flow.`,
+When the user asks what chords are in attached recordings, use the provided audio analysis context instead of generating new unrelated progressions. Briefly list the identified chords and add any useful guitar-playing notes.
+
+Always include text before and after calling the tool to create a natural conversation flow.${audioAnalysisContext}`,
       tools: {
         generateChordProgressions: generateChordProgressionsTool,
       },

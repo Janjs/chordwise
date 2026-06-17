@@ -9,6 +9,7 @@ import ConvexClientProvider from '@/lib/convex-client'
 import { ConvexAuthNextjsServerProvider } from '@convex-dev/auth/nextjs/server'
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/app-sidebar'
+import { Toaster } from '@/components/ui/sonner'
 
 export const metadata = {
   title: 'chordwise',
@@ -55,6 +56,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                   </SidebarInset>
                 </SidebarProvider>
               </InstrumentViewerProvider>
+              <Toaster />
             </ThemeProvider>
           </ConvexClientProvider>
         </ConvexAuthNextjsServerProvider>

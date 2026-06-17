@@ -10,6 +10,13 @@ import { useAnonymousSession } from '@/hooks/useAnonymousSession'
 import { usePathname, useSearchParams, useRouter } from 'next/navigation'
 import { Id } from '@/convex/_generated/dataModel'
 import useGenerateSearchParams from '@/hooks/useGenerateSearchParams'
+import { cn } from '@/lib/utils'
+import {
+  getRecordingIdsFromSearchParams,
+  isPlayableAudioUrl,
+  uploadAudioSourceToConvex,
+  type UploadedRecording,
+} from '@/lib/upload-recording'
 import {
   Conversation,
   ConversationContent,
@@ -22,7 +29,6 @@ import {
 } from '@/components/ai-elements/message'
 import {
   PromptInput,
-  PromptInputHeader,
   PromptInputBody,
   PromptInputTextarea,
   PromptInputFooter,
@@ -32,25 +38,152 @@ import {
   type PromptInputMessage,
 } from '@/components/ai-elements/prompt-input'
 import { Icons } from '@/components/icons'
-import {
-  Suggestions,
-  Suggestion,
-} from '@/components/ai-elements/suggestion'
-import { Label } from '../ui/label'
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { ChevronDownIcon, XIcon } from 'lucide-react'
+import { XIcon } from 'lucide-react'
 import { MascotCursor } from '@/components/mascot-cursor'
+import { AudioAttachmentPreview, AudioRecorderButton, AudioRecordingStatusProvider, MessageAudioRecordings, type MessageAudioItem } from './audio-recorder-button'
+import { useAudioRecordingStatus } from './audio-recording-status'
+import { ChatToolCallCard } from './chat-tool-call-card'
 
-const MOODS = ['Happy', 'Sad', 'Dreamy', 'Energetic', 'Chill', 'Melancholic', 'Romantic', 'Mysterious']
-const GENRES = ['Jazz', 'Pop', 'R&B', 'Classical', 'Lo-fi', 'Rock', 'Blues', 'Folk']
-const KEYS = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+const CHORD_IDENTIFICATION_PROMPT = 'What chords am I playing?'
+const PROMPT_PLACEHOLDER = 'e.g., happy jazz progressions in C major'
+
+type StoredRecording = {
+  url: string
+  storageId?: Id<'_storage'>
+}
+
+function getMessageText(message: {
+  parts?: Array<{ type: string; text?: string }>
+  content?: unknown
+}) {
+  const textPart = message.parts?.find(
+    (part): part is { type: 'text'; text: string } => part.type === 'text' && 'text' in part,
+  )
+  return textPart?.text ?? (message.content ? String(message.content) : '')
+}
+
+function withAudioPartsForSave<T extends {
+  id: string | number
+  role: string
+  content?: string
+  parts?: Array<{ type: string; text?: string }>
+}>(
+  messages: T[],
+  audioById: Map<string, StoredRecording[]>,
+): T[] {
+  return messages.map((message) => {
+    const recordings = audioById.get(String(message.id))
+    if (!recordings?.length) return message
+
+    const hasAudio = message.parts?.some(
+      (part) => part.type === 'file' || part.type === 'data-audio-recording',
+    )
+    if (hasAudio) return message
+
+    const textParts =
+      message.parts?.filter(
+        (part): part is { type: 'text'; text: string } => part.type === 'text' && 'text' in part,
+      ) ?? []
+    const resolvedTextParts =
+      textParts.length > 0
+        ? textParts
+        : message.content
+          ? [{ type: 'text' as const, text: message.content }]
+          : []
+
+    return {
+      ...message,
+      parts: [...createAudioRecordingParts(recordings), ...resolvedTextParts],
+    }
+  })
+}
+
+function createAudioRecordingParts(recordings: StoredRecording[]) {
+  return recordings.map((recording, index) => ({
+    type: 'data-audio-recording' as const,
+    data: {
+      url: recording.url,
+      storageId: recording.storageId,
+      filename: `recording-${index + 1}.wav`,
+    },
+  }))
+}
+
+function getStorageIdFromPart(part: { providerMetadata?: unknown }) {
+  const metadata = part.providerMetadata as { convexStorageId?: Id<'_storage'> } | undefined
+  return metadata?.convexStorageId
+}
+
+function getAudioItemsFromParts(
+  parts: Array<{ type: string; url?: string; mediaType?: string; providerMetadata?: unknown; data?: unknown }>,
+) {
+  const items: MessageAudioItem[] = []
+
+  for (const part of parts) {
+    if (part.type === 'file') {
+      items.push({
+        url: typeof part.url === 'string' && isPlayableAudioUrl(part.url) ? part.url : undefined,
+        storageId: getStorageIdFromPart(part),
+      })
+      continue
+    }
+
+    if (part.type === 'data-audio-recording' && part.data && typeof part.data === 'object') {
+      const data = part.data as { url?: string; storageId?: Id<'_storage'> }
+      items.push({
+        url: typeof data.url === 'string' && isPlayableAudioUrl(data.url) ? data.url : undefined,
+        storageId: data.storageId,
+      })
+    }
+  }
+
+  return items.filter((item) => item.storageId || item.url)
+}
+
+function getAudioItemsFromMessage(
+  message: {
+    id?: string
+    parts?: Array<{ type: string; url?: string; mediaType?: string; providerMetadata?: unknown }>
+  },
+  messageAudioById: Map<string, StoredRecording[]>,
+) {
+  const fromParts = getAudioItemsFromParts(message.parts ?? [])
+  const fromRef = message.id ? messageAudioById.get(String(message.id)) ?? [] : []
+  const merged = [...fromParts]
+
+  for (const recording of fromRef) {
+    const alreadyIncluded = merged.some(
+      (item) =>
+        (recording.storageId && item.storageId === recording.storageId) ||
+        (recording.url && item.url === recording.url),
+    )
+    if (!alreadyIncluded) {
+      merged.push({ url: recording.url, storageId: recording.storageId })
+    }
+  }
+
+  return merged
+}
+
+function isProgressionToolPart(part: { type?: string; toolName?: string }) {
+  if (part.type === 'tool-call' && part.toolName === 'generateChordProgressions') {
+    return true
+  }
+
+  return typeof part.type === 'string' && part.type === 'tool-generateChordProgressions'
+}
+
+function messageHasProgressionTool(
+  message: { role?: string; parts?: Array<{ type?: string; toolName?: string }> },
+) {
+  return (
+    message.role === 'assistant' &&
+    message.parts?.some((part) => isProgressionToolPart(part)) === true
+  )
+}
 
 const extractProgressionsFromMessages = (messages: any[]): Progression[] => {
   const progressions: Progression[] = []
@@ -78,47 +211,6 @@ const extractProgressionsFromMessages = (messages: any[]): Progression[] => {
   return progressions
 }
 
-
-function SuggestionsWithFade({ children, className }: { children: React.ReactNode; className?: string }) {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [showLeftFade, setShowLeftFade] = useState(false)
-  const [showRightFade, setShowRightFade] = useState(false)
-
-  useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
-
-    const viewport = container.querySelector('[data-radix-scroll-area-viewport]')
-    if (!viewport) return
-
-    const checkScroll = () => {
-      const { scrollLeft, scrollWidth, clientWidth } = viewport as HTMLElement
-      setShowLeftFade(scrollLeft > 0)
-      setShowRightFade(scrollLeft < scrollWidth - clientWidth - 1)
-    }
-
-    checkScroll()
-    viewport.addEventListener('scroll', checkScroll)
-    window.addEventListener('resize', checkScroll)
-
-    return () => {
-      viewport.removeEventListener('scroll', checkScroll)
-      window.removeEventListener('resize', checkScroll)
-    }
-  }, [])
-
-  return (
-    <div ref={containerRef} className={`relative ${className || ''}`}>
-      {showLeftFade && (
-        <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
-      )}
-      {showRightFade && (
-        <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
-      )}
-      {children}
-    </div>
-  )
-}
 
 function ConversationWithFade({ children, className, onViewportReady }: { children: React.ReactNode; className?: string; onViewportReady?: (viewport: HTMLElement | null) => void }) {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -209,18 +301,25 @@ interface ChatbotProps {
 }
 
 function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerated, onChatCreated, resetKey, onToolClick }: ChatbotProps) {
-  const [selectedMood, setSelectedMood] = useState<string | null>(null)
-  const [selectedGenre, setSelectedGenre] = useState<string | null>(null)
-  const [selectedKey, setSelectedKey] = useState<string | null>(null)
-  const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const lastAutoPromptRef = useRef<string>('')
   const lastHandledToolMessageIdRef = useRef<string | null>(null)
   const currentChatIdRef = useRef<string | null>(chatId || null)
   const lastSavedMessagesLengthRef = useRef<number>(0)
   const lastSubmittedPromptRef = useRef<string | null>(null)
+  const audioProgressionsRef = useRef<Progression[]>([])
+  const pendingAudioHandledRef = useRef(false)
+  const pendingRecordingsRef = useRef<StoredRecording[]>([])
+  const [messageAudioById, setMessageAudioById] = useState<Map<string, StoredRecording[]>>(new Map())
+  const messageAudioByIdRef = useRef(messageAudioById)
+  messageAudioByIdRef.current = messageAudioById
+  const [pendingUserMessage, setPendingUserMessage] = useState<{
+    text: string
+    recordings: StoredRecording[]
+  } | null>(null)
 
   const [isTyping, setIsTyping] = useState(false)
+  const [isAnalyzingAudio, setIsAnalyzingAudio] = useState(false)
+  const [audioToolPhase, setAudioToolPhase] = useState<'idle' | 'analyzing' | 'completed'>('idle')
 
   const { isAuthenticated } = useConvexAuth()
   const { signIn } = useAuthActions()
@@ -232,6 +331,16 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
   const useCredit = useMutation(api.credits.useCredit)
   const createChat = useMutation(api.chats.create)
   const updateChat = useMutation(api.chats.update)
+  const generateUploadUrl = useMutation(api.recordings.generateUploadUrl)
+  const createPendingRecording = useMutation(api.recordings.createPendingRecording)
+  const consumePendingRecordings = useMutation(api.recordings.consumePendingRecordings)
+  const recordingIds = getRecordingIdsFromSearchParams(searchParams) as Id<'pendingRecordings'>[]
+  const pendingRecordings = useQuery(
+    api.recordings.getPendingRecordings,
+    recordingIds.length > 0 && anonymousSessionId
+      ? { ids: recordingIds, sessionId: anonymousSessionId }
+      : 'skip',
+  )
   const existingChat = useQuery(
     api.chats.get,
     chatId && isAuthenticated ? { id: chatId as Id<'chats'> } : 'skip'
@@ -242,7 +351,8 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
     void signIn('google', { redirectTo: currentUrl })
   }
 
-  const { textInput } = usePromptInputController()
+  const { textInput, attachments } = usePromptInputController()
+  const { setFileUploading } = useAudioRecordingStatus()
   const [, setPrompt] = useGenerateSearchParams()
 
   const { messages, sendMessage, status, setMessages } = useChat({
@@ -276,13 +386,16 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
           let messagesToSave: any[] = []
 
           if (messages.length > 0) {
-            messagesToSave = messages.map(m => ({
-              id: m.id,
-              role: m.role,
-              content: 'content' in m ? String(m.content || '') : '',
-              parts: 'parts' in m ? m.parts : undefined,
-              createdAt: (m as any).createdAt instanceof Date ? (m as any).createdAt.getTime() : Date.now()
-            }))
+            messagesToSave = withAudioPartsForSave(
+              messages.map(m => ({
+                id: m.id,
+                role: m.role,
+                content: 'content' in m ? String(m.content || '') : '',
+                parts: 'parts' in m ? m.parts : undefined,
+                createdAt: (m as any).createdAt instanceof Date ? (m as any).createdAt.getTime() : Date.now()
+              })),
+              messageAudioByIdRef.current,
+            )
             // Check if the last message in state is the same as the finished message
             const lastStateMsg = messagesToSave[messagesToSave.length - 1]
             if (lastStateMsg.id === assistantMessage.id) {
@@ -306,7 +419,10 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
 
           const title = userMessageContent ? userMessageContent.slice(0, 50) : 'New Chat'
 
-          const progressions = extractProgressionsFromMessages(messagesToSave)
+          const progressions = [
+            ...extractProgressionsFromMessages(messagesToSave),
+            ...audioProgressionsRef.current,
+          ]
 
           // Create chat mutation
           const newChatId = await createChat({
@@ -388,6 +504,16 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
             return
           }
           setMessages(existingChat.messages as any)
+          const nextAudioById = new Map<string, StoredRecording[]>()
+          for (const message of existingChat.messages) {
+            const recordings = getAudioItemsFromParts(message.parts ?? []).filter(
+              (recording): recording is StoredRecording => Boolean(recording.url || recording.storageId),
+            )
+            if (recordings.length > 0) {
+              nextAudioById.set(String(message.id), recordings)
+            }
+          }
+          setMessageAudioById(nextAudioById)
           if (existingChat.progressions && onProgressionsGenerated) {
             onProgressionsGenerated(existingChat.progressions, true)
           }
@@ -397,9 +523,6 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
   }, [existingChat, setMessages, onProgressionsGenerated, messages.length, chatId])
 
   useEffect(() => {
-    if (status === 'submitted' || (messages.length > 0 && messages[messages.length - 1]?.role === 'user')) {
-      setIsSuggestionsOpen(false)
-    }
     if (status === 'error') {
       const lastMessage = messages[messages.length - 1]
       if (lastMessage && 'error' in lastMessage && lastMessage.error) {
@@ -417,26 +540,112 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
     if (messages.length > 0) {
       return
     }
+
+    const hasPendingRecordings = recordingIds.length > 0
+
+    if (hasPendingRecordings) {
+      return
+    }
+
     if (externalPrompt && externalPrompt !== lastExternalPromptRef.current && status === 'ready') {
       lastExternalPromptRef.current = externalPrompt
       setError(null)
-      setIsSuggestionsOpen(false)
       sendMessage(
         { text: externalPrompt },
         { body: { model: 'gpt-4o' } }
       )
     }
-  }, [externalPrompt, status, sendMessage, messages.length])
+  }, [externalPrompt, status, sendMessage, messages.length, searchParams])
 
   useEffect(() => {
     if (status === 'streaming') {
       setIsTyping(true)
       const timer = setTimeout(() => setIsTyping(false), 200)
       return () => clearTimeout(timer)
-    } else {
-      setIsTyping(false)
     }
-  }, [messages, status])
+    setIsTyping(false)
+  }, [status])
+
+  useEffect(() => {
+    if (!pendingUserMessage) return
+
+    const hasMatchingUserMessage = messages.some(
+      (message) =>
+        message.role === 'user' &&
+        getMessageText(message).trim() === pendingUserMessage.text.trim(),
+    )
+
+    if (hasMatchingUserMessage) {
+      setPendingUserMessage(null)
+    }
+  }, [messages, pendingUserMessage])
+
+  useEffect(() => {
+    if (pendingAudioHandledRef.current || status !== 'ready' || credits === undefined || anonymousSessionId === null) {
+      return
+    }
+
+    if (recordingIds.length === 0) {
+      return
+    }
+
+    if (pendingRecordings === undefined) {
+      return
+    }
+
+    if (pendingRecordings.length === 0) {
+      pendingAudioHandledRef.current = true
+      setError('Could not load the uploaded recording.')
+      return
+    }
+
+    const submitPendingRecordings = async () => {
+      pendingAudioHandledRef.current = true
+
+      const prompt =
+        searchParams.get('prompt')?.trim() ||
+        pendingRecordings[0]?.prompt?.trim() ||
+        CHORD_IDENTIFICATION_PROMPT
+
+      setPendingUserMessage({
+        text: prompt,
+        recordings: pendingRecordings.map((recording: { url: string; storageId: Id<'_storage'> }) => ({
+          url: recording.url,
+          storageId: recording.storageId,
+        })),
+      })
+      lastSubmittedPromptRef.current = prompt
+
+      try {
+        const canUseCredit = await consumeCreditForSubmission()
+        if (!canUseCredit) {
+          setPendingUserMessage(null)
+          return
+        }
+
+        lastExternalPromptRef.current = prompt
+
+        await sendPromptWithOptionalAudio(
+          prompt,
+          pendingRecordings.map((recording: { url: string; storageId: Id<'_storage'>; id: Id<'pendingRecordings'> }) => ({
+            url: recording.url,
+            storageId: recording.storageId,
+          })),
+        )
+
+        await consumePendingRecordings({
+          ids: pendingRecordings.map((recording: { id: Id<'pendingRecordings'> }) => recording.id),
+          sessionId: anonymousSessionId,
+        })
+      } catch (error: unknown) {
+        setPendingUserMessage(null)
+        const message = error instanceof Error ? error.message : 'Could not load the uploaded recording.'
+        setError(message)
+      }
+    }
+
+    void submitPendingRecordings()
+  }, [status, credits, anonymousSessionId, searchParams, pendingRecordings, recordingIds.length])
 
   // Reset chat when resetKey changes (New Chat for anonymous users)
   const lastResetKeyRef = useRef<string | null>(null)
@@ -445,18 +654,76 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
       lastResetKeyRef.current = resetKey
       setMessages([])
       setError(null)
-      setIsSuggestionsOpen(true)
-      // Reset current chat ID too if we want to force full reset
       currentChatIdRef.current = null
 
-      // Clear input and suggestions
       textInput.setInput('')
-      setSelectedMood(null)
-      setSelectedGenre(null)
-      setSelectedKey(null)
+      attachments.clear()
+      audioProgressionsRef.current = []
       lastSubmittedPromptRef.current = null
+      pendingRecordingsRef.current = []
+      setMessageAudioById(new Map())
+      setPendingUserMessage(null)
+      setAudioToolPhase('idle')
     }
-  }, [resetKey, setMessages, textInput])
+  }, [resetKey, setMessages, textInput, attachments])
+
+  useEffect(() => {
+    const pendingRecordings = pendingRecordingsRef.current
+    const prompt = lastSubmittedPromptRef.current
+
+    setMessageAudioById((prev) => {
+      let next: Map<string, StoredRecording[]> | null = null
+      const ensureNext = () => {
+        if (!next) next = new Map(prev)
+        return next
+      }
+
+      if (pendingRecordings.length && prompt) {
+        const lastUserIndex = messages.findLastIndex((message) => message.role === 'user')
+        if (lastUserIndex !== -1) {
+          const message = messages[lastUserIndex]
+          if (getMessageText(message).trim() === prompt.trim()) {
+            const messageId = String(message.id)
+            if (prev.get(messageId) !== pendingRecordings) {
+              ensureNext().set(messageId, pendingRecordings)
+            }
+            pendingRecordingsRef.current = []
+
+            for (const storedId of [...(next ?? prev).keys()]) {
+              if (storedId !== messageId && !messages.some((entry) => String(entry.id) === storedId)) {
+                ensureNext().delete(storedId)
+              }
+            }
+          }
+        }
+      }
+
+      if (prompt) {
+        const lastUserIndex = messages.findLastIndex((message) => message.role === 'user')
+        if (lastUserIndex !== -1) {
+          const message = messages[lastUserIndex]
+          const messageId = String(message.id)
+          const map = next ?? prev
+
+          if (!map.has(messageId)) {
+            const orphanId = [...map.keys()].find(
+              (storedId) => !messages.some((entry) => String(entry.id) === storedId),
+            )
+
+            if (orphanId && getMessageText(message).trim() === prompt.trim()) {
+              const recordings = map.get(orphanId)
+              if (recordings) {
+                ensureNext().set(messageId, recordings)
+                ensureNext().delete(orphanId)
+              }
+            }
+          }
+        }
+      }
+
+      return next ?? prev
+    })
+  }, [messages])
 
   // Save chat to Convex when messages change (allowing both authenticated and anonymous users with session)
   useEffect(() => {
@@ -482,16 +749,22 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
             ? (firstUserMessage.parts.find((p) => p.type === 'text' && 'text' in p) as { text: string }).text.slice(0, 100)
             : 'New Chat'
 
-      const messagesToSave = messages.map((m) => ({
-        id: String(m.id),
-        role: m.role as 'user' | 'assistant',
-        content: 'content' in m ? String(m.content || '') : '',
-        parts: m.parts,
-        createdAt: ((m as any).createdAt instanceof Date) ? (m as any).createdAt.getTime() : Date.now(),
-      }))
+      const messagesToSave = withAudioPartsForSave(
+        messages.map((m) => ({
+          id: String(m.id),
+          role: m.role as 'user' | 'assistant',
+          content: 'content' in m ? String(m.content || '') : '',
+          parts: m.parts,
+          createdAt: ((m as any).createdAt instanceof Date) ? (m as any).createdAt.getTime() : Date.now(),
+        })),
+        messageAudioById,
+      )
 
       try {
-        const progressions = extractProgressionsFromMessages(messagesToSave)
+        const progressions = [
+          ...extractProgressionsFromMessages(messagesToSave),
+          ...audioProgressionsRef.current,
+        ]
 
         if (currentChatIdRef.current) {
           await updateChat({
@@ -511,75 +784,21 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
     saveChat()
   }, [messages, status, isAuthenticated, createChat, updateChat, onChatCreated, router, searchParams])
 
-  const constructPrompt = () => {
-    const parts: string[] = []
-    if (selectedMood) parts.push(selectedMood.toLowerCase())
-    if (selectedGenre) parts.push(selectedGenre.toLowerCase())
-    if (selectedKey) parts.push(`in ${selectedKey} major`)
-
-    if (parts.length === 0) {
-      return 'e.g., happy jazz progressions in C major'
-    }
-
-    let prompt = parts.join(' ') + ' chord progressions'
-
-    if (selectedKey) {
-      prompt += ` (Key: ${selectedKey} major)`
-    }
-
-    return prompt
-  }
-
-  useEffect(() => {
-    const prompt = constructPrompt()
-    if (prompt !== 'e.g., happy jazz progressions in C major') {
-      const currentText = textInput.value || ''
-      if (currentText === '' || currentText === lastAutoPromptRef.current) {
-        textInput.setInput(prompt)
-        lastAutoPromptRef.current = prompt
-      }
-    } else {
-      if (!textInput.value || textInput.value === lastAutoPromptRef.current) {
-        textInput.setInput('')
-      }
-      lastAutoPromptRef.current = ''
-    }
-  }, [selectedMood, selectedGenre, selectedKey])
-
-  const handleMoodClick = (mood: string) => {
-    setSelectedMood(selectedMood === mood ? null : mood)
-  }
-
-  const handleGenreClick = (genre: string) => {
-    setSelectedGenre(selectedGenre === genre ? null : genre)
-  }
-
-  const handleKeyClick = (key: string) => {
-    setSelectedKey(selectedKey === key ? null : key)
-  }
-
-  const handleSubmit = async (message: PromptInputMessage) => {
-    console.log('handleSubmit called', message)
-    const hasText = Boolean(message.text?.trim())
-    if (!hasText) {
-      console.log('No text in message, returning early')
-      return
-    }
-
+  const consumeCreditForSubmission = async () => {
     if (credits === undefined) {
       setError('Loading credits...')
-      return
+      return false
     }
 
     if (!isAuthenticated && credits.credits === 0) {
       setError('You have used all 3 free generations. Please sign in to continue.')
-      return
+      return false
     }
 
     if (!isAuthenticated) {
       if (!anonymousSessionId) {
         setError('Session not initialized. Please refresh the page.')
-        return
+        return false
       }
       const result = await useCredit({ anonymousSessionId })
       if (!result.success) {
@@ -588,12 +807,59 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
         } else {
           setError('Failed to use credit. Please try again.')
         }
-        return
+        return false
       }
     }
 
+    return true
+  }
+
+  const analyzeAudioRecording = async (audioUrl: string, textToSend: string) => {
+    setIsAnalyzingAudio(true)
+    try {
+      const response = await fetch('/api/audio-chords', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          audioUrl,
+          prompt: textToSend,
+        }),
+      })
+
+      const result = await response.json()
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Could not identify chords from this recording.')
+      }
+
+      if (!result.progression?.chords?.length) {
+        return undefined
+      }
+
+      const identifiedProgression = result.progression as Progression
+      audioProgressionsRef.current = [...audioProgressionsRef.current, identifiedProgression]
+      onProgressionsGenerated?.([identifiedProgression])
+      setAudioToolPhase('completed')
+
+      return {
+        summary: result.summary,
+        notes: result.notes,
+        chords: identifiedProgression.chords.map((chord) => chord.representation),
+      }
+    } catch (error: any) {
+      setAudioToolPhase('idle')
+      setError(error.message || 'Could not identify chords from this recording.')
+      throw error
+    } finally {
+      setIsAnalyzingAudio(false)
+    }
+  }
+
+  const sendPromptWithOptionalAudio = async (textToSend: string, recordings: StoredRecording[] = []) => {
     setError(null)
-    const textToSend = message.text || constructPrompt()
+    setPendingUserMessage({ text: textToSend, recordings })
+    pendingRecordingsRef.current = recordings
+    lastSubmittedPromptRef.current = textToSend
     console.log('Sending message:', textToSend)
 
     // Update title for both anonymous and authenticated users for immediate feedback
@@ -603,28 +869,126 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
       // Prevent the auto-send effect from firing when the prompt prop updates via URL
       lastExternalPromptRef.current = textToSend
     }
-    lastSubmittedPromptRef.current = textToSend
 
-    sendMessage(
+    let audioChordAnalysis:
+      | {
+          summary?: string
+          notes?: string
+          chords: string[]
+        }
+      | undefined
+
+    if (recordings.length > 0) {
+      setAudioToolPhase('analyzing')
+      const analyses = []
+
+      for (const recording of recordings) {
+        const analysis = await analyzeAudioRecording(recording.url, textToSend)
+        if (analysis) analyses.push(analysis)
+      }
+
+      if (analyses.length === 0) {
+        setAudioToolPhase('idle')
+      }
+
+      if (analyses.length > 0) {
+        audioChordAnalysis = {
+          summary: analyses.map((analysis) => analysis.summary).filter(Boolean).join(' '),
+          notes: analyses.map((analysis) => analysis.notes).filter(Boolean).join(' '),
+          chords: analyses.flatMap((analysis) => analysis.chords),
+        }
+      }
+    }
+
+    await sendMessage(
       { text: textToSend },
       {
         body: {
           model: 'gpt-4o',
+          audioChordAnalysis,
         },
-      }
+      },
     )
 
-    setSelectedMood(null)
-    setSelectedGenre(null)
-    setSelectedKey(null)
-    setIsSuggestionsOpen(false)
   }
 
-  const defaultPrompt = constructPrompt()
-  const hasSelections = selectedMood || selectedGenre || selectedKey
-  const hasText = Boolean(textInput.value?.trim()) || hasSelections
-  const canSubmit = hasText && status === 'ready' && credits !== undefined && anonymousSessionId !== null && (isAuthenticated || (credits.credits ?? 0) > 0)
+  const uploadRecordingsFromPrompt = async (
+    audioFiles: Array<{ url: string; filename?: string; mediaType?: string }>,
+    prompt: string,
+  ): Promise<StoredRecording[]> => {
+    if (!anonymousSessionId) {
+      throw new Error('Session not initialized.')
+    }
+
+    return Promise.all(
+      audioFiles.map((file, index) =>
+        uploadAudioSourceToConvex({
+          audioUrl: file.url,
+          sessionId: anonymousSessionId,
+          prompt,
+          filename: file.filename ?? `recording-${index + 1}.wav`,
+          generateUploadUrl: () => generateUploadUrl(),
+          createPendingRecording: (args) => createPendingRecording(args),
+        }),
+      ),
+    )
+  }
+
+  const handleSubmit = async (message: PromptInputMessage) => {
+    console.log('handleSubmit called', message)
+    const hasText = Boolean(message.text?.trim())
+    const audioFiles = message.files.filter((file) => file.mediaType?.startsWith('audio/') && file.url)
+    const hasAudio = audioFiles.length > 0
+
+    if (!hasText && !hasAudio) {
+      console.log('No text in message, returning early')
+      return
+    }
+
+    const textToSend = message.text?.trim() || (hasAudio ? CHORD_IDENTIFICATION_PROMPT : '')
+
+    setPendingUserMessage({
+      text: textToSend,
+      recordings: hasAudio ? audioFiles.map((file) => ({ url: file.url })) : [],
+    })
+    lastSubmittedPromptRef.current = textToSend
+
+    const canUseCredit = await consumeCreditForSubmission()
+    if (!canUseCredit) {
+      setPendingUserMessage(null)
+      return
+    }
+
+    try {
+      if (hasAudio) {
+        for (const file of audioFiles) {
+          setFileUploading(file.id, true)
+        }
+      }
+
+      const recordings = hasAudio ? await uploadRecordingsFromPrompt(audioFiles, textToSend) : []
+      setPendingUserMessage({ text: textToSend, recordings })
+      await sendPromptWithOptionalAudio(textToSend, recordings)
+    } catch (error: any) {
+      setPendingUserMessage(null)
+      setError(error.message || 'Recording could not be uploaded.')
+    } finally {
+      if (hasAudio) {
+        for (const file of audioFiles) {
+          setFileUploading(file.id, false)
+        }
+      }
+    }
+  }
+
+  const hasAudio = attachments.files.some((file) => file.mediaType?.startsWith('audio/'))
+  const hasText = Boolean(textInput.value?.trim())
+  const canSubmit = (hasText || hasAudio) && status === 'ready' && !isAnalyzingAudio && credits !== undefined && anonymousSessionId !== null && (isAuthenticated || (credits.credits ?? 0) > 0)
   const showSignInPrompt = !isAuthenticated && credits !== undefined && credits.credits === 0
+  const assistantHasProgressionTool = messages.some((message) => messageHasProgressionTool(message))
+  const showAudioToolCard =
+    (audioToolPhase === 'analyzing' || audioToolPhase === 'completed') && !assistantHasProgressionTool
+  const isAwaitingAssistant = status === 'submitted' || isAnalyzingAudio
 
   return (
     <div className="flex flex-col h-full">
@@ -652,10 +1016,47 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
       )}
       <ConversationWithFade className="flex-1 min-h-0">
         <Conversation className="flex-1 min-h-0">
-          <ConversationContent className="pt-8 gap-4">
+          <ConversationContent className="pt-4 gap-4">
+            {pendingUserMessage &&
+              !messages.some(
+                (message) =>
+                  message.role === 'user' &&
+                  getMessageText(message).trim() === pendingUserMessage.text.trim(),
+              ) && (
+                <div className="flex flex-col gap-2">
+                  <Message
+                    from="user"
+                    className={pendingUserMessage.recordings.length > 0 ? 'gap-1' : undefined}
+                  >
+                    {pendingUserMessage.recordings.length > 0 && (
+                      <div className="ml-auto max-w-full">
+                        <MessageAudioRecordings
+                          items={pendingUserMessage.recordings}
+                          variant="chips"
+                        />
+                      </div>
+                    )}
+                    <MessageContent>
+                      <MessageResponse>{pendingUserMessage.text}</MessageResponse>
+                    </MessageContent>
+                  </Message>
+                </div>
+              )}
+            {showAudioToolCard && (
+              <ChatToolCallCard
+                isLoading={audioToolPhase === 'analyzing'}
+                loadingLabel="Identifying Chords from Recording..."
+                completedLabel="Identified Chords from Recording"
+                onClick={
+                  audioToolPhase === 'completed'
+                    ? () => onToolClick?.('generateChordProgressions', null)
+                    : undefined
+                }
+              />
+            )}
             {(() => {
               const messagesToRender = [...messages]
-              if (status === 'submitted' && messagesToRender.length > 0 && messagesToRender[messagesToRender.length - 1].role !== 'assistant') {
+              if (isAwaitingAssistant && messagesToRender.length > 0 && messagesToRender[messagesToRender.length - 1].role !== 'assistant') {
                 messagesToRender.push({
                   id: 'generating-placeholder',
                   role: 'assistant',
@@ -666,7 +1067,10 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
 
               return messagesToRender.map((message, messageIndex) => {
                 const isLastMessage = messageIndex === messagesToRender.length - 1
-                const showMascot = isLastMessage && message.role === 'assistant' && (status === 'streaming' || status === 'submitted')
+                const showMascot =
+                  isLastMessage &&
+                  message.role === 'assistant' &&
+                  (status === 'streaming' || status === 'submitted' || (isAnalyzingAudio && message.id === 'generating-placeholder'))
 
                 return (
                   <div
@@ -674,52 +1078,84 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
                     className="flex flex-col gap-2"
                   >
                     {message.parts ? (
-                      message.parts.map((part, i) => {
-                        if (part.type === 'text' && 'text' in part) {
-                          return (
-                            <Message key={`${message.id}-${i}`} from={message.role}>
-                              <MessageContent>
-                                <MessageResponse>
-                                  {part.text}
-                                </MessageResponse>
-                                {showMascot && i === (message.parts?.length ?? 0) - 1 && (
-                                  <div className="text-left">
-                                    <MascotCursor isTyping={isTyping} className="size-5 inline-block" />
+                      (() => {
+                        const textParts = message.parts.filter(
+                          (part): part is { type: 'text'; text: string } =>
+                            part.type === 'text' && 'text' in part,
+                        )
+                        const audioItems = getAudioItemsFromMessage(message, messageAudioById)
+                        const toolParts = message.parts.filter(
+                          (part) => isProgressionToolPart(part) && 'state' in part && 'input' in part,
+                        )
+                        const hasMessageContent = textParts.length > 0 || audioItems.length > 0
+
+                        return (
+                          <>
+                            {hasMessageContent && (
+                              <Message
+                                from={message.role}
+                                className={message.role === 'user' && audioItems.length > 0 ? 'gap-1' : undefined}
+                              >
+                                {message.role === 'user' && audioItems.length > 0 && (
+                                  <div className="ml-auto max-w-full">
+                                    <MessageAudioRecordings items={audioItems} variant="chips" />
                                   </div>
                                 )}
-                              </MessageContent>
-                            </Message>
-                          )
-                        }
-                        if (
-                          (part.type === 'tool-call' || (typeof part.type === 'string' && part.type.startsWith('tool-'))) &&
-                          'state' in part &&
-                          'input' in part
-                        ) {
-                          const isLoading = part.state === 'input-streaming' || part.state === 'input-available'
-                          const isCompleted = part.state === 'output-available'
-                          const MascotIcon = isLoading ? Icons.mascotSleeping : Icons.mascot
-                          return (
-                            <div
-                              key={i}
-                              className={`flex items-center gap-2 p-3 rounded-md border bg-muted/30 transition-shadow ${isLoading ? 'shadow-[0_0_15px_hsl(var(--primary)/0.4)] animate-pulse' : ''} ${isCompleted ? 'cursor-pointer hover:bg-muted/50' : ''}`}
-                              onClick={() => {
-                                if (isCompleted && onToolClick && 'output' in part) {
-                                  onToolClick('generateChordProgressions', part.output)
-                                }
-                              }}
-                            >
-                              <MascotIcon className={`size-5 ${isLoading ? 'opacity-50' : ''}`} />
-                              <span className="text-sm font-medium">
-                                {isLoading ? 'Generating Chord Progressions...' : isCompleted ? 'Generated Chord Progressions' : 'Chord Progression Tool'}
-                              </span>
-                            </div>
-                          )
-                        }
-                        return null
-                      })
+                                {textParts.length > 0 && (
+                                  <MessageContent>
+                                    {textParts.map((part, i) => (
+                                      <MessageResponse key={`${message.id}-text-${i}`}>
+                                        {part.text}
+                                      </MessageResponse>
+                                    ))}
+                                    {showMascot && message.role === 'assistant' && (
+                                      <div className="text-left">
+                                        <MascotCursor isTyping={isTyping} className="size-5 inline-block" />
+                                      </div>
+                                    )}
+                                  </MessageContent>
+                                )}
+                              </Message>
+                            )}
+                            {(toolParts as Array<{ state?: string; output?: unknown }>).map((part, i) => {
+                              const isLoading = part.state === 'input-streaming' || part.state === 'input-available'
+                              const isCompleted = part.state === 'output-available'
+                              return (
+                                <ChatToolCallCard
+                                  key={`${message.id}-tool-${i}`}
+                                  isLoading={isLoading}
+                                  loadingLabel="Generating Chord Progressions..."
+                                  completedLabel="Generated Chord Progressions"
+                                  onClick={
+                                    isCompleted && onToolClick && 'output' in part
+                                      ? () => onToolClick('generateChordProgressions', part.output)
+                                      : undefined
+                                  }
+                                />
+                              )
+                            })}
+                          </>
+                        )
+                      })()
                     ) : (
-                      <Message from={message.role}>
+                      <Message
+                        from={message.role}
+                        className={
+                          message.role === 'user' &&
+                          getAudioItemsFromMessage(message, messageAudioById).length > 0
+                            ? 'gap-1'
+                            : undefined
+                        }
+                      >
+                        {message.role === 'user' &&
+                          getAudioItemsFromMessage(message, messageAudioById).length > 0 && (
+                            <div className="ml-auto max-w-full">
+                              <MessageAudioRecordings
+                                items={getAudioItemsFromMessage(message, messageAudioById)}
+                                variant="chips"
+                              />
+                            </div>
+                          )}
                         <MessageContent>
                           <MessageResponse>
                             {'content' in message ? String(message.content || '') : ''}
@@ -740,69 +1176,27 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
           <ConversationScrollButton />
         </Conversation>
       </ConversationWithFade>
-      <Collapsible open={isSuggestionsOpen} onOpenChange={setIsSuggestionsOpen} className="group">
-        <CollapsibleTrigger className="flex items-center justify-between gap-2 mb-1.5 w-full">
-          <Label className="text-sm font-semibold text-muted-foreground">Suggestions</Label>
-          <ChevronDownIcon className="size-3.5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <Label className="mb-3 text-xs text-muted-foreground">Mood</Label>
-          <SuggestionsWithFade className="my-1">
-            <Suggestions>
-              {MOODS.map((mood) => (
-                <Suggestion
-                  size="sm"
-                  key={mood}
-                  suggestion={mood}
-                  selected={selectedMood === mood}
-                  onClick={handleMoodClick}
-                />
-              ))}
-            </Suggestions>
-          </SuggestionsWithFade>
-          <Label className="mb-2 text-xs text-muted-foreground">Genre</Label>
-          <SuggestionsWithFade className="my-1">
-            <Suggestions>
-              {GENRES.map((genre) => (
-                <Suggestion
-                  key={genre}
-                  suggestion={genre}
-                  selected={selectedGenre === genre}
-                  onClick={handleGenreClick}
-                />
-              ))}
-            </Suggestions>
-          </SuggestionsWithFade>
-          <Label className="mb-2 text-xs text-muted-foreground">Key</Label>
-          <SuggestionsWithFade className="my-1">
-            <Suggestions className="mb-2">
-              {KEYS.map((key) => (
-                <Suggestion
-                  key={key}
-                  suggestion={key}
-                  selected={selectedKey === key}
-                  onClick={handleKeyClick}
-                />
-              ))}
-            </Suggestions>
-          </SuggestionsWithFade>
-        </CollapsibleContent>
-      </Collapsible>
-
-      <PromptInput onSubmit={handleSubmit}>
+      <PromptInput accept="audio/*" maxFiles={5} maxFileSize={10 * 1024 * 1024} onSubmit={handleSubmit}>
+        <AudioAttachmentPreview variant="header" />
         <PromptInputBody>
-          <PromptInputTextarea placeholder={defaultPrompt} />
+          <PromptInputTextarea
+            className={cn(hasAudio && 'pt-1.5')}
+            placeholder={PROMPT_PLACEHOLDER}
+          />
         </PromptInputBody>
         <PromptInputFooter className="flex w-full items-end justify-between">
-          {credits && !isAuthenticated && (
-            <Badge variant="secondary" className="text-xs border-0">
-              {credits.credits} / 3 free generations
-            </Badge>
-          )}
+          <div className="flex min-w-0 flex-1 items-center gap-2 pr-3">
+            <AudioRecorderButton />
+            {credits && !isAuthenticated && (
+              <Badge variant="secondary" className="text-xs border-0">
+                {credits.credits} / 3 free generations
+              </Badge>
+            )}
+          </div>
           <div className="ml-auto">
             <PromptInputSubmit
               disabled={!canSubmit || status !== 'ready'}
-              status={status}
+              status={isAnalyzingAudio ? 'submitted' : status}
             />
           </div>
         </PromptInputFooter>
@@ -814,14 +1208,16 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
 export default function Chatbot({ prompt, chatId, onProgressionsGenerated, onChatCreated, resetKey, onToolClick }: ChatbotProps) {
   return (
     <PromptInputProvider>
-      <ChatbotContent
-        prompt={prompt}
-        chatId={chatId}
-        onProgressionsGenerated={onProgressionsGenerated}
-        onChatCreated={onChatCreated}
-        resetKey={resetKey}
-        onToolClick={onToolClick}
-      />
+      <AudioRecordingStatusProvider>
+        <ChatbotContent
+          prompt={prompt}
+          chatId={chatId}
+          onProgressionsGenerated={onProgressionsGenerated}
+          onChatCreated={onChatCreated}
+          resetKey={resetKey}
+          onToolClick={onToolClick}
+        />
+      </AudioRecordingStatusProvider>
     </PromptInputProvider>
   )
 }

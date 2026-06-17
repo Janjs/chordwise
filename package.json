@@ -83,6 +83,7 @@
     "react-hook-form": "^7.71.0",
     "react-piano": "^3.1.3",
     "shiki": "^3.21.0",
+    "sonner": "^2.0.7",
     "streamdown": "^2.1.0",
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "4.1.18",

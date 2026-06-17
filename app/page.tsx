@@ -8,8 +8,8 @@ import { Badge } from '@/components/ui/badge'
 
 const Page = () => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100dvh-60px)] w-full max-w-full">
-      <div className="flex flex-col w-full max-w-full gap-4 items-center text-center px-4">
+    <div className="grid min-h-[calc(100dvh-3.5rem)] w-full max-w-full grid-rows-[1fr_auto_1fr] px-4">
+      <div className="flex flex-col items-center justify-end gap-4 pb-6 text-center">
         <Link
           href="https://stroop.janjs.dev"
           target="_blank"
@@ -32,10 +32,13 @@ const Page = () => {
           </span>
         </h1>
         <h3 className="text-sm md:text-xl text-muted-foreground">Generate chord progression MIDIs and view them as guitar chords</h3>
+      </div>
+      <div className="flex w-full max-w-xl justify-self-center">
         <Suspense fallback={null}>
           <LandingInput />
         </Suspense>
       </div>
+      <div aria-hidden="true" />
     </div>
   )
 }

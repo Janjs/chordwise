@@ -44,4 +44,13 @@ export default defineSchema({
     .index("by_userId_updatedAt", ["userId", "updatedAt"])
     .index("by_sessionId", ["sessionId"])
     .index("by_sessionId_updatedAt", ["sessionId", "updatedAt"]),
+  pendingRecordings: defineTable({
+    sessionId: v.string(),
+    userId: v.optional(v.string()),
+    storageId: v.id("_storage"),
+    prompt: v.optional(v.string()),
+    filename: v.optional(v.string()),
+    createdAt: v.number(),
+    consumed: v.boolean(),
+  }).index("by_sessionId", ["sessionId"]),
 });
