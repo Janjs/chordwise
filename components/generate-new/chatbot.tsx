@@ -938,6 +938,7 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
     console.log('handleSubmit called', message)
     const hasText = Boolean(message.text?.trim())
     const audioFiles = message.files.filter((file) => file.mediaType?.startsWith('audio/') && file.url)
+    const attachmentAudioFiles = attachments.files.filter((file) => file.mediaType?.startsWith('audio/'))
     const hasAudio = audioFiles.length > 0
 
     if (!hasText && !hasAudio) {
@@ -961,7 +962,7 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
 
     try {
       if (hasAudio) {
-        for (const file of audioFiles) {
+        for (const file of attachmentAudioFiles) {
           setFileUploading(file.id, true)
         }
       }
@@ -974,7 +975,7 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
       setError(error.message || 'Recording could not be uploaded.')
     } finally {
       if (hasAudio) {
-        for (const file of audioFiles) {
+        for (const file of attachmentAudioFiles) {
           setFileUploading(file.id, false)
         }
       }
