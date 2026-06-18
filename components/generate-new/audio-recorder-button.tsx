@@ -491,7 +491,7 @@ export const AudioRecorderButton = forwardRef<AudioRecorderButtonHandle>(functio
           !isActiveRecorder &&
             !isCheckingAccess &&
             recorderState !== 'error' &&
-            'bg-card text-foreground hover:bg-accent hover:text-accent-foreground',
+            'bg-muted text-foreground hover:bg-accent hover:text-accent-foreground',
           isCheckingAccess && 'animate-pulse hover:bg-accent hover:text-accent-foreground',
           isActiveRecorder && recorderState === 'processing' && 'animate-pulse hover:bg-accent hover:text-accent-foreground',
         )}

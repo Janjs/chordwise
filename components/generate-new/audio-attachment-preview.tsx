@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useQuery } from 'convex/react'
-import { Loader2Icon, MicIcon, PlayIcon, Trash2Icon } from 'lucide-react'
+import { Loader2Icon, MicIcon, PauseIcon, PlayIcon, Trash2Icon } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { cn } from '@/lib/utils'
 import { PromptInputHeader, usePromptInputAttachments } from '@/components/ai-elements/prompt-input'
@@ -209,7 +209,7 @@ function AudioRecordingPlayer({
     >
       <audio ref={audioRef} src={url} onEnded={handlePlayEnded} className="hidden" />
       <Button
-        aria-label="Play recording"
+        aria-label={isPlaying ? 'Pause recording' : 'Play recording'}
         size="icon"
         type="button"
         variant="ghost"
@@ -221,7 +221,11 @@ function AudioRecordingPlayer({
           onTogglePlay(audioRef.current)
         }}
       >
-        <PlayIcon className={cn('size-3', isPlaying && 'fill-current')} />
+        {isPlaying ? (
+          <PauseIcon className="size-3 fill-current" />
+        ) : (
+          <PlayIcon className="size-3" />
+        )}
       </Button>
       <RecordedWaveform peaks={peaks} progress={progress} isPlaying={isPlaying} compact />
     </div>
