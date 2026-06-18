@@ -82,7 +82,7 @@ export function AudioRecordingChipLoading({
   return (
     <div
       className={cn(
-        'relative flex h-8 min-w-0 items-center gap-1 rounded-md bg-card px-1 text-foreground',
+        'relative flex h-8 min-w-0 items-center gap-1 rounded-md bg-muted px-1 text-foreground',
         showRemove && 'pr-7',
         className,
       )}
@@ -203,7 +203,7 @@ function AudioRecordingPlayer({
   return (
     <div
       className={cn(
-        'flex h-8 min-w-0 items-center gap-1 rounded-md bg-card px-1 text-foreground',
+        'flex h-8 min-w-0 items-center gap-1 rounded-md bg-muted px-1 text-foreground',
         className,
       )}
     >
