@@ -8,6 +8,10 @@ import { cn } from '@/lib/utils'
 import { PromptInputHeader, usePromptInputAttachments } from '@/components/ai-elements/prompt-input'
 import { Button } from '@/components/ui/button'
 import { extractWaveformPeaks, RecordedWaveform, MIN_BAR_LEVEL } from './audio-waveform'
+import {
+  audioControlSurfaceClassName,
+  audioControlSurfaceHoverClassName,
+} from './audio-control-surface'
 import { useAudioRecordingStatus } from './audio-recording-status'
 import { api } from '@/convex/_generated/api'
 import type { Id } from '@/convex/_generated/dataModel'
@@ -82,7 +86,8 @@ export function AudioRecordingChipLoading({
   return (
     <div
       className={cn(
-        'relative flex h-8 min-w-0 items-center gap-1 rounded-md bg-muted px-1 text-foreground',
+        'relative flex h-8 min-w-0 items-center gap-1 rounded-md px-1 text-foreground',
+        audioControlSurfaceClassName,
         showRemove && 'pr-7',
         className,
       )}
@@ -203,7 +208,8 @@ function AudioRecordingPlayer({
   return (
     <div
       className={cn(
-        'flex h-8 min-w-0 items-center gap-1 rounded-md bg-muted px-1 text-foreground',
+        'flex h-8 min-w-0 items-center gap-1 rounded-md px-1 text-foreground',
+        audioControlSurfaceClassName,
         className,
       )}
     >
@@ -213,7 +219,7 @@ function AudioRecordingPlayer({
         size="icon"
         type="button"
         variant="ghost"
-        className="h-6 w-6 shrink-0 text-muted-foreground hover:bg-muted hover:text-foreground"
+        className={cn('h-6 w-6 shrink-0 text-muted-foreground', audioControlSurfaceHoverClassName)}
         onClick={(event) => {
           event.preventDefault()
           event.stopPropagation()

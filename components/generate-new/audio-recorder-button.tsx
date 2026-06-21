@@ -18,6 +18,10 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { LiveRecordingWaveform, WAVEFORM_BAR_COUNT } from './audio-waveform'
+import {
+  audioControlSurfaceClassName,
+  audioControlSurfaceHoverClassName,
+} from './audio-control-surface'
 
 export { AudioAttachmentPreview, AudioRecordingChipLoading, MessageAudioRecordings, type MessageAudioItem } from './audio-attachment-preview'
 export { AudioRecordingStatusProvider } from './audio-recording-status'
@@ -491,9 +495,16 @@ export const AudioRecorderButton = forwardRef<AudioRecorderButtonHandle>(functio
           !isActiveRecorder &&
             !isCheckingAccess &&
             recorderState !== 'error' &&
-            'bg-muted text-foreground hover:bg-accent hover:text-accent-foreground',
-          isCheckingAccess && 'animate-pulse hover:bg-accent hover:text-accent-foreground',
-          isActiveRecorder && recorderState === 'processing' && 'animate-pulse hover:bg-accent hover:text-accent-foreground',
+            cn(
+              audioControlSurfaceClassName,
+              audioControlSurfaceHoverClassName,
+              'text-foreground',
+            ),
+          isCheckingAccess &&
+            cn(audioControlSurfaceHoverClassName, 'animate-pulse'),
+          isActiveRecorder &&
+            recorderState === 'processing' &&
+            cn(audioControlSurfaceHoverClassName, 'animate-pulse'),
         )}
         onClick={isActiveRecorder && recorderState === 'recording' ? stopRecording : startRecording}
         disabled={isCheckingAccess || isPreparingRecording}
@@ -549,7 +560,10 @@ export const AudioRecorderButton = forwardRef<AudioRecorderButtonHandle>(functio
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: -8, scale: 0.98 }}
                 transition={enterTransition}
-                className="flex h-8 min-w-0 items-center gap-1.5 rounded-md bg-card px-1"
+                className={cn(
+                  'flex h-8 min-w-0 items-center gap-1.5 rounded-md px-1',
+                  audioControlSurfaceClassName,
+                )}
               >
                 <LiveRecordingWaveform levels={levels} active={recorderState === 'recording'} />
                 <span className="mr-1.5 w-9 shrink-0 text-right text-xs tabular-nums text-muted-foreground">
