@@ -2,7 +2,6 @@
 
 import { useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useMutation } from 'convex/react'
 import { MicIcon, SparklesIcon } from 'lucide-react'
 import { toast } from 'sonner'
 import {
@@ -26,7 +25,6 @@ import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import { uploadAudioSourceToConvex } from '@/lib/upload-recording'
 import { useAnonymousSession } from '@/hooks/useAnonymousSession'
-import { api } from '@/convex/_generated/api'
 
 const PROMPT_SUGGESTION = 'Happy jazz progressions in C major'
 const CHORD_IDENTIFICATION_PROMPT = 'What chords am I playing?'
@@ -36,8 +34,6 @@ function LandingInputContent() {
   const router = useRouter()
   const recorderRef = useRef<AudioRecorderButtonHandle>(null)
   const anonymousSessionId = useAnonymousSession()
-  const generateUploadUrl = useMutation(api.recordings.generateUploadUrl)
-  const createPendingRecording = useMutation(api.recordings.createPendingRecording)
   const [isUploading, setIsUploading] = useState(false)
 
   const { textInput, attachments } = usePromptInputController()
@@ -71,8 +67,6 @@ function LandingInputContent() {
               sessionId: anonymousSessionId,
               prompt: textToSend,
               filename: file.filename ?? `recording-${index + 1}.wav`,
-              generateUploadUrl: () => generateUploadUrl(),
-              createPendingRecording: (args) => createPendingRecording(args),
             }),
           ),
         )

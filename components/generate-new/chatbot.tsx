@@ -331,8 +331,6 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
   const useCredit = useMutation(api.credits.useCredit)
   const createChat = useMutation(api.chats.create)
   const updateChat = useMutation(api.chats.update)
-  const generateUploadUrl = useMutation(api.recordings.generateUploadUrl)
-  const createPendingRecording = useMutation(api.recordings.createPendingRecording)
   const consumePendingRecordings = useMutation(api.recordings.consumePendingRecordings)
   const recordingIds = getRecordingIdsFromSearchParams(searchParams) as Id<'pendingRecordings'>[]
   const pendingRecordings = useQuery(
@@ -927,8 +925,6 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
           sessionId: anonymousSessionId,
           prompt,
           filename: file.filename ?? `recording-${index + 1}.wav`,
-          generateUploadUrl: () => generateUploadUrl(),
-          createPendingRecording: (args) => createPendingRecording(args),
         }),
       ),
     )

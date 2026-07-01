@@ -1,17 +1,5 @@
 import type { Id } from '@/convex/_generated/dataModel'
 
-type GenerateUploadUrl = () => Promise<string>
-type CreatePendingRecording = (args: {
-  sessionId: string
-  storageId: Id<'_storage'>
-  prompt?: string
-  filename?: string
-}) => Promise<{
-  id: Id<'pendingRecordings'>
-  url: string
-  storageId: Id<'_storage'>
-}>
-
 export type UploadedRecording = {
   id: Id<'pendingRecordings'>
   url: string
@@ -32,22 +20,22 @@ export async function uploadAudioSourceToConvex({
   sessionId,
   prompt,
   filename = 'recording.wav',
-  generateUploadUrl,
-  createPendingRecording,
 }: {
   audioUrl: string
   sessionId: string
   prompt?: string
   filename?: string
-  generateUploadUrl: GenerateUploadUrl
-  createPendingRecording: CreatePendingRecording
 }): Promise<UploadedRecording> {
   const blob = await blobFromAudioSource(audioUrl)
   const file = new File([blob], filename, { type: blob.type || 'audio/wav' })
-  const uploadUrl = await generateUploadUrl()
-  const uploadResponse = await fetch(uploadUrl, {
+  const uploadResponse = await fetch('/api/recordings/upload', {
     method: 'POST',
-    headers: { 'Content-Type': file.type },
+    headers: {
+      'Content-Type': file.type,
+      'x-chordwise-session-id': sessionId,
+      'x-chordwise-filename': encodeURIComponent(file.name),
+      ...(prompt ? { 'x-chordwise-prompt': encodeURIComponent(prompt) } : {}),
+    },
     body: file,
   })
 
@@ -55,14 +43,7 @@ export async function uploadAudioSourceToConvex({
     throw new Error('Recording upload failed.')
   }
 
-  const { storageId } = (await uploadResponse.json()) as { storageId: Id<'_storage'> }
-
-  return createPendingRecording({
-    sessionId,
-    storageId,
-    prompt,
-    filename: file.name,
-  })
+  return uploadResponse.json()
 }
 
 export function getRecordingIdsFromSearchParams(searchParams: URLSearchParams) {
