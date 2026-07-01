@@ -347,6 +347,7 @@ export type PromptInputProps = Omit<
     message: PromptInputMessage,
     event: FormEvent<HTMLFormElement>
   ) => void | Promise<void>;
+  clearOnSubmit?: boolean;
 };
 
 export const PromptInput = ({
@@ -359,6 +360,7 @@ export const PromptInput = ({
   maxFileSize,
   onError,
   onSubmit,
+  clearOnSubmit = true,
   children,
   ...props
 }: PromptInputProps) => {
@@ -727,16 +729,17 @@ export const PromptInput = ({
           if (result instanceof Promise) {
             result
               .then(() => {
-                clear();
-                if (usingProvider) {
-                  controller.textInput.clear();
+                if (clearOnSubmit) {
+                  clear();
+                  if (usingProvider) {
+                    controller.textInput.clear();
+                  }
                 }
               })
               .catch(() => {
                 // Don't clear on error - user may want to retry
               });
-          } else {
-            // Sync function completed without throwing, clear inputs
+          } else if (clearOnSubmit) {
             clear();
             if (usingProvider) {
               controller.textInput.clear();

@@ -5,8 +5,6 @@ import { Midi as TonalMidi, Chord as TonalChord } from 'tonal'
 import { generateObject } from 'ai'
 import { openai } from '@ai-sdk/openai'
 import { z } from 'zod'
-import { redirect } from 'next/navigation'
-import { GITHUB_LINK } from '@/lib/utils'
 import { revalidatePath } from 'next/cache'
 
 const MOCK = false
@@ -72,10 +70,6 @@ const MOCK_DATA = {
     ['Cm7', 'Ebmaj7', 'Abmaj7', 'G7'],
     ['Fm7', 'Bb7', 'Ebmaj7', 'Abmaj7'],
   ],
-}
-
-export const navigateToGithub = async () => {
-  redirect(GITHUB_LINK)
 }
 
 export const reGenerate = async () => {

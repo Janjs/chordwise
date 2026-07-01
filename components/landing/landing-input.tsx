@@ -114,6 +114,7 @@ function LandingInputContent() {
         accept="audio/*"
         maxFiles={5}
         maxFileSize={10 * 1024 * 1024}
+        clearOnSubmit={false}
         onSubmit={handleSubmit}
         className="w-full"
       >

@@ -34,13 +34,18 @@ export default function Header() {
   const { props: instrumentViewer } = useInstrumentViewer()
   const pathname = usePathname()
   const isGeneratePage = pathname === '/generate'
+  const isLandingPage = pathname === '/'
+  const showSidebarTrigger =
+    isGeneratePage || isAuthenticated || (isAuthLoading && !isLandingPage)
+  const showLandingLogo =
+    !isGeneratePage && !isAuthenticated && (!isAuthLoading || isLandingPage)
 
   return (
     <header className="flex-shrink-0 relative">
       <nav className="flex gap-4 items-center px-4 py-3 min-h-[3.5rem] min-w-0" aria-label="Global">
         <div className={`flex items-center gap-3 min-w-0 ${isGeneratePage ? 'flex-1 md:flex-none md:w-72 lg:w-[25rem] md:flex-shrink-0' : 'flex-1'}`}>
-          {(isAuthenticated || isAuthLoading || isGeneratePage) && <SidebarTrigger className="md:hidden flex-shrink-0" />}
-          {!isAuthenticated && !isAuthLoading && !isGeneratePage && (
+          {showSidebarTrigger && <SidebarTrigger className="md:hidden flex-shrink-0" />}
+          {showLandingLogo && (
             <Link href="/" className="flex items-center gap-2 mr-4 flex-shrink-0">
               <div className="flex aspect-square items-center justify-center">
                 <Icons.mascot className="size-6.5" />

@@ -4,7 +4,6 @@ import { Icons } from '@/components/icons'
 import { Button } from '@/components/ui/button'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import { GITHUB_LINK, TWITTER_LINK } from '@/lib/utils'
-import { navigateToGithub } from './_actions'
 import { usePathname } from 'next/navigation'
 
 export default function Footer() {
@@ -20,12 +19,10 @@ export default function Footer() {
         <HoverCard>
           <HoverCardTrigger className="hover:cursor-pointer">
             💻 by{' '}
-            <Button
-              onClick={(e) => navigateToGithub()}
-              variant="link"
-              className="hover:underline hover:underline-offset-4 text-xs p-0 h-auto"
-            >
-              @Janjs.
+            <Button asChild variant="link" className="hover:underline hover:underline-offset-4 text-xs p-0 h-auto">
+              <a href={GITHUB_LINK} target="_blank" rel="noopener noreferrer">
+                @Janjs.
+              </a>
             </Button>{' '}
           </HoverCardTrigger>
           <HoverCardContent className="w-25">

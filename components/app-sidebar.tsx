@@ -29,7 +29,7 @@ export function AppSidebar() {
   const isCollapsed = state === 'collapsed'
   const { isAuthenticated, isLoading } = useConvexAuth()
 
-  if (!isAuthenticated && !isLoading && pathname === '/') {
+  if (pathname === '/' && (isLoading || !isAuthenticated)) {
     return null
   }
 
