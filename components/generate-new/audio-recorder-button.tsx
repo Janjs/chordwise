@@ -22,11 +22,11 @@ import {
   audioControlSurfaceClassName,
   audioControlSurfaceHoverClassName,
 } from './audio-control-surface'
+import { MAX_RECORDING_MS } from '@/lib/audio-recording-limits'
 
 export { AudioAttachmentPreview, AudioRecordingChipLoading, MessageAudioRecordings, type MessageAudioItem } from './audio-attachment-preview'
 export { AudioRecordingStatusProvider } from './audio-recording-status'
 
-const MAX_RECORDING_MS = 20_000
 const enterTransition = { duration: 0.25, ease: [0.4, 0, 0.2, 1] as const }
 
 function useDelayedExpand(open: boolean) {

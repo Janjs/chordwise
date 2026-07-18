@@ -12,6 +12,7 @@ import { Id } from '@/convex/_generated/dataModel'
 import useGenerateSearchParams from '@/hooks/useGenerateSearchParams'
 import { cn } from '@/lib/utils'
 import {
+  AUDIO_UPLOAD_MAX_BYTES,
   getRecordingIdsFromSearchParams,
   isPlayableAudioUrl,
   uploadAudioSourceToConvex,
@@ -1173,7 +1174,17 @@ function ChatbotContent({ prompt: externalPrompt, chatId, onProgressionsGenerate
           <ConversationScrollButton />
         </Conversation>
       </ConversationWithFade>
-      <PromptInput accept="audio/*" maxFiles={5} maxFileSize={10 * 1024 * 1024} onSubmit={handleSubmit}>
+      <PromptInput
+        accept="audio/*"
+        maxFiles={5}
+        maxFileSize={AUDIO_UPLOAD_MAX_BYTES}
+        onError={({ code }) => {
+          if (code === 'max_file_size') {
+            setError('Recording is too large. Try a shorter recording.')
+          }
+        }}
+        onSubmit={handleSubmit}
+      >
         <AudioAttachmentPreview variant="header" />
         <PromptInputBody>
           <PromptInputTextarea

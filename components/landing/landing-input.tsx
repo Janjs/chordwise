@@ -23,7 +23,7 @@ import {
 import { useAudioRecordingStatus } from '@/components/generate-new/audio-recording-status'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
-import { uploadAudioSourceToConvex } from '@/lib/upload-recording'
+import { AUDIO_UPLOAD_MAX_BYTES, uploadAudioSourceToConvex } from '@/lib/upload-recording'
 import { useAnonymousSession } from '@/hooks/useAnonymousSession'
 
 const PROMPT_SUGGESTION = 'Happy jazz progressions in C major'
@@ -107,7 +107,12 @@ function LandingInputContent() {
       <PromptInput
         accept="audio/*"
         maxFiles={5}
-        maxFileSize={10 * 1024 * 1024}
+        maxFileSize={AUDIO_UPLOAD_MAX_BYTES}
+        onError={({ code }) => {
+          if (code === 'max_file_size') {
+            toast.error('Recording is too large. Try a shorter recording.')
+          }
+        }}
         clearOnSubmit={false}
         onSubmit={handleSubmit}
         className="w-full"

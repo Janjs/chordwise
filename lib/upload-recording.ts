@@ -1,4 +1,5 @@
 import type { Id } from '@/convex/_generated/dataModel'
+export { AUDIO_UPLOAD_MAX_BYTES } from './audio-recording-limits'
 
 export type UploadedRecording = {
   id: Id<'pendingRecordings'>
@@ -40,7 +41,21 @@ export async function uploadAudioSourceToConvex({
   })
 
   if (!uploadResponse.ok) {
-    throw new Error('Recording upload failed.')
+    if (uploadResponse.status === 413) {
+      throw new Error('Recording is too large. Try a shorter recording.')
+    }
+
+    let message = 'Recording upload failed.'
+    try {
+      const result = await uploadResponse.json()
+      if (typeof result?.error === 'string') {
+        message = result.error
+      }
+    } catch {
+      // Keep the generic upload failure when the platform returns a non-JSON error page.
+    }
+
+    throw new Error(message)
   }
 
   return uploadResponse.json()
