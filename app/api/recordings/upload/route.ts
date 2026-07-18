@@ -1,5 +1,9 @@
 import { ConvexHttpClient } from 'convex/browser'
 import { api } from '@/convex/_generated/api'
+import {
+  getResponseErrorText,
+  getStorageUploadFailureMessage,
+} from '@/lib/recording-upload-errors'
 
 export const maxDuration = 30
 
@@ -39,7 +43,21 @@ export async function POST(req: Request) {
     })
 
     if (!uploadResponse.ok) {
-      return Response.json({ error: 'Recording upload failed.' }, { status: 502 })
+      const upstreamError = await getResponseErrorText(uploadResponse)
+      const error = getStorageUploadFailureMessage(
+        uploadResponse.status,
+        uploadResponse.statusText,
+        upstreamError,
+      )
+      console.error('Convex storage upload failed:', {
+        status: uploadResponse.status,
+        statusText: uploadResponse.statusText,
+        upstreamError,
+        contentType,
+        size: blob.size,
+        uploadOrigin: new URL(uploadUrl).origin,
+      })
+      return Response.json({ error }, { status: 502 })
     }
 
     const { storageId } = await uploadResponse.json()
