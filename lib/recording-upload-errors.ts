@@ -22,3 +22,11 @@ export function getStorageUploadFailureMessage(
   const detail = upstreamError ? `: ${upstreamError.replace(/[.\s]+$/, '')}` : ''
   return `Convex storage upload failed (${statusLabel})${detail}.`
 }
+
+export function describeUploadUrl(uploadUrl: string) {
+  const url = new URL(uploadUrl)
+  return {
+    origin: url.origin,
+    pathname: url.pathname,
+  }
+}
