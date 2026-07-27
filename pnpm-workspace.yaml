@@ -1,5 +1,23 @@
 packages:
-  - '.'
+  - .
 
 onlyBuiltDependencies:
-  - "@tombatossals/chords-db"
+  - '@tombatossals/chords-db'
+
+overrides:
+  brace-expansion@<=5.0.7: '>=5.0.8'
+  linkify-it@<=5.0.0: '>=5.0.1'
+  linkify-it@<=5.0.1: '>=5.0.2'
+  minimist@<0.2.1: '>=0.2.1'
+  minimist@<0.2.4: '>=0.2.4'
+  postcss@<8.5.10: '>=8.5.10'
+  postcss@<=8.5.11: '>=8.5.12'
+  postcss@<=8.5.17: '>=8.5.18'
+  protobufjs@<7.5.5: '>=7.5.5'
+  protobufjs@<=7.5.5: '>=7.5.6'
+  protobufjs@<=7.5.7: '>=7.5.8'
+  protobufjs@<=7.6.0: '>=7.6.1'
+  protobufjs@<=7.6.2: '>=7.6.3'
+  sharp@<0.35.0: '>=0.35.0'
+  static-eval@<2.0.0: '>=2.0.0'
+  static-eval@<=2.0.1: '>=2.0.2'
