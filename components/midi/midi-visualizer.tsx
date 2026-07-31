@@ -90,6 +90,12 @@ const MidiVisualizer: FC<InstrumentContainerProps> = (props) => {
     indexCurrentChordRef.current = indexCurrentChord
     tempoRef.current = tempo
 
+    useLayoutEffect(() => {
+        chordStartTimeRef.current = performance.now()
+        lastChordIndexRef.current = indexCurrentChord
+        setPlayheadProgress(0)
+    }, [indexCurrentChord])
+
     // Animation loop for smooth playhead
     useEffect(() => {
         if (!isCurrentlyPlaying) {
