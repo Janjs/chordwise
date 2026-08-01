@@ -179,7 +179,7 @@ export function SidebarChatList({ pathname }: { pathname: string }) {
       )}
       {status === 'CanLoadMore' && (
         <div className="p-4 flex justify-center">
-          <SidebarMenuButton onClick={() => loadMore(20)} className='justify-center text-muted-foreground'>
+          <SidebarMenuButton closeOnMobileClick={false} onClick={() => loadMore(20)} className='justify-center text-muted-foreground'>
             Load More
           </SidebarMenuButton>
         </div>
