@@ -35,6 +35,7 @@ function LandingInputContent() {
   const recorderRef = useRef<AudioRecorderButtonHandle>(null)
   const anonymousSessionId = useAnonymousSession()
   const [isUploading, setIsUploading] = useState(false)
+  const [isNavigating, setIsNavigating] = useState(false)
 
   const { textInput, attachments } = usePromptInputController()
   const { setFileUploading } = useAudioRecordingStatus()
@@ -72,6 +73,7 @@ function LandingInputContent() {
         )
 
         const recordingIds = uploadedRecordings.map((recording) => recording.id).join(',')
+        setIsNavigating(true)
         router.push(
           `/generate?prompt=${encodeURIComponent(textToSend)}&recordings=${encodeURIComponent(recordingIds)}`,
         )
@@ -86,6 +88,7 @@ function LandingInputContent() {
       return
     }
 
+    setIsNavigating(true)
     router.push(`/generate?prompt=${encodeURIComponent(textToSend)}`)
   }
 
@@ -100,7 +103,7 @@ function LandingInputContent() {
 
   const hasText = Boolean(textInput.value?.trim())
   const hasAudio = attachments.files.some((file) => file.mediaType?.startsWith('audio/'))
-  const isBusy = isUploading
+  const isBusy = isUploading || isNavigating
 
   return (
     <div className="flex flex-col w-full max-w-xl items-center">
@@ -128,7 +131,10 @@ function LandingInputContent() {
           <div className="flex min-w-0 flex-1 items-center gap-2 pr-3">
             <AudioRecorderButton ref={recorderRef} />
           </div>
-          <PromptInputSubmit disabled={isBusy || (!hasText && !hasAudio)} />
+          <PromptInputSubmit
+            disabled={isBusy || (!hasText && !hasAudio)}
+            status={isBusy ? 'submitted' : undefined}
+          />
         </PromptInputFooter>
       </PromptInput>
 

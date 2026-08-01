@@ -7,7 +7,10 @@ export function rewriteCookieForFrontend(cookie: string): string {
     if (lowerPart.startsWith('domain=')) {
       continue
     }
-    if (lowerPart === 'samesite=strict') {
+    if (lowerPart === 'partitioned') {
+      continue
+    }
+    if (lowerPart === 'samesite=none' || lowerPart === 'samesite=strict') {
       rewritten.push('SameSite=Lax')
       continue
     }
